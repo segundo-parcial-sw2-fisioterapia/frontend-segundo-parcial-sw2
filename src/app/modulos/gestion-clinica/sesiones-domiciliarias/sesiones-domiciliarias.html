@@ -1,0 +1,41 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-bold text-gray-800">Sesiones Domiciliarias</h1>
+      <p class="text-sm text-gray-500 mt-0.5">Sesiones de ejercicio realizadas en casa</p>
+    </div>
+    <button (click)="abrirCrear()" class="btn-primary">
+      <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+      Nueva Sesión Domiciliaria
+    </button>
+  </div>
+
+  <app-tabla
+    [columnas]="columnas"
+    [filas]="sesiones()"
+    [cargando]="cargando()"
+    mensajeVacio="No hay sesiones domiciliarias registradas"
+    (ver)="abrirVer($event)"
+    (editar)="abrirEditar($event)"
+    (eliminar)="eliminarSesion($event)"
+  />
+
+  <app-modal titulo="Nueva Sesión Domiciliaria" [abierto]="modalCrear()" (cerrar)="modalCrear.set(false)">
+    <app-crear-sesiones-domiciliarias
+      (guardar)="crearSesion($event)"
+      (cancelar)="modalCrear.set(false)"
+    />
+  </app-modal>
+
+  <app-modal titulo="Editar Sesión Domiciliaria" [abierto]="modalEditar()" (cerrar)="modalEditar.set(false)">
+    <app-editar-sesiones-domiciliarias
+      [sesion]="sesionSeleccionada()"
+      (guardar)="editarSesion($event)"
+      (cancelar)="modalEditar.set(false)"
+    />
+  </app-modal>
+
+  <app-modal titulo="Detalle Sesión Domiciliaria" [abierto]="modalVer()" (cerrar)="modalVer.set(false)">
+    <app-ver-sesiones-domiciliarias [sesion]="sesionSeleccionada()" />
+  </app-modal>
+</div>

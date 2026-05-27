@@ -1,0 +1,39 @@
+{
+  "kpis": {
+    "pacientesActivos": 284,
+    "pacientesActivos_variacion": 12,
+    "citasHoy": 18,
+    "citasSemana": 94,
+    "citasSemana_variacion": -3,
+    "sesionesEsteMes": 312,
+    "sesionesEsteMes_variacion": 8,
+    "ingresosMes": 48750,
+    "ingresosMes_variacion": 15
+  },
+  "distribucionSemaforo": {
+    "verde": 178,
+    "amarillo": 76,
+    "rojo": 30
+  },
+  "ocupacionFisioterapeutas": [
+    { "nombre": "Dra. Andrea Vásquez", "iniciales": "AV", "ocupacion": 92 },
+    { "nombre": "Lic. Carlos Mendoza", "iniciales": "CM", "ocupacion": 78 },
+    { "nombre": "Dra. María Soto", "iniciales": "MS", "ocupacion": 85 },
+    { "nombre": "Lic. Juan Pérez", "iniciales": "JP", "ocupacion": 65 }
+  ],
+  "citasPorMes": [
+    { "mes": "Dic", "valor": 267 },
+    { "mes": "Ene", "valor": 312 },
+    { "mes": "Feb", "valor": 289 },
+    { "mes": "Mar", "valor": 341 },
+    { "mes": "Abr", "valor": 318 },
+    { "mes": "May", "valor": 356 }
+  ],
+  "proximasCitas": [
+    { "hora": "08:30", "paciente": "Juan Vásquez Torres", "tipo": "Fisioterapia Neurológica", "fisio": "A. Vásquez", "estado": "CONFIRMADA" },
+    { "hora": "09:00", "paciente": "María López Gutiérrez", "tipo": "Rehabilitación Deportiva", "fisio": "C. Mendoza", "estado": "CONFIRMADA" },
+    { "hora": "09:30", "paciente": "Carlos Ríos Paz", "tipo": "Terapia Manual", "fisio": "M. Soto", "estado": "PENDIENTE" },
+    { "hora": "10:00", "paciente": "Ana Flores Suárez", "tipo": "Electroterapia", "fisio": "J. Pérez", "estado": "CONFIRMADA" },
+    { "hora": "10:30", "paciente": "Roberto Chávez Lima", "tipo": "Kinesioterapia", "fisio": "A. Vásquez", "estado": "PENDIENTE" }
+  ]
+}

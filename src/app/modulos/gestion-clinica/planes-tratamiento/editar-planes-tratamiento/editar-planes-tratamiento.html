@@ -1,0 +1,41 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Estado</label>
+    <select formControlName="estado" class="input-base"
+      [class.input-error]="form.get('estado')?.invalid && form.get('estado')?.touched">
+      <option value="">Seleccione...</option>
+      <option value="ACTIVO">Activo</option>
+      <option value="COMPLETADO">Completado</option>
+      <option value="SUSPENDIDO">Suspendido</option>
+    </select>
+    @if (form.get('estado')?.invalid && form.get('estado')?.touched) {
+      <span class="text-xs text-red-500">Campo requerido</span>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Fecha Fin Estimada</label>
+    <input formControlName="fecha_fin_estimada" type="date" class="input-base" />
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Objetivo Terapéutico</label>
+    <textarea formControlName="objetivo_terapeutico" rows="3" placeholder="Describa el objetivo terapéutico..." class="input-base resize-none"
+      [class.input-error]="form.get('objetivo_terapeutico')?.invalid && form.get('objetivo_terapeutico')?.touched"></textarea>
+    @if (form.get('objetivo_terapeutico')?.invalid && form.get('objetivo_terapeutico')?.touched) {
+      <span class="text-xs text-red-500">Campo requerido</span>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Observaciones</label>
+    <textarea formControlName="observaciones" rows="2" placeholder="Observaciones adicionales..." class="input-base resize-none"></textarea>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-2">
+    <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+    <button type="submit" class="btn-primary">Guardar</button>
+  </div>
+
+</form>

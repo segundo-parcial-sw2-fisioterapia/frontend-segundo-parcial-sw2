@@ -1,0 +1,34 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Nombre</label>
+    <input formControlName="nombre" type="text" placeholder="Nombre del ejercicio" class="input-base" [class.input-error]="form.get('nombre')?.invalid && form.get('nombre')?.touched" />
+    @if (form.get('nombre')?.invalid && form.get('nombre')?.touched) {
+      <span class="text-xs text-red-500">Nombre requerido</span>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Nivel de Dificultad</label>
+    <select formControlName="nivel_dificultad" class="input-base">
+      <option value="">Seleccione...</option>
+      <option value="BAJO">Bajo</option>
+      <option value="MEDIO">Medio</option>
+      <option value="ALTO">Alto</option>
+    </select>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Repeticiones Sugeridas</label>
+    <input formControlName="repeticiones_sugeridas" type="number" placeholder="Número de repeticiones" class="input-base" />
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Duración (segundos)</label>
+    <input formControlName="duracion_segundos" type="number" placeholder="Duración en segundos" class="input-base" />
+  </div>
+
+  <div class="flex justify-end gap-3 pt-2">
+    <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+    <button type="submit" class="btn-primary">Guardar</button>
+  </div>
+</form>

@@ -1,0 +1,30 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+
+  <div class="flex items-center gap-2">
+    <input type="checkbox" formControlName="analizado_por_ia" id="analizado_por_ia_editar" class="w-4 h-4 rounded border-gray-300 text-primary-600" />
+    <label for="analizado_por_ia_editar" class="text-sm font-medium text-gray-700">Analizado por IA</label>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Correcciones Emitidas</label>
+    <textarea formControlName="correcciones_emitidas" rows="3" placeholder="Correcciones emitidas..." class="input-base resize-none"></textarea>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Puntuación (0-100)</label>
+      <input formControlName="puntuacion" type="number" min="0" max="100" placeholder="0" class="input-base" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">XP Ganado</label>
+      <input formControlName="xp_ganado" type="number" placeholder="0" class="input-base" />
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-2">
+    <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+    <button type="submit" class="btn-primary">Guardar</button>
+  </div>
+
+</form>

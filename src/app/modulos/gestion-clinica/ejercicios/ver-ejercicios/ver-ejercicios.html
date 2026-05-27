@@ -1,0 +1,32 @@
+@if (ejercicio) {
+  <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Nombre</span>
+      <span class="text-sm text-gray-800">{{ ejercicio.nombre ?? '—' }}</span>
+    </div>
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Categoría de Trabajo</span>
+      <span class="text-sm text-gray-800">{{ ejercicio.categoria_trabajo ?? '—' }}</span>
+    </div>
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Nivel de Dificultad</span>
+      <span class="text-sm text-gray-800">{{ ejercicio.nivel_dificultad ?? '—' }}</span>
+    </div>
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Duración (seg)</span>
+      <span class="text-sm text-gray-800">{{ ejercicio.duracion_segundos ?? '—' }}</span>
+    </div>
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Repeticiones Sugeridas</span>
+      <span class="text-sm text-gray-800">{{ ejercicio.repeticiones_sugeridas ?? '—' }}</span>
+    </div>
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">URL Video</span>
+      <span class="text-sm text-gray-800">{{ ejercicio.url_video_referencia ?? '—' }}</span>
+    </div>
+    <div class="flex flex-col gap-0.5 col-span-2">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Descripción</span>
+      <span class="text-sm text-gray-800">{{ ejercicio.descripcion ?? '—' }}</span>
+    </div>
+  </div>
+}

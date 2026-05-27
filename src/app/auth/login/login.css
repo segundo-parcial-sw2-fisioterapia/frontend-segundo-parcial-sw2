@@ -1,0 +1,228 @@
+/* ===================================================================
+   LOGIN — Layout y panel de branding
+   Solo lo que Tailwind no cubre directamente.
+   =================================================================== */
+
+.login-root {
+  min-height: 100svh;
+  display: flex;
+  background: #f8fafc;
+}
+
+/* ---- Panel izquierdo (branding) ---- */
+
+.login-brand {
+  display: none;
+  position: relative;
+  overflow: hidden;
+  background: var(--color-primary-600);
+  width: 42%;
+  flex-shrink: 0;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .login-brand {
+    display: flex;
+  }
+}
+
+/* Círculos decorativos */
+.login-brand__deco {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.login-brand__deco--top {
+  width: 480px;
+  height: 480px;
+  background: var(--color-primary-500);
+  opacity: 0.35;
+  top: -160px;
+  right: -160px;
+}
+
+.login-brand__deco--bottom {
+  width: 360px;
+  height: 360px;
+  background: var(--color-primary-700);
+  opacity: 0.5;
+  bottom: -120px;
+  left: -100px;
+}
+
+.login-brand__inner {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 2.5rem;
+}
+
+/* Logo */
+.login-brand__logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 3.5rem;
+}
+
+.login-brand__logo svg {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+}
+
+.login-brand__logo span {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* Titular */
+.login-brand__headline {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-brand__headline h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.login-brand__headline p {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.6;
+  max-width: 26ch;
+}
+
+/* Lista de características */
+.login-brand__features {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.login-brand__features li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.875rem;
+}
+
+.login-brand__feature-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.login-brand__feature-icon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.login-brand__footer {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.75rem;
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+/* ---- Panel derecho (formulario) ---- */
+
+.login-form-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.login-form-wrap {
+  width: 100%;
+  max-width: 26rem;
+}
+
+/* Logo para móvil */
+.login-mobile-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: 2rem;
+}
+
+.login-mobile-logo svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.login-mobile-logo span {
+  color: var(--color-primary-600);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+@media (min-width: 1024px) {
+  .login-mobile-logo {
+    display: none;
+  }
+}
+
+/* Encabezado del formulario */
+.login-form-header {
+  margin-bottom: 1.75rem;
+}
+
+.login-form-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+.login-form-header p {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+/* Alerta de error */
+.login-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  padding: 0.875rem 1rem;
+  border-radius: 0.5rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-bottom: 1.25rem;
+}
+
+.login-alert svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}

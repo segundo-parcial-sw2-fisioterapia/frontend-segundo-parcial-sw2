@@ -1,0 +1,34 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-bold text-gray-800">Usuarios</h1>
+      <p class="text-sm text-gray-500 mt-0.5">Gestión de usuarios del sistema</p>
+    </div>
+    <button (click)="abrirCrear()" class="btn-primary">
+      <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+      Nuevo Usuario
+    </button>
+  </div>
+
+  <app-tabla
+    [columnas]="columnas"
+    [filas]="usuarios()"
+    [cargando]="cargando()"
+    mensajeVacio="No hay usuarios registrados."
+    (ver)="abrirVer($event)"
+    (editar)="abrirEditar($event)"
+    (eliminar)="eliminarUsuario($event)"
+  />
+
+  <app-modal titulo="Nuevo Usuario" [abierto]="modalCrear()" (cerrar)="modalCrear.set(false)">
+    <app-crear-usuarios (guardar)="crearUsuario($event)" (cancelar)="modalCrear.set(false)" />
+  </app-modal>
+
+  <app-modal titulo="Editar Usuario" [abierto]="modalEditar()" (cerrar)="modalEditar.set(false)">
+    <app-editar-usuarios [usuario]="usuarioSeleccionado()" (guardar)="editarUsuario($event)" (cancelar)="modalEditar.set(false)" />
+  </app-modal>
+
+  <app-modal titulo="Detalle de Usuario" [abierto]="modalVer()" (cerrar)="modalVer.set(false)">
+    <app-ver-usuarios [usuario]="usuarioSeleccionado()" />
+  </app-modal>
+</div>

@@ -1,0 +1,37 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Semáforo</label>
+    <select formControlName="categoria_semaforo" class="input-base"
+      [class.input-error]="form.get('categoria_semaforo')?.invalid && form.get('categoria_semaforo')?.touched">
+      <option value="">Seleccione...</option>
+      <option value="VERDE">Verde</option>
+      <option value="AMARILLO">Amarillo</option>
+      <option value="ROJO">Rojo</option>
+    </select>
+    @if (form.get('categoria_semaforo')?.invalid && form.get('categoria_semaforo')?.touched) {
+      <span class="text-xs text-red-500">Campo requerido</span>
+    }
+  </div>
+
+  <div class="flex items-center gap-2">
+    <input type="checkbox" formControlName="es_vigente" id="es_vigente_edit" class="w-4 h-4 rounded border-gray-300 text-primary-600" />
+    <label for="es_vigente_edit" class="text-sm font-medium text-gray-700">Vigente</label>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Observaciones</label>
+    <textarea formControlName="observaciones" rows="3" placeholder="Observaciones adicionales..." class="input-base resize-none"></textarea>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Justificación Semáforo</label>
+    <textarea formControlName="justificacion_semaforo" rows="3" placeholder="Justifique la categoría semáforo..." class="input-base resize-none"></textarea>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-2">
+    <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+    <button type="submit" class="btn-primary">Guardar</button>
+  </div>
+
+</form>

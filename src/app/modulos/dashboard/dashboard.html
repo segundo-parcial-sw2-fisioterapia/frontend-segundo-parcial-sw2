@@ -1,0 +1,303 @@
+<div class="space-y-6">
+
+  <!-- Hero / Header -->
+  <div class="flex items-start justify-between">
+    <div>
+      <p class="text-xs font-semibold text-primary-400 uppercase tracking-widest mb-0.5">ERP Fisioterapia</p>
+      <h1 class="text-2xl font-bold text-gray-800">
+        {{ saludo() }}, <span class="text-primary-600">{{ nombreUsuario() }}</span>
+      </h1>
+      <p class="text-sm text-gray-400 mt-0.5 capitalize">{{ fechaHoy() }}</p>
+    </div>
+    <div class="flex items-center gap-2 bg-white border border-gray-100 px-4 py-2.5 rounded-xl shadow-[var(--shadow-card)] text-sm text-gray-500">
+      <svg class="w-4 h-4 text-primary-400" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+      </svg>
+      Datos simulados · BI Módulo
+    </div>
+  </div>
+
+  <!-- Skeleton loader -->
+  @if (cargando()) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      @for (_ of [1,2,3,4]; track $index) {
+        <div class="bg-white rounded-xl p-5 shadow-[var(--shadow-card)] animate-pulse">
+          <div class="h-3 bg-gray-200 rounded w-24 mb-3"></div>
+          <div class="h-8 bg-gray-200 rounded w-20 mb-2"></div>
+          <div class="h-3 bg-gray-200 rounded w-32"></div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Dashboard Content -->
+  @if (!cargando() && datos()) {
+
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <!-- Pacientes Activos -->
+      <div class="bg-white rounded-xl p-5 shadow-[var(--shadow-card)] border border-gray-50">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Pacientes Activos</span>
+          <div class="w-9 h-9 bg-primary-50 rounded-lg flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-primary-600" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+            </svg>
+          </div>
+        </div>
+        <p class="text-3xl font-bold text-gray-900 tracking-tight">{{ datos().kpis.pacientesActivos }}</p>
+        <div class="flex items-center gap-1.5 mt-2">
+          <svg class="w-3.5 h-3.5 text-emerald-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+          </svg>
+          <span class="text-xs font-semibold text-emerald-600">+{{ datos().kpis.pacientesActivos_variacion }}%</span>
+          <span class="text-xs text-gray-400">vs mes anterior</span>
+        </div>
+      </div>
+
+      <!-- Citas del Día -->
+      <div class="bg-white rounded-xl p-5 shadow-[var(--shadow-card)] border border-gray-50">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Citas del Día</span>
+          <div class="w-9 h-9 bg-teal-50 rounded-lg flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-teal-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+        </div>
+        <p class="text-3xl font-bold text-gray-900 tracking-tight">{{ datos().kpis.citasHoy }}</p>
+        <div class="flex items-center gap-1.5 mt-2">
+          <span class="text-xs text-gray-400">Semana: <strong class="text-gray-700">{{ datos().kpis.citasSemana }}</strong></span>
+          @if (datos().kpis.citasSemana_variacion < 0) {
+            <span class="text-xs font-semibold text-red-500 ml-1">{{ datos().kpis.citasSemana_variacion }}%</span>
+          } @else {
+            <span class="text-xs font-semibold text-emerald-600 ml-1">+{{ datos().kpis.citasSemana_variacion }}%</span>
+          }
+        </div>
+      </div>
+
+      <!-- Sesiones del Mes -->
+      <div class="bg-white rounded-xl p-5 shadow-[var(--shadow-card)] border border-gray-50">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Sesiones del Mes</span>
+          <div class="w-9 h-9 bg-violet-50 rounded-lg flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-violet-600" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+              <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+        </div>
+        <p class="text-3xl font-bold text-gray-900 tracking-tight">{{ datos().kpis.sesionesEsteMes }}</p>
+        <div class="flex items-center gap-1.5 mt-2">
+          <svg class="w-3.5 h-3.5 text-emerald-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+          </svg>
+          <span class="text-xs font-semibold text-emerald-600">+{{ datos().kpis.sesionesEsteMes_variacion }}%</span>
+          <span class="text-xs text-gray-400">vs mes anterior</span>
+        </div>
+      </div>
+
+      <!-- Ingresos del Mes -->
+      <div class="bg-white rounded-xl p-5 shadow-[var(--shadow-card)] border border-gray-50">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Ingresos del Mes</span>
+          <div class="w-9 h-9 bg-amber-50 rounded-lg flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-amber-600" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+        </div>
+        <p class="text-3xl font-bold text-gray-900 tracking-tight">Bs {{ formatearMoneda(datos().kpis.ingresosMes) }}</p>
+        <div class="flex items-center gap-1.5 mt-2">
+          <svg class="w-3.5 h-3.5 text-emerald-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+          </svg>
+          <span class="text-xs font-semibold text-emerald-600">+{{ datos().kpis.ingresosMes_variacion }}%</span>
+          <span class="text-xs text-gray-400">vs mes anterior</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+      <!-- Bar Chart: Citas por Mes -->
+      <div class="lg:col-span-2 bg-white rounded-xl p-5 shadow-[var(--shadow-card)] border border-gray-50">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-700">Citas por Mes</h3>
+            <p class="text-xs text-gray-400 mt-0.5">Últimos 6 meses</p>
+          </div>
+          <span class="text-[0.7rem] bg-primary-50 text-primary-600 font-semibold px-2.5 py-1 rounded-full">
+            Total: {{ datos().kpis.citasSemana * 4 }}
+          </span>
+        </div>
+        <div class="h-44">
+          <svg viewBox="0 0 390 110" class="w-full h-full" preserveAspectRatio="xMidYMid meet">
+            @for (barra of barras(); track barra.mes; let i = $index) {
+              <g [attr.transform]="'translate(' + (i * 65 + 3) + ', 0)'">
+                <!-- fondo de barra -->
+                <rect x="8" y="5" width="48" height="85" fill="#f8fafc" rx="5"/>
+                <!-- barra de valor -->
+                <rect
+                  x="8"
+                  [attr.y]="90 - barra.altura"
+                  width="48"
+                  [attr.height]="barra.altura"
+                  rx="5"
+                  [attr.fill]="barra.esUltimo ? 'var(--color-primary-600)' : 'var(--color-primary-400)'"
+                  style="opacity: 0.9"
+                />
+                <!-- etiqueta de mes -->
+                <text
+                  x="32"
+                  y="103"
+                  text-anchor="middle"
+                  font-size="8.5"
+                  fill="#9ca3af"
+                  font-family="Inter, sans-serif"
+                >{{ barra.mes }}</text>
+                <!-- valor en barra grande -->
+                @if (barra.esUltimo) {
+                  <text
+                    x="32"
+                    [attr.y]="90 - barra.altura + 12"
+                    text-anchor="middle"
+                    font-size="8"
+                    fill="#fff"
+                    font-weight="600"
+                    font-family="Inter, sans-serif"
+                  >{{ barra.valor }}</text>
+                }
+              </g>
+            }
+          </svg>
+        </div>
+      </div>
+
+      <!-- Donut Chart: Distribución Semáforo -->
+      <div class="bg-white rounded-xl p-5 shadow-[var(--shadow-card)] border border-gray-50">
+        <h3 class="text-sm font-semibold text-gray-700 mb-1">Distribución de Pacientes</h3>
+        <p class="text-xs text-gray-400 mb-5">Por categoría clínica</p>
+
+        <div class="flex items-center gap-5">
+          <!-- Donut SVG -->
+          <div class="relative shrink-0 w-28 h-28">
+            <svg viewBox="0 0 36 36" class="w-full h-full">
+              <!-- fondo gris -->
+              <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="#f1f5f9" stroke-width="3.5"/>
+              <!-- segmentos coloreados, rotados -90° desde el centro -->
+              <g transform="rotate(-90, 18, 18)">
+                @for (seg of donutSegments(); track seg.label) {
+                  <circle
+                    cx="18" cy="18" r="15.9"
+                    fill="transparent"
+                    [attr.stroke]="seg.color"
+                    stroke-width="3.5"
+                    [attr.stroke-dasharray]="seg.dasharray"
+                    [attr.stroke-dashoffset]="seg.dashoffset"
+                  />
+                }
+              </g>
+            </svg>
+            <!-- Número central -->
+            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <span class="text-lg font-bold text-gray-800 leading-none">{{ totalSemaforo() }}</span>
+              <span class="text-[0.58rem] text-gray-400 leading-tight">total</span>
+            </div>
+          </div>
+
+          <!-- Leyenda -->
+          <div class="space-y-3 flex-1">
+            @for (seg of donutSegments(); track seg.label) {
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-2.5 h-2.5 rounded-full shrink-0" [style.background]="seg.color"></div>
+                  <span class="text-xs text-gray-600 font-medium">{{ seg.label }}</span>
+                </div>
+                <div class="text-right">
+                  <span class="text-xs font-bold text-gray-800">{{ seg.valor }}</span>
+                  <span class="text-[0.65rem] text-gray-400 ml-1">{{ seg.pct }}%</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+      <!-- Agenda del Día -->
+      <div class="bg-white rounded-xl shadow-[var(--shadow-card)] border border-gray-50 overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
+          <h3 class="text-sm font-semibold text-gray-700">Agenda del Día</h3>
+          <span class="text-xs text-primary-600 font-semibold bg-primary-50 px-2.5 py-1 rounded-full">
+            {{ datos().proximasCitas.length }} citas
+          </span>
+        </div>
+        <div class="divide-y divide-gray-50">
+          @for (cita of datos().proximasCitas; track cita.hora) {
+            <div class="px-5 py-3.5 flex items-center gap-3 hover:bg-gray-50/50 transition-colors">
+              <span class="text-xs font-mono font-bold text-primary-600 w-10 shrink-0">{{ cita.hora }}</span>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-800 truncate">{{ cita.paciente }}</p>
+                <p class="text-xs text-gray-400 truncate mt-0.5">{{ cita.tipo }} · {{ cita.fisio }}</p>
+              </div>
+              <span
+                class="badge-base shrink-0"
+                [class.badge-verde]="cita.estado === 'CONFIRMADA'"
+                [class.badge-amarillo]="cita.estado !== 'CONFIRMADA'"
+              >
+                {{ cita.estado === 'CONFIRMADA' ? 'Confirmada' : 'Pendiente' }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Ocupación por Fisioterapeuta -->
+      <div class="bg-white rounded-xl p-5 shadow-[var(--shadow-card)] border border-gray-50">
+        <h3 class="text-sm font-semibold text-gray-700 mb-1">Ocupación por Fisioterapeuta</h3>
+        <p class="text-xs text-gray-400 mb-5">Carga de trabajo actual</p>
+        <div class="space-y-5">
+          @for (ft of datos().ocupacionFisioterapeutas; track ft.nombre) {
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-7 h-7 rounded-full bg-primary-600 flex items-center justify-center text-white text-[0.58rem] font-bold shrink-0 shadow-sm">
+                    {{ ft.iniciales }}
+                  </div>
+                  <span class="text-sm text-gray-700">{{ ft.nombre }}</span>
+                </div>
+                <span
+                  class="text-sm font-bold"
+                  [class.text-red-500]="ft.ocupacion >= 90"
+                  [class.text-amber-600]="ft.ocupacion >= 75 && ft.ocupacion < 90"
+                  [class.text-emerald-600]="ft.ocupacion < 75"
+                >{{ ft.ocupacion }}%</span>
+              </div>
+              <div class="w-full bg-gray-100 rounded-full h-1.5">
+                <div
+                  class="h-1.5 rounded-full transition-all duration-500"
+                  [style.width.%]="ft.ocupacion"
+                  [class.bg-red-400]="ft.ocupacion >= 90"
+                  [class.bg-amber-400]="ft.ocupacion >= 75 && ft.ocupacion < 90"
+                  [class.bg-emerald-400]="ft.ocupacion < 75"
+                ></div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+
+  }
+
+</div>

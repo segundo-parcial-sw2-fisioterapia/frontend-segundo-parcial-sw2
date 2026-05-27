@@ -1,0 +1,50 @@
+@if (sesion) {
+  <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Paciente</span>
+      <span class="text-sm text-gray-800">{{ sesion.paciente?.persona?.nombre ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Ejercicio</span>
+      <span class="text-sm text-gray-800">{{ sesion.plan_ejercicio?.ejercicio?.nombre ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Fecha/Hora</span>
+      <span class="text-sm text-gray-800">{{ sesion.fecha_hora ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Repeticiones Completadas</span>
+      <span class="text-sm text-gray-800">{{ sesion.repeticiones_completadas ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Puntuación</span>
+      <span class="text-sm text-gray-800">{{ sesion.puntuacion ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">XP Ganado</span>
+      <span class="text-sm text-gray-800">{{ sesion.xp_ganado ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Analizado por IA</span>
+      <span class="text-sm text-gray-800">{{ sesion.analizado_por_ia ? 'Sí' : 'No' }}</span>
+    </div>
+
+    <div class="col-span-2 flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Correcciones Emitidas</span>
+      <span class="text-sm text-gray-800">{{ sesion.correcciones_emitidas ?? '—' }}</span>
+    </div>
+
+    <div class="col-span-2 flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">URL del Video</span>
+      <span class="text-sm text-gray-800 break-all">{{ sesion.url_video ?? '—' }}</span>
+    </div>
+
+  </div>
+}

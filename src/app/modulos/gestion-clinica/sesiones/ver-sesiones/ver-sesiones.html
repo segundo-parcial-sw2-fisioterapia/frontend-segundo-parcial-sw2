@@ -1,0 +1,55 @@
+@if (sesion) {
+  <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Paciente</span>
+      <span class="text-sm text-gray-800">{{ sesion.paciente?.persona?.nombre ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Fecha/Hora Cita</span>
+      <span class="text-sm text-gray-800">{{ sesion.cita?.fecha_hora ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Fecha/Hora Inicio</span>
+      <span class="text-sm text-gray-800">{{ sesion.fecha_hora_inicio ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Fecha/Hora Fin</span>
+      <span class="text-sm text-gray-800">{{ sesion.fecha_hora_fin ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Estado</span>
+      <span class="text-sm text-gray-800">{{ sesion.estado_sesion ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Dolor Reportado</span>
+      <span class="text-sm text-gray-800">{{ sesion.nivel_dolor_reportado ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Dolor Post</span>
+      <span class="text-sm text-gray-800">{{ sesion.nivel_dolor_post ?? '—' }}</span>
+    </div>
+
+    <div class="col-span-2 flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Observaciones Clínicas</span>
+      <span class="text-sm text-gray-800">{{ sesion.observaciones_clinicas ?? '—' }}</span>
+    </div>
+
+    <div class="col-span-2 flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Hash Blockchain</span>
+      <span class="text-sm text-gray-800 break-all">{{ sesion.hash_blockchain ?? '—' }}</span>
+    </div>
+
+    <div class="col-span-2 flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">URL Documento Firmado</span>
+      <span class="text-sm text-gray-800 break-all">{{ sesion.url_documento_firmado ?? '—' }}</span>
+    </div>
+
+  </div>
+}

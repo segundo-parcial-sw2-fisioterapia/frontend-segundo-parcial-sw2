@@ -1,0 +1,55 @@
+@if (evaluacion) {
+  <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Paciente</span>
+      <span class="text-sm text-gray-800">{{ evaluacion.paciente?.persona?.nombre ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Fecha Evaluación</span>
+      <span class="text-sm text-gray-800">{{ evaluacion.fecha_evaluacion ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Categoría Enfermedad</span>
+      <span class="text-sm text-gray-800">{{ evaluacion.categoria_enfermedad ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Semáforo</span>
+      <span class="text-sm text-gray-800">{{ evaluacion.categoria_semaforo ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Categoría Trabajo</span>
+      <span class="text-sm text-gray-800">{{ evaluacion.categoria_trabajo ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Frecuencia Sesión</span>
+      <span class="text-sm text-gray-800">{{ evaluacion.frecuencia_sesion ?? '—' }}</span>
+    </div>
+
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Vigente</span>
+      <span class="text-sm text-gray-800">{{ evaluacion.es_vigente ? 'Sí' : 'No' }}</span>
+    </div>
+
+    <div class="col-span-2 flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Descripción Enfermedad</span>
+      <span class="text-sm text-gray-800">{{ evaluacion.descripcion_enfermedad ?? '—' }}</span>
+    </div>
+
+    <div class="col-span-2 flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Justificación Semáforo</span>
+      <span class="text-sm text-gray-800">{{ evaluacion.justificacion_semaforo ?? '—' }}</span>
+    </div>
+
+    <div class="col-span-2 flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Observaciones</span>
+      <span class="text-sm text-gray-800">{{ evaluacion.observaciones ?? '—' }}</span>
+    </div>
+
+  </div>
+}

@@ -1,0 +1,123 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+
+  <div class="grid grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">ID Paciente</label>
+      <input formControlName="pacienteId" type="number" placeholder="Ingrese ID del paciente" class="input-base"
+        [class.input-error]="form.get('pacienteId')?.invalid && form.get('pacienteId')?.touched" />
+      @if (form.get('pacienteId')?.invalid && form.get('pacienteId')?.touched) {
+        <span class="text-xs text-red-500">Campo requerido</span>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">ID Empleado</label>
+      <input formControlName="empleadoId" type="number" placeholder="Ingrese ID del empleado" class="input-base"
+        [class.input-error]="form.get('empleadoId')?.invalid && form.get('empleadoId')?.touched" />
+      @if (form.get('empleadoId')?.invalid && form.get('empleadoId')?.touched) {
+        <span class="text-xs text-red-500">Campo requerido</span>
+      }
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Fecha de Evaluación</label>
+    <input formControlName="fecha_evaluacion" type="datetime-local" class="input-base"
+      [class.input-error]="form.get('fecha_evaluacion')?.invalid && form.get('fecha_evaluacion')?.touched" />
+    @if (form.get('fecha_evaluacion')?.invalid && form.get('fecha_evaluacion')?.touched) {
+      <span class="text-xs text-red-500">Campo requerido</span>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Categoría Enfermedad</label>
+    <select formControlName="categoria_enfermedad" class="input-base"
+      [class.input-error]="form.get('categoria_enfermedad')?.invalid && form.get('categoria_enfermedad')?.touched">
+      <option value="">Seleccione...</option>
+      <option value="LESION_PIERNA">Lesión de Pierna</option>
+      <option value="LESION_BRAZO">Lesión de Brazo</option>
+      <option value="LESION_PIE">Lesión de Pie</option>
+      <option value="ESPALDA_DESVIADA">Espalda Desviada</option>
+      <option value="CADERA_DESALINEADA">Cadera Desalineada</option>
+      <option value="OBESIDAD">Obesidad</option>
+      <option value="POST_ACV">Post ACV</option>
+      <option value="PARALISIS_FACIAL">Parálisis Facial</option>
+      <option value="DISCAPACIDAD_MOTORA">Discapacidad Motora</option>
+      <option value="OTRO">Otro</option>
+    </select>
+    @if (form.get('categoria_enfermedad')?.invalid && form.get('categoria_enfermedad')?.touched) {
+      <span class="text-xs text-red-500">Campo requerido</span>
+    }
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Semáforo</label>
+      <select formControlName="categoria_semaforo" class="input-base"
+        [class.input-error]="form.get('categoria_semaforo')?.invalid && form.get('categoria_semaforo')?.touched">
+        <option value="">Seleccione...</option>
+        <option value="VERDE">Verde</option>
+        <option value="AMARILLO">Amarillo</option>
+        <option value="ROJO">Rojo</option>
+      </select>
+      @if (form.get('categoria_semaforo')?.invalid && form.get('categoria_semaforo')?.touched) {
+        <span class="text-xs text-red-500">Campo requerido</span>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Categoría Trabajo</label>
+      <select formControlName="categoria_trabajo" class="input-base"
+        [class.input-error]="form.get('categoria_trabajo')?.invalid && form.get('categoria_trabajo')?.touched">
+        <option value="">Seleccione...</option>
+        <option value="EXTREMIDAD_SUPERIOR">Extremidad Superior</option>
+        <option value="EXTREMIDAD_INFERIOR">Extremidad Inferior</option>
+        <option value="TORAX_CINTURA">Tórax / Cintura</option>
+        <option value="SUPERIOR">Superior</option>
+      </select>
+      @if (form.get('categoria_trabajo')?.invalid && form.get('categoria_trabajo')?.touched) {
+        <span class="text-xs text-red-500">Campo requerido</span>
+      }
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Frecuencia de Sesión</label>
+    <select formControlName="frecuencia_sesion" class="input-base"
+      [class.input-error]="form.get('frecuencia_sesion')?.invalid && form.get('frecuencia_sesion')?.touched">
+      <option value="">Seleccione...</option>
+      <option value="DIARIA">Diaria</option>
+      <option value="SEMANAL">Semanal</option>
+      <option value="MENSUAL">Mensual</option>
+    </select>
+    @if (form.get('frecuencia_sesion')?.invalid && form.get('frecuencia_sesion')?.touched) {
+      <span class="text-xs text-red-500">Campo requerido</span>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Descripción de la Enfermedad</label>
+    <textarea formControlName="descripcion_enfermedad" rows="3" placeholder="Describa la enfermedad..." class="input-base resize-none"></textarea>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Justificación Semáforo</label>
+    <textarea formControlName="justificacion_semaforo" rows="3" placeholder="Justifique la categoría semáforo..." class="input-base resize-none"></textarea>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Observaciones</label>
+    <textarea formControlName="observaciones" rows="3" placeholder="Observaciones adicionales..." class="input-base resize-none"></textarea>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <input type="checkbox" formControlName="es_vigente" id="es_vigente" class="w-4 h-4 rounded border-gray-300 text-primary-600" />
+    <label for="es_vigente" class="text-sm font-medium text-gray-700">Vigente</label>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-2">
+    <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+    <button type="submit" class="btn-primary">Guardar</button>
+  </div>
+
+</form>

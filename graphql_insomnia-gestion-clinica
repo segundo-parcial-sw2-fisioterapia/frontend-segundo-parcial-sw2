@@ -1,0 +1,1199 @@
+# 🏥 ERP Fisioterapia — GraphQL API Reference (Insomnia)
+
+**Endpoint:** `http://localhost:4000/graphql`  
+**Método:** `POST`  
+**Header:** `Content-Type: application/json`
+
+> En Insomnia: New Request → POST → GraphQL → pegar el body en cada sección.
+
+---
+
+## 1. 👤 Módulo: Usuarios
+
+### Queries
+
+#### `listarUsuarios`
+```graphql
+query {
+  listarUsuarios {
+    id
+    correo
+    estado
+    roles
+    fecha_creacion
+    ultimo_acceso
+    persona {
+      id
+      nombre
+      apellido
+      ci
+    }
+  }
+}
+```
+
+#### `verUsuario`
+```graphql
+query {
+  verUsuario(id: 1) {
+    id
+    correo
+    estado
+    roles
+    persona {
+      nombre
+      apellido
+    }
+  }
+}
+```
+
+### Mutations
+
+#### `crearUsuarios`
+```graphql
+mutation {
+  crearUsuarios(datos: {
+    correo: "juan@clinica.com"
+    contrasena: "secreto123"
+    personaId: 1
+    roles: [FISIOTERAPEUTA]
+    estado: ACTIVO
+  }) {
+    id
+    correo
+    roles
+    estado
+  }
+}
+```
+
+#### `editarUsuario`
+```graphql
+mutation {
+  editarUsuario(datos: {
+    id: 1
+    correo: "nuevo@clinica.com"
+    estado: ACTIVO
+    roles: [ADMINISTRADOR]
+  }) {
+    id
+    correo
+    estado
+    roles
+  }
+}
+```
+
+#### `inactivarUsuario`
+```graphql
+mutation {
+  inactivarUsuario(id: 1) {
+    id
+    correo
+    estado
+  }
+}
+```
+
+#### `eliminarUsuario`
+```graphql
+mutation {
+  eliminarUsuario(id: 1) {
+    id
+    correo
+  }
+}
+```
+
+---
+
+## 2. 🧑 Módulo: Personas
+
+### Queries
+
+#### `listarPersonas`
+```graphql
+query {
+  listarPersonas {
+    id
+    nombre
+    apellido
+    ci
+    telefono
+  }
+}
+```
+
+#### `verPersona`
+```graphql
+query {
+  verPersona(id: 1) {
+    id
+    nombre
+    apellido
+    ci
+    telefono
+  }
+}
+```
+
+#### `buscarPersonas`
+```graphql
+query {
+  buscarPersonas(termino: "Juan") {
+    id
+    nombre
+    apellido
+    ci
+    telefono
+  }
+}
+```
+
+### Mutations
+
+#### `crearPersonas`
+```graphql
+mutation {
+  crearPersonas(datos: {
+    nombre: "Juan"
+    apellido: "Pérez"
+    ci: "12345678"
+    telefono: "70012345"
+  }) {
+    id
+    nombre
+    apellido
+    ci
+  }
+}
+```
+
+#### `editarPersona`
+```graphql
+mutation {
+  editarPersona(datos: {
+    id: 1
+    nombre: "Juan Carlos"
+    apellido: "Pérez"
+    telefono: "71112222"
+  }) {
+    id
+    nombre
+    apellido
+    telefono
+  }
+}
+```
+
+#### `eliminarPersona`
+```graphql
+mutation {
+  eliminarPersona(id: 1) {
+    id
+    nombre
+    apellido
+  }
+}
+```
+
+---
+
+## 3. 🏥 Módulo: Pacientes
+
+### Queries
+
+#### `listarPacientes`
+```graphql
+query {
+  listarPacientes {
+    id
+    estado
+    fecha_nacimiento
+    fecha_registro
+    sexo
+    direccion
+    persona {
+      nombre
+      apellido
+      ci
+      telefono
+    }
+  }
+}
+```
+
+#### `verPaciente`
+```graphql
+query {
+  verPaciente(id: 1) {
+    id
+    estado
+    sexo
+    fecha_nacimiento
+    persona {
+      nombre
+      apellido
+      ci
+    }
+  }
+}
+```
+
+#### `buscarPacientes`
+```graphql
+query {
+  buscarPacientes(termino: "Pérez") {
+    id
+    estado
+    persona {
+      nombre
+      apellido
+      ci
+      telefono
+    }
+  }
+}
+```
+
+### Mutations
+
+#### `crearPacientes`
+```graphql
+mutation {
+  crearPacientes(datos: {
+    personaId: 1
+    fecha_nacimiento: "1990-05-15"
+    sexo: MASCULINO
+    estado: ACTIVO
+    direccion: "Av. Principal 123"
+  }) {
+    id
+    estado
+    sexo
+    persona {
+      nombre
+      apellido
+    }
+  }
+}
+```
+
+#### `editarPaciente`
+```graphql
+mutation {
+  editarPaciente(datos: {
+    id: 1
+    estado: ACTIVO
+    direccion: "Nueva dirección 456"
+    sexo: MASCULINO
+  }) {
+    id
+    estado
+    direccion
+  }
+}
+```
+
+#### `altaMedicaPaciente`
+```graphql
+mutation {
+  altaMedicaPaciente(id: 1) {
+    id
+    estado
+    persona {
+      nombre
+    }
+  }
+}
+```
+
+#### `eliminarPaciente`
+```graphql
+mutation {
+  eliminarPaciente(id: 1) {
+    id
+    persona {
+      nombre
+    }
+  }
+}
+```
+
+---
+
+## 4. 📅 Módulo: Citas
+
+### Queries
+
+#### `listarCitas`
+```graphql
+query {
+  listarCitas {
+    id
+    fecha_hora
+    estado
+    tipo
+    origen
+    duracion_minutos
+    observaciones
+    empleado_id
+    paciente {
+      id
+      persona {
+        nombre
+        apellido
+      }
+    }
+  }
+}
+```
+
+#### `verCita`
+```graphql
+query {
+  verCita(id: 1) {
+    id
+    fecha_hora
+    estado
+    tipo
+    origen
+    empleado_id
+    duracion_minutos
+    observaciones
+    paciente {
+      persona { nombre apellido }
+    }
+  }
+}
+```
+
+#### `listarCitasPorPaciente`
+```graphql
+query {
+  listarCitasPorPaciente(pacienteId: 1) {
+    id
+    fecha_hora
+    estado
+    tipo
+  }
+}
+```
+
+#### `listarCitasPorEmpleadoYFecha`
+```graphql
+query {
+  listarCitasPorEmpleadoYFecha(empleadoId: 1, fecha: "2026-05-26") {
+    id
+    fecha_hora
+    estado
+    tipo
+    paciente {
+      persona { nombre apellido }
+    }
+  }
+}
+```
+
+#### `listarCitasProximas`
+```graphql
+query {
+  listarCitasProximas(horasAntelacion: 24) {
+    id
+    fecha_hora
+    estado
+    paciente {
+      persona { nombre telefono }
+    }
+  }
+}
+```
+
+### Mutations
+
+#### `crearCitas`
+```graphql
+mutation {
+  crearCitas(datos: {
+    pacienteId: 1
+    empleadoId: 2
+    fecha_hora: "2026-05-27T09:00:00Z"
+    tipo: PRIMERA_VEZ
+    origen: RECEPCION
+    estado: PROGRAMADA
+    duracion_minutos: 45
+    observaciones: "Primera cita de evaluación"
+  }) {
+    id
+    fecha_hora
+    estado
+    tipo
+  }
+}
+```
+
+#### `editarCita`
+```graphql
+mutation {
+  editarCita(datos: {
+    id: 1
+    fecha_hora: "2026-05-28T10:00:00Z"
+    estado: CONFIRMADA
+    tipo: CONTROL
+    duracion_minutos: 30
+    observaciones: "Cambio de horario"
+  }) {
+    id
+    fecha_hora
+    estado
+  }
+}
+```
+
+#### `confirmarCita`
+```graphql
+mutation {
+  confirmarCita(id: 1) {
+    id
+    estado
+    fecha_hora
+  }
+}
+```
+
+#### `cancelarCita`
+```graphql
+mutation {
+  cancelarCita(id: 1) {
+    id
+    estado
+    fecha_hora
+  }
+}
+```
+
+#### `eliminarCita`
+```graphql
+mutation {
+  eliminarCita(id: 1) {
+    id
+    estado
+  }
+}
+```
+
+---
+
+## 5. 🏋️ Módulo: Ejercicios
+
+### Queries
+
+#### `listarEjercicios`
+```graphql
+query {
+  listarEjercicios {
+    id
+    nombre
+    descripcion
+    categoria_trabajo
+    nivel_dificultad
+    duracion_segundos
+    repeticiones_sugeridas
+    url_video_referencia
+  }
+}
+```
+
+#### `verEjercicio`
+```graphql
+query {
+  verEjercicio(id: 1) {
+    id
+    nombre
+    descripcion
+    categoria_trabajo
+    nivel_dificultad
+    duracion_segundos
+    repeticiones_sugeridas
+    url_video_referencia
+  }
+}
+```
+
+#### `listarEjerciciosPorCategoria`
+```graphql
+query {
+  listarEjerciciosPorCategoria(categoria: EXTREMIDAD_SUPERIOR) {
+    id
+    nombre
+    nivel_dificultad
+    duracion_segundos
+  }
+}
+```
+
+### Mutations
+
+#### `crearEjercicios`
+```graphql
+mutation {
+  crearEjercicios(datos: {
+    nombre: "Flexión de rodilla"
+    descripcion: "Ejercicio para fortalecer cuádriceps"
+    categoria_trabajo: EXTREMIDAD_INFERIOR
+    nivel_dificultad: MEDIO
+    duracion_segundos: 30
+    repeticiones_sugeridas: 15
+    url_video_referencia: "https://videos.clinica.com/flexion-rodilla"
+  }) {
+    id
+    nombre
+    categoria_trabajo
+    nivel_dificultad
+  }
+}
+```
+
+#### `editarEjercicio`
+```graphql
+mutation {
+  editarEjercicio(datos: {
+    id: 1
+    nombre: "Flexión de rodilla avanzada"
+    nivel_dificultad: ALTO
+    repeticiones_sugeridas: 20
+  }) {
+    id
+    nombre
+    nivel_dificultad
+  }
+}
+```
+
+#### `eliminarEjercicio`
+```graphql
+mutation {
+  eliminarEjercicio(id: 1) {
+    id
+    nombre
+  }
+}
+```
+
+---
+
+## 6. 📋 Módulo: Evaluaciones Iniciales
+
+### Queries
+
+#### `listarEvaluacionesIniciales`
+```graphql
+query {
+  listarEvaluacionesIniciales {
+    id
+    categoria_enfermedad
+    categoria_semaforo
+    categoria_trabajo
+    descripcion_enfermedad
+    fecha_evaluacion
+    frecuencia_sesion
+    es_vigente
+    observaciones
+    justificacion_semaforo
+    empleado_id
+    tiempo_sesion_minutos
+    paciente {
+      id
+      persona { nombre apellido }
+    }
+  }
+}
+```
+
+#### `verEvaluacionInicial`
+```graphql
+query {
+  verEvaluacionInicial(id: 1) {
+    id
+    categoria_enfermedad
+    categoria_semaforo
+    es_vigente
+    fecha_evaluacion
+    paciente {
+      persona { nombre apellido }
+    }
+  }
+}
+```
+
+#### `listarEvaluacionesPorPaciente`
+```graphql
+query {
+  listarEvaluacionesPorPaciente(pacienteId: 1) {
+    id
+    categoria_enfermedad
+    categoria_semaforo
+    es_vigente
+    fecha_evaluacion
+    frecuencia_sesion
+  }
+}
+```
+
+### Mutations
+
+#### `crearEvaluacionesIniciales`
+```graphql
+mutation {
+  crearEvaluacionesIniciales(datos: {
+    pacienteId: 1
+    empleadoId: 2
+    fecha_evaluacion: "2026-05-26T08:00:00Z"
+    categoria_enfermedad: LESION_PIERNA
+    categoria_semaforo: AMARILLO
+    categoria_trabajo: EXTREMIDAD_INFERIOR
+    frecuencia_sesion: SEMANAL
+    descripcion_enfermedad: "Lesión de ligamento cruzado anterior"
+    justificacion_semaforo: "Dolor moderado, movilidad reducida"
+    observaciones: "Requiere evaluación periódica"
+    es_vigente: true
+  }) {
+    id
+    categoria_enfermedad
+    categoria_semaforo
+    es_vigente
+  }
+}
+```
+
+#### `editarEvaluacionInicial`
+```graphql
+mutation {
+  editarEvaluacionInicial(datos: {
+    id: 1
+    categoria_semaforo: VERDE
+    es_vigente: true
+    observaciones: "Mejoría significativa"
+    justificacion_semaforo: "Dolor leve, recuperando movilidad"
+  }) {
+    id
+    categoria_semaforo
+    es_vigente
+  }
+}
+```
+
+#### `eliminarEvaluacionInicial`
+```graphql
+mutation {
+  eliminarEvaluacionInicial(id: 1) {
+    id
+    categoria_enfermedad
+  }
+}
+```
+
+---
+
+## 7. 📄 Módulo: Planes de Tratamiento
+
+### Queries
+
+#### `listarPlanesTratamientos`
+```graphql
+query {
+  listarPlanesTratamientos {
+    id
+    fecha_inicio
+    fecha_fin_estimada
+    estado
+    objetivo_terapeutico
+    observaciones
+    empleado_id
+    paciente {
+      id
+      persona { nombre apellido }
+    }
+    evaluacion_inicial {
+      id
+      categoria_enfermedad
+    }
+  }
+}
+```
+
+#### `verPlanTratamiento`
+```graphql
+query {
+  verPlanTratamiento(id: 1) {
+    id
+    fecha_inicio
+    fecha_fin_estimada
+    estado
+    objetivo_terapeutico
+    observaciones
+    paciente {
+      persona { nombre apellido }
+    }
+  }
+}
+```
+
+#### `listarPlanesPorPaciente`
+```graphql
+query {
+  listarPlanesPorPaciente(pacienteId: 1) {
+    id
+    estado
+    fecha_inicio
+    fecha_fin_estimada
+    objetivo_terapeutico
+  }
+}
+```
+
+### Mutations
+
+#### `crearPlanesTratamientos`
+```graphql
+mutation {
+  crearPlanesTratamientos(datos: {
+    pacienteId: 1
+    empleadoId: 2
+    fecha_inicio: "2026-05-26"
+    fecha_fin_estimada: "2026-08-26"
+    objetivo_terapeutico: "Recuperación funcional completa de rodilla"
+    observaciones: "Plan de 3 meses con revisión mensual"
+    estado: ACTIVO
+    evaluacionInicialId: 1
+  }) {
+    id
+    estado
+    fecha_inicio
+    objetivo_terapeutico
+  }
+}
+```
+
+#### `editarPlanTratamiento`
+```graphql
+mutation {
+  editarPlanTratamiento(datos: {
+    id: 1
+    estado: ACTIVO
+    fecha_fin_estimada: "2026-09-30"
+    objetivo_terapeutico: "Recuperación total y prevención de recaídas"
+    observaciones: "Extendido por progreso favorable"
+  }) {
+    id
+    estado
+    fecha_fin_estimada
+  }
+}
+```
+
+#### `eliminarPlanTratamiento`
+```graphql
+mutation {
+  eliminarPlanTratamiento(id: 1) {
+    id
+    estado
+  }
+}
+```
+
+---
+
+## 8. 🗂️ Módulo: Planes de Ejercicios
+
+### Queries
+
+#### `listarPlanesEjercicios`
+```graphql
+query {
+  listarPlanesEjercicios {
+    id
+    activo
+    frecuencia
+    orden
+    repeticiones
+    series
+    ejercicio {
+      id
+      nombre
+      nivel_dificultad
+    }
+    plan_tratamiento {
+      id
+      objetivo_terapeutico
+    }
+  }
+}
+```
+
+#### `verPlanEjercicio`
+```graphql
+query {
+  verPlanEjercicio(id: 1) {
+    id
+    activo
+    frecuencia
+    repeticiones
+    series
+    ejercicio {
+      nombre
+      nivel_dificultad
+    }
+  }
+}
+```
+
+#### `listarEjerciciosDePlan`
+```graphql
+query {
+  listarEjerciciosDePlan(planTratamientoId: 1) {
+    id
+    activo
+    frecuencia
+    orden
+    repeticiones
+    series
+    ejercicio {
+      id
+      nombre
+      categoria_trabajo
+      nivel_dificultad
+    }
+  }
+}
+```
+
+### Mutations
+
+#### `crearPlanesEjercicios`
+```graphql
+mutation {
+  crearPlanesEjercicios(datos: {
+    planTratamientoId: 1
+    ejercicioId: 1
+    frecuencia: DIARIA
+    orden: 1
+    repeticiones: 15
+    series: 3
+    activo: true
+  }) {
+    id
+    frecuencia
+    repeticiones
+    series
+    ejercicio {
+      nombre
+    }
+  }
+}
+```
+
+#### `editarPlanEjercicio`
+```graphql
+mutation {
+  editarPlanEjercicio(datos: {
+    id: 1
+    frecuencia: INTERDIARIA
+    repeticiones: 12
+    series: 4
+    activo: true
+    orden: 2
+  }) {
+    id
+    frecuencia
+    repeticiones
+    series
+    activo
+  }
+}
+```
+
+#### `eliminarPlanEjercicio`
+```graphql
+mutation {
+  eliminarPlanEjercicio(id: 1) {
+    id
+    ejercicio {
+      nombre
+    }
+  }
+}
+```
+
+---
+
+## 9. 🧘 Módulo: Sesiones
+
+### Queries
+
+#### `listarSesiones`
+```graphql
+query {
+  listarSesiones {
+    id
+    fecha_hora_inicio
+    fecha_hora_fin
+    estado_sesion
+    nivel_dolor_reportado
+    nivel_dolor_post
+    observaciones_clinicas
+    hash_blockchain
+    url_documento_firmado
+    empleado_id
+    paciente {
+      id
+      persona { nombre apellido }
+    }
+    cita {
+      id
+      fecha_hora
+    }
+  }
+}
+```
+
+#### `verSesion`
+```graphql
+query {
+  verSesion(id: 1) {
+    id
+    fecha_hora_inicio
+    fecha_hora_fin
+    estado_sesion
+    nivel_dolor_reportado
+    nivel_dolor_post
+    observaciones_clinicas
+    hash_blockchain
+    url_documento_firmado
+  }
+}
+```
+
+#### `listarSesionesPorPaciente`
+```graphql
+query {
+  listarSesionesPorPaciente(pacienteId: 1) {
+    id
+    fecha_hora_inicio
+    estado_sesion
+    nivel_dolor_reportado
+    nivel_dolor_post
+  }
+}
+```
+
+### Mutations
+
+#### `crearSesiones`
+```graphql
+mutation {
+  crearSesiones(datos: {
+    pacienteId: 1
+    empleadoId: 2
+    citaId: 1
+    fecha_hora_inicio: "2026-05-26T09:00:00Z"
+    estado_sesion: ABIERTA
+    nivel_dolor_reportado: 5
+    observaciones_clinicas: "Paciente refiere dolor moderado al inicio"
+  }) {
+    id
+    estado_sesion
+    fecha_hora_inicio
+  }
+}
+```
+
+#### `editarSesion`
+```graphql
+mutation {
+  editarSesion(datos: {
+    id: 1
+    fecha_hora_fin: "2026-05-26T10:00:00Z"
+    nivel_dolor_post: 3
+    observaciones_clinicas: "Mejoría notable tras ejercicios"
+    estado_sesion: CERRADA
+  }) {
+    id
+    estado_sesion
+    nivel_dolor_post
+    fecha_hora_fin
+  }
+}
+```
+
+#### `cerrarYFirmarSesion`
+```graphql
+mutation {
+  cerrarYFirmarSesion(
+    id: 1
+    hashBlockchain: "0xabc123def456..."
+    urlDocumento: "https://docs.clinica.com/sesion-1-firmada.pdf"
+  ) {
+    id
+    estado_sesion
+    hash_blockchain
+    url_documento_firmado
+  }
+}
+```
+
+#### `eliminarSesion`
+```graphql
+mutation {
+  eliminarSesion(id: 1) {
+    id
+    estado_sesion
+  }
+}
+```
+
+---
+
+## 10. 🏠 Módulo: Sesiones Domiciliarias
+
+### Queries
+
+#### `listarSesionesDomiciliarias`
+```graphql
+query {
+  listarSesionesDomiciliarias {
+    id
+    fecha_hora
+    fecha_creacion
+    analizado_por_ia
+    correcciones_emitidas
+    puntuacion
+    repeticiones_completadas
+    xp_ganado
+    url_video
+    paciente {
+      id
+      persona { nombre apellido }
+    }
+    plan_ejercicio {
+      id
+      ejercicio {
+        nombre
+        nivel_dificultad
+      }
+    }
+  }
+}
+```
+
+#### `verSesionDomiciliaria`
+```graphql
+query {
+  verSesionDomiciliaria(id: 1) {
+    id
+    fecha_hora
+    analizado_por_ia
+    correcciones_emitidas
+    puntuacion
+    repeticiones_completadas
+    xp_ganado
+    url_video
+    paciente {
+      persona { nombre }
+    }
+  }
+}
+```
+
+#### `listarSesionesDomiciliariasPorPaciente`
+```graphql
+query {
+  listarSesionesDomiciliariasPorPaciente(pacienteId: 1) {
+    id
+    fecha_hora
+    puntuacion
+    xp_ganado
+    repeticiones_completadas
+    analizado_por_ia
+    plan_ejercicio {
+      ejercicio { nombre }
+    }
+  }
+}
+```
+
+### Mutations
+
+#### `crearSesionesDomiciliarias`
+```graphql
+mutation {
+  crearSesionesDomiciliarias(datos: {
+    pacienteId: 1
+    planEjercicioId: 1
+    fecha_hora: "2026-05-26T07:30:00Z"
+    repeticiones_completadas: 12
+    puntuacion: 85
+    xp_ganado: 50
+    url_video: "https://s3.amazonaws.com/videos/paciente-1-sesion.mp4"
+    analizado_por_ia: false
+    correcciones_emitidas: null
+  }) {
+    id
+    puntuacion
+    xp_ganado
+    repeticiones_completadas
+  }
+}
+```
+
+#### `editarSesionDomiciliaria`
+```graphql
+mutation {
+  editarSesionDomiciliaria(datos: {
+    id: 1
+    analizado_por_ia: true
+    correcciones_emitidas: "Mejorar postura de espalda. Mantener rodilla alineada."
+    puntuacion: 90
+    xp_ganado: 60
+  }) {
+    id
+    analizado_por_ia
+    correcciones_emitidas
+    puntuacion
+    xp_ganado
+  }
+}
+```
+
+#### `eliminarSesionDomiciliaria`
+```graphql
+mutation {
+  eliminarSesionDomiciliaria(id: 1) {
+    id
+    fecha_hora
+  }
+}
+```
+
+---
+
+## 📌 Referencia de Enums
+
+| Enum | Valores |
+|------|---------|
+| `EstadoUsuario` | `ACTIVO`, `INACTIVO`, `SUSPENDIDO` |
+| `RolUsuario` | `ADMINISTRADOR`, `CONTADOR`, `DIRECTOR`, `FISIOTERAPEUTA`, `PACIENTE`, `RECEPCIONISTA` |
+| `EstadoPaciente` | `ACTIVO`, `ALTA_MEDICA`, `INACTIVO` |
+| `SexoPaciente` | `MASCULINO`, `FEMENINO`, `OTRO` |
+| `EstadoCita` | `PROGRAMADA`, `CONFIRMADA`, `ASISTIDA`, `CANCELADA`, `REPROGRAMADA` |
+| `TipoCita` | `PRIMERA_VEZ`, `CONTROL`, `SEGUIMIENTO` |
+| `OrigenCita` | `RECEPCION`, `SISTEMA`, `WHATSAPP` |
+| `CategoriaEnfermedad` | `LESION_PIERNA`, `LESION_BRAZO`, `LESION_PIE`, `ESPALDA_DESVIADA`, `CADERA_DESALINEADA`, `OBESIDAD`, `POST_ACV`, `PARALISIS_FACIAL`, `DISCAPACIDAD_MOTORA`, `OTRO` |
+| `CategoriaSemaforo` | `VERDE`, `AMARILLO`, `ROJO` |
+| `CategoriaTrabajo` | `EXTREMIDAD_SUPERIOR`, `EXTREMIDAD_INFERIOR`, `TORAX_CINTURA`, `SUPERIOR` |
+| `FrecuenciaSesion` | `DIARIA`, `SEMANAL`, `MENSUAL` |
+| `EstadoPlanTratamiento` | `ACTIVO`, `COMPLETADO`, `SUSPENDIDO` |
+| `FrecuenciaPlanEjercicio` | `DIARIA`, `INTERDIARIA`, `SEMANAL` |
+| `NivelDificultadEjercicio` | `BAJO`, `MEDIO`, `ALTO` |
+| `EstadoSesion` | `ABIERTA`, `CERRADA`, `FIRMADA` |

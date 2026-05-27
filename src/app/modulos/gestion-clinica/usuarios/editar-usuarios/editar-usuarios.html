@@ -1,0 +1,37 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Correo electrónico</label>
+    <input formControlName="correo" type="email" placeholder="correo@ejemplo.com" class="input-base" [class.input-error]="form.get('correo')?.invalid && form.get('correo')?.touched" />
+    @if (form.get('correo')?.invalid && form.get('correo')?.touched) {
+      <span class="text-xs text-red-500">Correo electrónico válido requerido</span>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Rol</label>
+    <select formControlName="roles" class="input-base">
+      <option value="">Seleccione...</option>
+      <option value="ADMINISTRADOR">Administrador</option>
+      <option value="CONTADOR">Contador</option>
+      <option value="DIRECTOR">Director</option>
+      <option value="FISIOTERAPEUTA">Fisioterapeuta</option>
+      <option value="PACIENTE">Paciente</option>
+      <option value="RECEPCIONISTA">Recepcionista</option>
+    </select>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Estado</label>
+    <select formControlName="estado" class="input-base">
+      <option value="">Seleccione...</option>
+      <option value="ACTIVO">Activo</option>
+      <option value="INACTIVO">Inactivo</option>
+      <option value="SUSPENDIDO">Suspendido</option>
+    </select>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-2">
+    <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+    <button type="submit" class="btn-primary">Guardar</button>
+  </div>
+</form>

@@ -1,0 +1,41 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-bold text-gray-800">Planes de Tratamiento</h1>
+      <p class="text-sm text-gray-500 mt-0.5">Planes terapéuticos asignados a pacientes</p>
+    </div>
+    <button (click)="abrirCrear()" class="btn-primary">
+      <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+      Nuevo Plan
+    </button>
+  </div>
+
+  <app-tabla
+    [columnas]="columnas"
+    [filas]="planes()"
+    [cargando]="cargando()"
+    mensajeVacio="No hay planes de tratamiento registrados"
+    (ver)="abrirVer($event)"
+    (editar)="abrirEditar($event)"
+    (eliminar)="eliminarPlan($event)"
+  />
+
+  <app-modal titulo="Nuevo Plan de Tratamiento" [abierto]="modalCrear()" (cerrar)="modalCrear.set(false)">
+    <app-crear-planes-tratamiento
+      (guardar)="crearPlan($event)"
+      (cancelar)="modalCrear.set(false)"
+    />
+  </app-modal>
+
+  <app-modal titulo="Editar Plan de Tratamiento" [abierto]="modalEditar()" (cerrar)="modalEditar.set(false)">
+    <app-editar-planes-tratamiento
+      [plan]="planSeleccionado()"
+      (guardar)="editarPlan($event)"
+      (cancelar)="modalEditar.set(false)"
+    />
+  </app-modal>
+
+  <app-modal titulo="Detalle Plan de Tratamiento" [abierto]="modalVer()" (cerrar)="modalVer.set(false)">
+    <app-ver-planes-tratamiento [plan]="planSeleccionado()" />
+  </app-modal>
+</div>

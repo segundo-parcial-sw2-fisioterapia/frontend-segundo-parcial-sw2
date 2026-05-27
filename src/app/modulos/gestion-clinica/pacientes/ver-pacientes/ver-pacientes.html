@@ -1,0 +1,40 @@
+@if (paciente) {
+  <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Nombre</span>
+      <span class="text-sm text-gray-800">{{ paciente?.persona?.nombre ?? '—' }}</span>
+    </div>
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Apellido</span>
+      <span class="text-sm text-gray-800">{{ paciente?.persona?.apellido ?? '—' }}</span>
+    </div>
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">C.I.</span>
+      <span class="text-sm text-gray-800">{{ paciente?.persona?.ci ?? '—' }}</span>
+    </div>
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Teléfono</span>
+      <span class="text-sm text-gray-800">{{ paciente?.persona?.telefono ?? '—' }}</span>
+    </div>
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Estado</span>
+      <span class="text-sm text-gray-800">{{ paciente.estado ?? '—' }}</span>
+    </div>
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Sexo</span>
+      <span class="text-sm text-gray-800">{{ paciente.sexo ?? '—' }}</span>
+    </div>
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Fecha de Nacimiento</span>
+      <span class="text-sm text-gray-800">{{ paciente.fecha_nacimiento ?? '—' }}</span>
+    </div>
+    <div class="flex flex-col gap-0.5">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Fecha de Registro</span>
+      <span class="text-sm text-gray-800">{{ paciente.fecha_registro ?? '—' }}</span>
+    </div>
+    <div class="flex flex-col gap-0.5 col-span-2">
+      <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Dirección</span>
+      <span class="text-sm text-gray-800">{{ paciente.direccion ?? '—' }}</span>
+    </div>
+  </div>
+}

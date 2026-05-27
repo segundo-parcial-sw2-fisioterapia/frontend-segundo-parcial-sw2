@@ -1,0 +1,35 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Nombre</label>
+    <input formControlName="nombre" type="text" placeholder="Nombre" class="input-base" [class.input-error]="form.get('nombre')?.invalid && form.get('nombre')?.touched" />
+    @if (form.get('nombre')?.invalid && form.get('nombre')?.touched) {
+      <span class="text-xs text-red-500">Nombre requerido</span>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Apellido</label>
+    <input formControlName="apellido" type="text" placeholder="Apellido" class="input-base" [class.input-error]="form.get('apellido')?.invalid && form.get('apellido')?.touched" />
+    @if (form.get('apellido')?.invalid && form.get('apellido')?.touched) {
+      <span class="text-xs text-red-500">Apellido requerido</span>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">C.I.</label>
+    <input formControlName="ci" type="text" placeholder="Cédula de identidad" class="input-base" [class.input-error]="form.get('ci')?.invalid && form.get('ci')?.touched" />
+    @if (form.get('ci')?.invalid && form.get('ci')?.touched) {
+      <span class="text-xs text-red-500">C.I. requerido</span>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Teléfono</label>
+    <input formControlName="telefono" type="text" placeholder="Teléfono" class="input-base" />
+  </div>
+
+  <div class="flex justify-end gap-3 pt-2">
+    <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+    <button type="submit" class="btn-primary">Guardar</button>
+  </div>
+</form>

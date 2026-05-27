@@ -1,0 +1,277 @@
+<!-- Indicador de pasos -->
+<div class="flex items-center gap-2 mb-6">
+  <div class="flex items-center gap-1.5">
+    <div
+      class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-colors"
+      [class.bg-primary-600]="paso() >= 1"
+      [class.text-white]="paso() >= 1"
+      [class.bg-gray-100]="paso() < 1"
+      [class.text-gray-400]="paso() < 1"
+    >1</div>
+    <span class="text-xs font-medium" [class.text-primary-600]="paso() === 1" [class.text-gray-400]="paso() !== 1">
+      Persona
+    </span>
+  </div>
+  <div class="flex-1 h-px bg-gray-200 mx-1"></div>
+  <div class="flex items-center gap-1.5">
+    <div
+      class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-colors"
+      [class.bg-primary-600]="paso() >= 2"
+      [class.text-white]="paso() >= 2"
+      [class.bg-gray-100]="paso() < 2"
+      [class.text-gray-400]="paso() < 2"
+    >2</div>
+    <span class="text-xs font-medium" [class.text-primary-600]="paso() === 2" [class.text-gray-400]="paso() !== 2">
+      Datos Clínicos
+    </span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ PASO 1 ═══════════════════════════ -->
+@if (paso() === 1) {
+  <div class="space-y-4">
+
+    <!-- Toggle modo -->
+    <div class="flex rounded-lg border border-gray-200 p-0.5 bg-gray-50 gap-0.5">
+      <button
+        type="button"
+        (click)="cambiarModo('buscar')"
+        class="flex-1 py-1.5 text-xs font-semibold rounded-md transition-colors"
+        [class.bg-white]="modo() === 'buscar'"
+        [class.text-primary-700]="modo() === 'buscar'"
+        [class.shadow-sm]="modo() === 'buscar'"
+        [class.text-gray-500]="modo() !== 'buscar'"
+      >
+        Buscar persona existente
+      </button>
+      <button
+        type="button"
+        (click)="cambiarModo('nueva')"
+        class="flex-1 py-1.5 text-xs font-semibold rounded-md transition-colors"
+        [class.bg-white]="modo() === 'nueva'"
+        [class.text-primary-700]="modo() === 'nueva'"
+        [class.shadow-sm]="modo() === 'nueva'"
+        [class.text-gray-500]="modo() !== 'nueva'"
+      >
+        Registrar nueva persona
+      </button>
+    </div>
+
+    <!-- MODO BUSCAR -->
+    @if (modo() === 'buscar') {
+      <div>
+        <label class="text-sm font-medium text-gray-700">Buscar por nombre o C.I.</label>
+        <div class="relative mt-1">
+          <input
+            #searchInput
+            type="text"
+            (input)="buscarConDebounce(searchInput.value)"
+            placeholder="Ej: Juan García, 12345678..."
+            class="input-base pl-9"
+          />
+          <svg class="w-4 h-4 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Skeleton de búsqueda -->
+      @if (buscandoPersonas) {
+        <div class="space-y-2">
+          @for (_ of [1,2]; track $index) {
+            <div class="h-12 bg-gray-100 rounded-lg animate-pulse"></div>
+          }
+        </div>
+      }
+
+      <!-- Resultados -->
+      @if (!buscandoPersonas && personas.length > 0) {
+        <div class="border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-100">
+          @for (persona of personas; track persona.id) {
+            <button
+              type="button"
+              (click)="seleccionarPersona(persona)"
+              class="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-primary-50 transition-colors text-left"
+              [class.bg-primary-50]="personaSeleccionada()?.id === persona.id"
+              [class.border-l-2]="personaSeleccionada()?.id === persona.id"
+              [class.border-l-primary-600]="personaSeleccionada()?.id === persona.id"
+            >
+              <div
+                class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+                [class.bg-primary-100]="personaSeleccionada()?.id !== persona.id"
+                [class.text-primary-600]="personaSeleccionada()?.id !== persona.id"
+                [class.bg-primary-600]="personaSeleccionada()?.id === persona.id"
+                [class.text-white]="personaSeleccionada()?.id === persona.id"
+              >
+                {{ persona.nombre?.[0] }}{{ persona.apellido?.[0] }}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-gray-800 truncate">{{ persona.nombre }} {{ persona.apellido }}</p>
+                <p class="text-xs text-gray-400">C.I. {{ persona.ci }}
+                  @if (persona.telefono) { · {{ persona.telefono }} }
+                </p>
+              </div>
+              @if (personaSeleccionada()?.id === persona.id) {
+                <svg class="w-4 h-4 text-primary-600 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+              }
+            </button>
+          }
+        </div>
+      }
+
+      <!-- Sin resultados -->
+      @if (!buscandoPersonas && personas.length === 0) {
+        <p class="text-xs text-gray-400 text-center py-3">
+          Escribe al menos 2 caracteres para buscar, o
+          <button type="button" (click)="cambiarModo('nueva')" class="text-primary-600 font-semibold underline hover:no-underline">
+            registra una nueva persona
+          </button>
+        </p>
+      }
+
+      <!-- Persona seleccionada confirmada -->
+      @if (personaSeleccionada()) {
+        <div class="flex items-center gap-2 bg-primary-50 border border-primary-200 rounded-lg px-3 py-2">
+          <svg class="w-4 h-4 text-primary-600 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          <p class="text-xs text-primary-700 font-medium">
+            Seleccionado: <strong>{{ personaSeleccionada().nombre }} {{ personaSeleccionada().apellido }}</strong> · CI {{ personaSeleccionada().ci }}
+          </p>
+        </div>
+      }
+    }
+
+    <!-- MODO NUEVA PERSONA -->
+    @if (modo() === 'nueva') {
+      <div [formGroup]="formPersona" class="grid grid-cols-2 gap-3">
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-700">Nombre <span class="text-red-400">*</span></label>
+          <input formControlName="nombre" type="text" placeholder="Nombre" class="input-base"
+                 [class.input-error]="formPersona.get('nombre')?.invalid && formPersona.get('nombre')?.touched"/>
+          @if (formPersona.get('nombre')?.invalid && formPersona.get('nombre')?.touched) {
+            <span class="text-xs text-red-500">Requerido</span>
+          }
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-700">Apellido <span class="text-red-400">*</span></label>
+          <input formControlName="apellido" type="text" placeholder="Apellido" class="input-base"
+                 [class.input-error]="formPersona.get('apellido')?.invalid && formPersona.get('apellido')?.touched"/>
+          @if (formPersona.get('apellido')?.invalid && formPersona.get('apellido')?.touched) {
+            <span class="text-xs text-red-500">Requerido</span>
+          }
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-700">C.I. <span class="text-red-400">*</span></label>
+          <input formControlName="ci" type="text" placeholder="Cédula de identidad" class="input-base"
+                 [class.input-error]="formPersona.get('ci')?.invalid && formPersona.get('ci')?.touched"/>
+          @if (formPersona.get('ci')?.invalid && formPersona.get('ci')?.touched) {
+            <span class="text-xs text-red-500">Requerido</span>
+          }
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-700">Teléfono</label>
+          <input formControlName="telefono" type="text" placeholder="Teléfono" class="input-base"/>
+        </div>
+      </div>
+    }
+
+    <!-- Botones paso 1 -->
+    <div class="flex justify-end gap-3 pt-2">
+      <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+      <button
+        type="button"
+        (click)="siguientePaso()"
+        class="btn-primary"
+        [disabled]="modo() === 'buscar' && !personaSeleccionada()"
+      >
+        Siguiente
+        <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+}
+
+<!-- ═══════════════════════════ PASO 2 ═══════════════════════════ -->
+@if (paso() === 2) {
+  <div class="space-y-4">
+
+    <!-- Banner de persona seleccionada -->
+    <div class="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-2.5">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-700 shrink-0">
+          {{ inicialesResumen() }}
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-emerald-800">{{ nombreResumen() }}</p>
+          @if (ciResumen()) {
+            <p class="text-xs text-emerald-600">C.I. {{ ciResumen() }}</p>
+          }
+        </div>
+      </div>
+      <button type="button" (click)="volverPaso()" class="text-xs text-emerald-700 font-semibold hover:underline">
+        Cambiar
+      </button>
+    </div>
+
+    <!-- Formulario datos clínicos -->
+    <div [formGroup]="formPaciente" class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Fecha de Nacimiento <span class="text-red-400">*</span></label>
+        <input formControlName="fecha_nacimiento" type="date" class="input-base"
+               [class.input-error]="formPaciente.get('fecha_nacimiento')?.invalid && formPaciente.get('fecha_nacimiento')?.touched"/>
+        @if (formPaciente.get('fecha_nacimiento')?.invalid && formPaciente.get('fecha_nacimiento')?.touched) {
+          <span class="text-xs text-red-500">Requerida</span>
+        }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Sexo <span class="text-red-400">*</span></label>
+        <select formControlName="sexo" class="input-base"
+                [class.input-error]="formPaciente.get('sexo')?.invalid && formPaciente.get('sexo')?.touched">
+          <option value="">Seleccione...</option>
+          <option value="MASCULINO">Masculino</option>
+          <option value="FEMENINO">Femenino</option>
+          <option value="OTRO">Otro</option>
+        </select>
+        @if (formPaciente.get('sexo')?.invalid && formPaciente.get('sexo')?.touched) {
+          <span class="text-xs text-red-500">Requerido</span>
+        }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Estado</label>
+        <select formControlName="estado" class="input-base">
+          <option value="ACTIVO">Activo</option>
+          <option value="ALTA_MEDICA">Alta médica</option>
+          <option value="INACTIVO">Inactivo</option>
+        </select>
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Dirección</label>
+        <input formControlName="direccion" type="text" placeholder="Dirección del paciente" class="input-base"/>
+      </div>
+    </div>
+
+    <!-- Botones paso 2 -->
+    <div class="flex justify-between pt-2">
+      <button type="button" (click)="volverPaso()" class="btn-secondary">
+        <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+        </svg>
+        Atrás
+      </button>
+      <div class="flex gap-3">
+        <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+        <button type="button" (click)="enviar()" class="btn-primary">
+          <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          Guardar Paciente
+        </button>
+      </div>
+    </div>
+  </div>
+}

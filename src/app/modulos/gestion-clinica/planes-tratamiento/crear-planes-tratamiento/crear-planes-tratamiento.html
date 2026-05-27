@@ -1,0 +1,77 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+
+  <div class="grid grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">ID Paciente</label>
+      <input formControlName="pacienteId" type="number" placeholder="Ingrese ID del paciente" class="input-base"
+        [class.input-error]="form.get('pacienteId')?.invalid && form.get('pacienteId')?.touched" />
+      @if (form.get('pacienteId')?.invalid && form.get('pacienteId')?.touched) {
+        <span class="text-xs text-red-500">Campo requerido</span>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">ID Empleado</label>
+      <input formControlName="empleadoId" type="number" placeholder="Ingrese ID del empleado" class="input-base"
+        [class.input-error]="form.get('empleadoId')?.invalid && form.get('empleadoId')?.touched" />
+      @if (form.get('empleadoId')?.invalid && form.get('empleadoId')?.touched) {
+        <span class="text-xs text-red-500">Campo requerido</span>
+      }
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Fecha Inicio</label>
+      <input formControlName="fecha_inicio" type="date" class="input-base"
+        [class.input-error]="form.get('fecha_inicio')?.invalid && form.get('fecha_inicio')?.touched" />
+      @if (form.get('fecha_inicio')?.invalid && form.get('fecha_inicio')?.touched) {
+        <span class="text-xs text-red-500">Campo requerido</span>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Fecha Fin Estimada</label>
+      <input formControlName="fecha_fin_estimada" type="date" class="input-base" />
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Objetivo Terapéutico</label>
+    <textarea formControlName="objetivo_terapeutico" rows="3" placeholder="Describa el objetivo terapéutico..." class="input-base resize-none"
+      [class.input-error]="form.get('objetivo_terapeutico')?.invalid && form.get('objetivo_terapeutico')?.touched"></textarea>
+    @if (form.get('objetivo_terapeutico')?.invalid && form.get('objetivo_terapeutico')?.touched) {
+      <span class="text-xs text-red-500">Campo requerido</span>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Observaciones</label>
+    <textarea formControlName="observaciones" rows="2" placeholder="Observaciones adicionales..." class="input-base resize-none"></textarea>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Estado</label>
+    <select formControlName="estado" class="input-base"
+      [class.input-error]="form.get('estado')?.invalid && form.get('estado')?.touched">
+      <option value="">Seleccione...</option>
+      <option value="ACTIVO">Activo</option>
+      <option value="COMPLETADO">Completado</option>
+      <option value="SUSPENDIDO">Suspendido</option>
+    </select>
+    @if (form.get('estado')?.invalid && form.get('estado')?.touched) {
+      <span class="text-xs text-red-500">Campo requerido</span>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">ID Evaluación Inicial (opcional)</label>
+    <input formControlName="evaluacionInicialId" type="number" placeholder="Ingrese ID de la evaluación inicial" class="input-base" />
+  </div>
+
+  <div class="flex justify-end gap-3 pt-2">
+    <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+    <button type="submit" class="btn-primary">Guardar</button>
+  </div>
+
+</form>

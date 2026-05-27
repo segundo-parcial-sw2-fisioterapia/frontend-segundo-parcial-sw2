@@ -1,0 +1,28 @@
+<div class="flex items-center justify-center min-h-[60vh]">
+  <div class="text-center max-w-sm px-6">
+
+    <div class="w-20 h-20 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-[var(--shadow-card)]">
+      <svg class="w-10 h-10 text-primary-300" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+      </svg>
+    </div>
+
+    <span class="inline-block bg-amber-100 text-amber-700 text-xs font-semibold px-3 py-1 rounded-full mb-4 tracking-wide">
+      Próximamente
+    </span>
+
+    <h2 class="text-xl font-bold text-gray-800 mb-2">
+      {{ datos().titulo || 'Módulo en Desarrollo' }}
+    </h2>
+
+    <p class="text-sm text-gray-500 leading-relaxed">
+      {{ datos().descripcion || 'Este módulo estará disponible en la próxima versión del ERP. El equipo de desarrollo está trabajando en su implementación.' }}
+    </p>
+
+    <div class="mt-6 flex items-center justify-center gap-2 text-xs text-gray-400">
+      <div class="w-1.5 h-1.5 rounded-full bg-primary-300 animate-pulse"></div>
+      <span>En construcción — ERP Fisioterapia v2</span>
+    </div>
+
+  </div>
+</div>

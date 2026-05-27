@@ -1,0 +1,66 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+
+  <div class="grid grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">ID Paciente</label>
+      <input formControlName="pacienteId" type="number" placeholder="Ingrese ID del paciente" class="input-base"
+        [class.input-error]="form.get('pacienteId')?.invalid && form.get('pacienteId')?.touched" />
+      @if (form.get('pacienteId')?.invalid && form.get('pacienteId')?.touched) {
+        <span class="text-xs text-red-500">Campo requerido</span>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">ID Empleado</label>
+      <input formControlName="empleadoId" type="number" placeholder="Ingrese ID del empleado" class="input-base"
+        [class.input-error]="form.get('empleadoId')?.invalid && form.get('empleadoId')?.touched" />
+      @if (form.get('empleadoId')?.invalid && form.get('empleadoId')?.touched) {
+        <span class="text-xs text-red-500">Campo requerido</span>
+      }
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">ID Cita (opcional)</label>
+    <input formControlName="citaId" type="number" placeholder="Ingrese ID de la cita" class="input-base" />
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Fecha/Hora Inicio</label>
+    <input formControlName="fecha_hora_inicio" type="datetime-local" class="input-base"
+      [class.input-error]="form.get('fecha_hora_inicio')?.invalid && form.get('fecha_hora_inicio')?.touched" />
+    @if (form.get('fecha_hora_inicio')?.invalid && form.get('fecha_hora_inicio')?.touched) {
+      <span class="text-xs text-red-500">Campo requerido</span>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Estado de Sesión</label>
+    <select formControlName="estado_sesion" class="input-base"
+      [class.input-error]="form.get('estado_sesion')?.invalid && form.get('estado_sesion')?.touched">
+      <option value="">Seleccione...</option>
+      <option value="ABIERTA">Abierta</option>
+      <option value="CERRADA">Cerrada</option>
+      <option value="FIRMADA">Firmada</option>
+    </select>
+    @if (form.get('estado_sesion')?.invalid && form.get('estado_sesion')?.touched) {
+      <span class="text-xs text-red-500">Campo requerido</span>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Nivel de dolor (0-10)</label>
+    <input formControlName="nivel_dolor_reportado" type="number" min="0" max="10" placeholder="0" class="input-base" />
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Observaciones Clínicas</label>
+    <textarea formControlName="observaciones_clinicas" rows="3" placeholder="Observaciones clínicas..." class="input-base resize-none"></textarea>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-2">
+    <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+    <button type="submit" class="btn-primary">Guardar</button>
+  </div>
+
+</form>

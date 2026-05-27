@@ -1,0 +1,69 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+
+  <div class="grid grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">ID Paciente</label>
+      <input formControlName="pacienteId" type="number" placeholder="Ingrese ID del paciente" class="input-base"
+        [class.input-error]="form.get('pacienteId')?.invalid && form.get('pacienteId')?.touched" />
+      @if (form.get('pacienteId')?.invalid && form.get('pacienteId')?.touched) {
+        <span class="text-xs text-red-500">Campo requerido</span>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">ID Plan de Ejercicio</label>
+      <input formControlName="planEjercicioId" type="number" placeholder="Ingrese ID del plan" class="input-base"
+        [class.input-error]="form.get('planEjercicioId')?.invalid && form.get('planEjercicioId')?.touched" />
+      @if (form.get('planEjercicioId')?.invalid && form.get('planEjercicioId')?.touched) {
+        <span class="text-xs text-red-500">Campo requerido</span>
+      }
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Fecha/Hora</label>
+    <input formControlName="fecha_hora" type="datetime-local" class="input-base"
+      [class.input-error]="form.get('fecha_hora')?.invalid && form.get('fecha_hora')?.touched" />
+    @if (form.get('fecha_hora')?.invalid && form.get('fecha_hora')?.touched) {
+      <span class="text-xs text-red-500">Campo requerido</span>
+    }
+  </div>
+
+  <div class="grid grid-cols-3 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Repeticiones Completadas</label>
+      <input formControlName="repeticiones_completadas" type="number" placeholder="0" class="input-base" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Puntuación (0-100)</label>
+      <input formControlName="puntuacion" type="number" min="0" max="100" placeholder="0" class="input-base" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">XP Ganado</label>
+      <input formControlName="xp_ganado" type="number" placeholder="0" class="input-base" />
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">URL del video</label>
+    <input formControlName="url_video" type="url" placeholder="https://..." class="input-base" />
+  </div>
+
+  <div class="flex items-center gap-2">
+    <input type="checkbox" formControlName="analizado_por_ia" id="analizado_por_ia_crear" class="w-4 h-4 rounded border-gray-300 text-primary-600" />
+    <label for="analizado_por_ia_crear" class="text-sm font-medium text-gray-700">Analizado por IA</label>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Correcciones emitidas (opcional)</label>
+    <textarea formControlName="correcciones_emitidas" rows="3" placeholder="Correcciones emitidas por IA..." class="input-base resize-none"></textarea>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-2">
+    <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+    <button type="submit" class="btn-primary">Guardar</button>
+  </div>
+
+</form>

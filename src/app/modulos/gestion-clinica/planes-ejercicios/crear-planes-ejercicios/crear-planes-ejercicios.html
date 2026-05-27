@@ -1,0 +1,64 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+
+  <div class="grid grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">ID Plan de Tratamiento</label>
+      <input formControlName="planTratamientoId" type="number" placeholder="Ingrese ID del plan" class="input-base"
+        [class.input-error]="form.get('planTratamientoId')?.invalid && form.get('planTratamientoId')?.touched" />
+      @if (form.get('planTratamientoId')?.invalid && form.get('planTratamientoId')?.touched) {
+        <span class="text-xs text-red-500">Campo requerido</span>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">ID Ejercicio</label>
+      <input formControlName="ejercicioId" type="number" placeholder="Ingrese ID del ejercicio" class="input-base"
+        [class.input-error]="form.get('ejercicioId')?.invalid && form.get('ejercicioId')?.touched" />
+      @if (form.get('ejercicioId')?.invalid && form.get('ejercicioId')?.touched) {
+        <span class="text-xs text-red-500">Campo requerido</span>
+      }
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Frecuencia</label>
+    <select formControlName="frecuencia" class="input-base"
+      [class.input-error]="form.get('frecuencia')?.invalid && form.get('frecuencia')?.touched">
+      <option value="">Seleccione...</option>
+      <option value="DIARIA">Diaria</option>
+      <option value="INTERDIARIA">Interdiaria</option>
+      <option value="SEMANAL">Semanal</option>
+    </select>
+    @if (form.get('frecuencia')?.invalid && form.get('frecuencia')?.touched) {
+      <span class="text-xs text-red-500">Campo requerido</span>
+    }
+  </div>
+
+  <div class="grid grid-cols-3 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Orden</label>
+      <input formControlName="orden" type="number" placeholder="0" class="input-base" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Repeticiones</label>
+      <input formControlName="repeticiones" type="number" placeholder="0" class="input-base" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Series</label>
+      <input formControlName="series" type="number" placeholder="0" class="input-base" />
+    </div>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <input type="checkbox" formControlName="activo" id="activo_crear" class="w-4 h-4 rounded border-gray-300 text-primary-600" />
+    <label for="activo_crear" class="text-sm font-medium text-gray-700">Activo</label>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-2">
+    <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+    <button type="submit" class="btn-primary">Guardar</button>
+  </div>
+
+</form>
