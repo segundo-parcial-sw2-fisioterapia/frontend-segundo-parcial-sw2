@@ -1,0 +1,52 @@
+<div [formGroup]="formGroup" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  @if (formGroup.get('nombre')) {
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Nombre <span class="text-red-400">*</span></label>
+      <input formControlName="nombre" type="text" placeholder="Nombre" class="input-base"
+             [class.input-error]="formGroup.get('nombre')?.invalid && formGroup.get('nombre')?.touched"/>
+      @if (formGroup.get('nombre')?.invalid && formGroup.get('nombre')?.touched) {
+        <span class="text-xs text-red-500">Nombre requerido</span>
+      }
+    </div>
+  }
+
+  @if (formGroup.get('apellido')) {
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Apellido <span class="text-red-400">*</span></label>
+      <input formControlName="apellido" type="text" placeholder="Apellido" class="input-base"
+             [class.input-error]="formGroup.get('apellido')?.invalid && formGroup.get('apellido')?.touched"/>
+      @if (formGroup.get('apellido')?.invalid && formGroup.get('apellido')?.touched) {
+        <span class="text-xs text-red-500">Apellido requerido</span>
+      }
+    </div>
+  }
+
+  @if (formGroup.get('ci') && mostrarCI) {
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">C.I. <span class="text-red-400">*</span></label>
+      <input formControlName="ci" type="text" placeholder="Cédula de identidad" class="input-base"
+             [class.input-error]="formGroup.get('ci')?.invalid && formGroup.get('ci')?.touched"/>
+      @if (formGroup.get('ci')?.invalid && formGroup.get('ci')?.touched) {
+        <span class="text-xs text-red-500">C.I. requerido</span>
+      }
+    </div>
+  }
+
+  @if (formGroup.get('telefono')) {
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Teléfono</label>
+      <input formControlName="telefono" type="text" placeholder="Teléfono" class="input-base"/>
+    </div>
+  }
+
+  @if (formGroup.get('email')) {
+    <div class="flex flex-col gap-1 sm:col-span-2">
+      <label class="text-sm font-medium text-gray-700">Correo Electrónico <span class="text-red-400">*</span></label>
+      <input formControlName="email" type="email" placeholder="Correo electrónico" class="input-base"
+             [class.input-error]="formGroup.get('email')?.invalid && formGroup.get('email')?.touched"/>
+      @if (formGroup.get('email')?.invalid && formGroup.get('email')?.touched) {
+        <span class="text-xs text-red-500">Correo electrónico válido requerido</span>
+      }
+    </div>
+  }
+</div>

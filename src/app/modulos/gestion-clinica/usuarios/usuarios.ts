@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { UsuariosService } from '../../../nucleo/graphql/gestion-clinica/usuarios';
+import { PersonasService } from '../../../nucleo/graphql/gestion-clinica/persona';
 import { Tabla, ColumnaTabla } from '../../../compartido/tabla/tabla';
 import { Modal } from '../../../compartido/modal/modal';
 import { CrearUsuarios } from './crear-usuarios/crear-usuarios';
@@ -14,6 +15,7 @@ import { VerUsuarios } from './ver-usuarios/ver-usuarios';
 })
 export class Usuarios implements OnInit {
   private usuariosService = inject(UsuariosService);
+  private personasService = inject(PersonasService);
 
   usuarios = signal<any[]>([]);
   cargando = signal(false);
@@ -21,6 +23,8 @@ export class Usuarios implements OnInit {
   modalEditar = signal(false);
   modalVer = signal(false);
   usuarioSeleccionado = signal<any | null>(null);
+  personasBuscadas = signal<any[]>([]);
+  buscandoPersonas = signal(false);
 
   columnas: ColumnaTabla[] = [
     { key: 'correo', titulo: 'Correo' },
@@ -45,10 +49,25 @@ export class Usuarios implements OnInit {
   abrirEditar(usuario: any): void { this.usuarioSeleccionado.set(usuario); this.modalEditar.set(true); }
   abrirVer(usuario: any): void { this.usuarioSeleccionado.set(usuario); this.modalVer.set(true); }
 
+  cerrarModalCrear(): void {
+    this.modalCrear.set(false);
+    this.personasBuscadas.set([]);
+  }
+
+  /** Busca personas por nombre o CI para el selector del formulario */
+  buscarPersonas(termino: string): void {
+    if (!termino || termino.length < 2) { this.personasBuscadas.set([]); return; }
+    this.buscandoPersonas.set(true);
+    this.personasService.buscarPersonas(termino).subscribe({
+      next: (d: any[]) => { this.personasBuscadas.set(d); this.buscandoPersonas.set(false); },
+      error: () => this.buscandoPersonas.set(false),
+    });
+  }
+
   /** Crea un nuevo usuario y recarga el listado */
   crearUsuario(datos: any): void {
     this.usuariosService.crearUsuario(datos).subscribe({
-      next: () => { this.modalCrear.set(false); this.cargarUsuarios(); },
+      next: () => { this.cerrarModalCrear(); this.cargarUsuarios(); },
     });
   }
 
@@ -59,7 +78,7 @@ export class Usuarios implements OnInit {
     });
   }
 
-  /** Elimina un usuario tras confirmación del usuario */
+  /** Elimina un usuario tras confirmación */
   eliminarUsuario(id: number): void {
     if (!confirm('¿Desea eliminar este registro?')) return;
     this.usuariosService.eliminarUsuario(id).subscribe({

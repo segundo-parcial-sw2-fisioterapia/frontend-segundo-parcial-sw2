@@ -1,9 +1,10 @@
 import { Component, Input, Output, EventEmitter, OnChanges, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { FormularioPersona } from '../formulario-persona/formulario-persona';
 
 @Component({
   selector: 'app-editar-personas',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, FormularioPersona],
   templateUrl: './editar-personas.html',
   styleUrl: './editar-personas.css',
 })
@@ -19,6 +20,7 @@ export class EditarPersonas implements OnChanges {
     nombre: ['', Validators.required],
     apellido: ['', Validators.required],
     telefono: [''],
+    email: ['', [Validators.required, Validators.email]],
   });
 
   ngOnChanges(): void {

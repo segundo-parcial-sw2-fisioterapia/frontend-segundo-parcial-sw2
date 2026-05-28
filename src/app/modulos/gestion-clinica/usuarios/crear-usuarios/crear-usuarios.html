@@ -1,7 +1,9 @@
 <form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+
   <div class="flex flex-col gap-1">
     <label class="text-sm font-medium text-gray-700">Correo electrónico</label>
-    <input formControlName="correo" type="email" placeholder="correo@ejemplo.com" class="input-base" [class.input-error]="form.get('correo')?.invalid && form.get('correo')?.touched" />
+    <input formControlName="correo" type="email" placeholder="correo@ejemplo.com" class="input-base"
+      [class.input-error]="form.get('correo')?.invalid && form.get('correo')?.touched" />
     @if (form.get('correo')?.invalid && form.get('correo')?.touched) {
       <span class="text-xs text-red-500">Correo electrónico válido requerido</span>
     }
@@ -9,30 +11,83 @@
 
   <div class="flex flex-col gap-1">
     <label class="text-sm font-medium text-gray-700">Contraseña</label>
-    <input formControlName="contrasena" type="password" placeholder="Mínimo 6 caracteres" class="input-base" [class.input-error]="form.get('contrasena')?.invalid && form.get('contrasena')?.touched" />
+    <input formControlName="contrasena" type="password" placeholder="Mínimo 6 caracteres" class="input-base"
+      [class.input-error]="form.get('contrasena')?.invalid && form.get('contrasena')?.touched" />
     @if (form.get('contrasena')?.invalid && form.get('contrasena')?.touched) {
       <span class="text-xs text-red-500">Contraseña mínima de 6 caracteres requerida</span>
     }
   </div>
 
+  <!-- Persona vinculada — búsqueda por nombre o CI -->
   <div class="flex flex-col gap-1">
-    <label class="text-sm font-medium text-gray-700">ID de Persona</label>
-    <input formControlName="personaId" type="number" placeholder="ID de persona" class="input-base" [class.input-error]="form.get('personaId')?.invalid && form.get('personaId')?.touched" />
+    <label class="text-sm font-medium text-gray-700">Persona vinculada</label>
+
+    @if (!personaSeleccionada()) {
+      <div class="relative">
+        <input
+          type="text"
+          [value]="terminoBusqueda"
+          (input)="onBuscarPersona($any($event.target).value)"
+          placeholder="Buscar por nombre o CI..."
+          autocomplete="off"
+          class="input-base"
+          [class.input-error]="form.get('personaId')?.invalid && form.get('personaId')?.touched"
+        />
+
+        @if (buscandoPersonas) {
+          <div class="absolute right-3 top-2.5 w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+        }
+
+        @if (personas.length > 0) {
+          <ul class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-panel max-h-48 overflow-y-auto">
+            @for (persona of personas; track persona.id) {
+              <li>
+                <button
+                  type="button"
+                  (click)="seleccionarPersona(persona)"
+                  class="w-full text-left px-3 py-2.5 hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-0"
+                >
+                  <span class="text-sm font-medium text-gray-800">{{ persona.nombre }} {{ persona.apellido }}</span>
+                  <span class="ml-2 text-xs text-gray-400">CI: {{ persona.ci }}</span>
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    }
+
+    @if (personaSeleccionada()) {
+      <div class="flex items-center gap-2 px-3 py-2.5 bg-green-50 border border-green-200 rounded-lg">
+        <svg class="w-4 h-4 text-green-600 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        <span class="text-sm text-gray-800 flex-1">
+          <span class="font-medium">{{ personaSeleccionada()?.nombre }} {{ personaSeleccionada()?.apellido }}</span>
+          <span class="text-gray-500 ml-1.5">CI: {{ personaSeleccionada()?.ci }}</span>
+        </span>
+        <button type="button" (click)="limpiarPersona()" class="text-xs text-primary-600 hover:underline shrink-0">
+          Cambiar
+        </button>
+      </div>
+    }
+
     @if (form.get('personaId')?.invalid && form.get('personaId')?.touched) {
-      <span class="text-xs text-red-500">ID de persona requerido</span>
+      <span class="text-xs text-red-500">Debe seleccionar una persona de la búsqueda</span>
     }
   </div>
 
   <div class="flex flex-col gap-1">
     <label class="text-sm font-medium text-gray-700">Rol</label>
-    <select formControlName="roles" class="input-base" [class.input-error]="form.get('roles')?.invalid && form.get('roles')?.touched">
-      <option value="">Seleccione...</option>
-      <option value="ADMINISTRADOR">Administrador</option>
-      <option value="CONTADOR">Contador</option>
-      <option value="DIRECTOR">Director</option>
-      <option value="FISIOTERAPEUTA">Fisioterapeuta</option>
-      <option value="PACIENTE">Paciente</option>
-      <option value="RECEPCIONISTA">Recepcionista</option>
+    <select formControlName="roles" class="input-base"
+      [class.input-error]="form.get('roles')?.invalid && form.get('roles')?.touched">
+      <option value="">Seleccione un rol...</option>
+      <option value="administrador">Administrador</option>
+      <option value="contador">Contador</option>
+      <option value="director">Director</option>
+      <option value="fisioterapeuta">Fisioterapeuta</option>
+      <option value="paciente">Paciente</option>
+      <option value="recepcionista">Recepcionista</option>
     </select>
     @if (form.get('roles')?.invalid && form.get('roles')?.touched) {
       <span class="text-xs text-red-500">Rol requerido</span>
@@ -42,10 +97,9 @@
   <div class="flex flex-col gap-1">
     <label class="text-sm font-medium text-gray-700">Estado</label>
     <select formControlName="estado" class="input-base">
-      <option value="">Seleccione...</option>
-      <option value="ACTIVO">Activo</option>
-      <option value="INACTIVO">Inactivo</option>
-      <option value="SUSPENDIDO">Suspendido</option>
+      <option value="activo">Activo</option>
+      <option value="inactivo">Inactivo</option>
+      <option value="suspendido">Suspendido</option>
     </select>
   </div>
 
@@ -53,4 +107,5 @@
     <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
     <button type="submit" class="btn-primary">Guardar</button>
   </div>
+
 </form>

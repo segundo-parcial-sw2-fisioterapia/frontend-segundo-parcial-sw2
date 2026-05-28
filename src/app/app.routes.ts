@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './nucleo/guards/auth.guard';
+import { permisoGuard } from './nucleo/guards/permiso.guard';
 
 export const routes: Routes = [
   {
@@ -19,33 +20,41 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {
         path: 'dashboard',
-        loadComponent: () =>
-          import('./modulos/dashboard/dashboard').then((m) => m.Dashboard),
+        loadComponent: () => import('./modulos/dashboard/dashboard').then((m) => m.Dashboard),
       },
       {
         path: 'personas',
         loadComponent: () =>
           import('./modulos/gestion-clinica/personas/personas').then((m) => m.Personas),
+        canActivate: [permisoGuard],
+        data: { roles: ['administrador', 'recepcionista', 'fisioterapeuta'] },
       },
       {
         path: 'pacientes',
         loadComponent: () =>
           import('./modulos/gestion-clinica/pacientes/pacientes').then((m) => m.Pacientes),
+        canActivate: [permisoGuard],
+        data: { roles: ['administrador', 'recepcionista', 'fisioterapeuta'] },
       },
       {
         path: 'usuarios',
         loadComponent: () =>
           import('./modulos/gestion-clinica/usuarios/usuarios').then((m) => m.Usuarios),
+        canActivate: [permisoGuard],
+        data: { roles: ['administrador'] },
       },
       {
         path: 'citas',
-        loadComponent: () =>
-          import('./modulos/gestion-clinica/citas/citas').then((m) => m.Citas),
+        loadComponent: () => import('./modulos/gestion-clinica/citas/citas').then((m) => m.Citas),
+        canActivate: [permisoGuard],
+        data: { roles: ['administrador', 'recepcionista', 'fisioterapeuta', 'director'] },
       },
       {
         path: 'ejercicios',
         loadComponent: () =>
           import('./modulos/gestion-clinica/ejercicios/ejercicios').then((m) => m.Ejercicios),
+        canActivate: [permisoGuard],
+        data: { roles: ['administrador', 'fisioterapeuta', 'paciente'] },
       },
       {
         path: 'evaluaciones-iniciales',
@@ -53,6 +62,8 @@ export const routes: Routes = [
           import('./modulos/gestion-clinica/evaluaciones-iniciales/evaluaciones-iniciales').then(
             (m) => m.EvaluacionesIniciales,
           ),
+        canActivate: [permisoGuard],
+        data: { roles: ['administrador', 'fisioterapeuta', 'director'] },
       },
       {
         path: 'planes-tratamiento',
@@ -60,6 +71,8 @@ export const routes: Routes = [
           import('./modulos/gestion-clinica/planes-tratamiento/planes-tratamiento').then(
             (m) => m.PlanesTratamiento,
           ),
+        canActivate: [permisoGuard],
+        data: { roles: ['administrador', 'fisioterapeuta', 'director'] },
       },
       {
         path: 'planes-ejercicios',
@@ -67,11 +80,15 @@ export const routes: Routes = [
           import('./modulos/gestion-clinica/planes-ejercicios/planes-ejercicios').then(
             (m) => m.PlanesEjercicios,
           ),
+        canActivate: [permisoGuard],
+        data: { roles: ['administrador', 'fisioterapeuta'] },
       },
       {
         path: 'sesiones',
         loadComponent: () =>
           import('./modulos/gestion-clinica/sesiones/sesiones').then((m) => m.Sesiones),
+        canActivate: [permisoGuard],
+        data: { roles: ['administrador', 'fisioterapeuta', 'director'] },
       },
       {
         path: 'sesiones-domiciliarias',
@@ -79,6 +96,8 @@ export const routes: Routes = [
           import('./modulos/gestion-clinica/sesiones-domiciliarias/sesiones-domiciliarias').then(
             (m) => m.SesionesDomiciliarias,
           ),
+        canActivate: [permisoGuard],
+        data: { roles: ['administrador', 'fisioterapeuta', 'director', 'paciente'] },
       },
       {
         path: 'admin/empleados',
@@ -86,7 +105,8 @@ export const routes: Routes = [
           import('./modulos/placeholders/proximamente').then((m) => m.Proximamente),
         data: {
           titulo: 'Gestión de Empleados',
-          descripcion: 'Administración del personal del centro: fisioterapeutas, administrativos y médicos.',
+          descripcion:
+            'Administración del personal del centro: fisioterapeutas, administrativos y médicos.',
         },
       },
       {

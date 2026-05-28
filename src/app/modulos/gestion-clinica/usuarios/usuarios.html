@@ -20,8 +20,14 @@
     (eliminar)="eliminarUsuario($event)"
   />
 
-  <app-modal titulo="Nuevo Usuario" [abierto]="modalCrear()" (cerrar)="modalCrear.set(false)">
-    <app-crear-usuarios (guardar)="crearUsuario($event)" (cancelar)="modalCrear.set(false)" />
+  <app-modal titulo="Nuevo Usuario" [abierto]="modalCrear()" (cerrar)="cerrarModalCrear()">
+    <app-crear-usuarios
+      [personas]="personasBuscadas()"
+      [buscandoPersonas]="buscandoPersonas()"
+      (buscarPersonas)="buscarPersonas($event)"
+      (guardar)="crearUsuario($event)"
+      (cancelar)="cerrarModalCrear()"
+    />
   </app-modal>
 
   <app-modal titulo="Editar Usuario" [abierto]="modalEditar()" (cerrar)="modalEditar.set(false)">

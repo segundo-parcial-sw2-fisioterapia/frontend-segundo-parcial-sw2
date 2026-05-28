@@ -109,6 +109,7 @@
                 <p class="text-sm font-semibold text-gray-800 truncate">{{ persona.nombre }} {{ persona.apellido }}</p>
                 <p class="text-xs text-gray-400">C.I. {{ persona.ci }}
                   @if (persona.telefono) { · {{ persona.telefono }} }
+                  @if (persona.email) { · {{ persona.email }} }
                 </p>
               </div>
               @if (personaSeleccionada()?.id === persona.id) {
@@ -146,36 +147,7 @@
 
     <!-- MODO NUEVA PERSONA -->
     @if (modo() === 'nueva') {
-      <div [formGroup]="formPersona" class="grid grid-cols-2 gap-3">
-        <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-gray-700">Nombre <span class="text-red-400">*</span></label>
-          <input formControlName="nombre" type="text" placeholder="Nombre" class="input-base"
-                 [class.input-error]="formPersona.get('nombre')?.invalid && formPersona.get('nombre')?.touched"/>
-          @if (formPersona.get('nombre')?.invalid && formPersona.get('nombre')?.touched) {
-            <span class="text-xs text-red-500">Requerido</span>
-          }
-        </div>
-        <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-gray-700">Apellido <span class="text-red-400">*</span></label>
-          <input formControlName="apellido" type="text" placeholder="Apellido" class="input-base"
-                 [class.input-error]="formPersona.get('apellido')?.invalid && formPersona.get('apellido')?.touched"/>
-          @if (formPersona.get('apellido')?.invalid && formPersona.get('apellido')?.touched) {
-            <span class="text-xs text-red-500">Requerido</span>
-          }
-        </div>
-        <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-gray-700">C.I. <span class="text-red-400">*</span></label>
-          <input formControlName="ci" type="text" placeholder="Cédula de identidad" class="input-base"
-                 [class.input-error]="formPersona.get('ci')?.invalid && formPersona.get('ci')?.touched"/>
-          @if (formPersona.get('ci')?.invalid && formPersona.get('ci')?.touched) {
-            <span class="text-xs text-red-500">Requerido</span>
-          }
-        </div>
-        <div class="flex flex-col gap-1">
-          <label class="text-sm font-medium text-gray-700">Teléfono</label>
-          <input formControlName="telefono" type="text" placeholder="Teléfono" class="input-base"/>
-        </div>
-      </div>
+      <app-formulario-persona [formGroup]="formPersona" />
     }
 
     <!-- Botones paso 1 -->

@@ -27,6 +27,7 @@ export class Personas implements OnInit {
     { key: 'apellido', titulo: 'Apellido' },
     { key: 'ci', titulo: 'C.I.' },
     { key: 'telefono', titulo: 'Teléfono' },
+    { key: 'email', titulo: 'Correo' },
   ];
 
   ngOnInit(): void {
