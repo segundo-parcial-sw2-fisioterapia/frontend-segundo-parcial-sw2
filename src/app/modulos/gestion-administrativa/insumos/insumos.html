@@ -1,0 +1,57 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-bold text-gray-800">Inventario de Insumos</h1>
+      <p class="text-sm text-gray-500 mt-0.5">Control de materiales y equipos terapéuticos</p>
+    </div>
+    <button (click)="abrirCrear()" class="btn-primary">
+      <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/>
+      </svg>
+      Nuevo Insumo
+    </button>
+  </div>
+
+  <!-- Alerta de stock bajo -->
+  @if (alertaStock().length > 0) {
+    <div class="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+      <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+      </svg>
+      <div>
+        <p class="text-sm font-medium text-amber-800">{{ alertaStock().length }} insumo(s) con stock bajo</p>
+        <p class="text-xs text-amber-600 mt-0.5">
+          {{ nombresAlertaStock() }}{{ alertaStock().length > 3 ? ' y más...' : '' }}
+        </p>
+      </div>
+    </div>
+  }
+
+  <app-tabla
+    [columnas]="columnas"
+    [filas]="insumos()"
+    [cargando]="cargando()"
+    mensajeVacio="No hay insumos registrados en el inventario."
+    (ver)="abrirVer($event)"
+    (editar)="abrirEditar($event)"
+    (eliminar)="eliminarInsumo($event)"
+  />
+
+  <app-paginacion [paginaInfo]="paginaInfo()" (cambiarPagina)="cambiarPagina($event)" />
+
+  <app-modal titulo="Nuevo Insumo" [abierto]="modalCrear()" (cerrar)="modalCrear.set(false)">
+    <app-crear-insumos (guardar)="crearInsumo($event)" (cancelar)="modalCrear.set(false)" />
+  </app-modal>
+
+  <app-modal titulo="Editar Insumo" [abierto]="modalEditar()" (cerrar)="modalEditar.set(false)">
+    <app-editar-insumos
+      [insumo]="insumoSeleccionado()"
+      (guardar)="editarInsumo($event)"
+      (cancelar)="modalEditar.set(false)"
+    />
+  </app-modal>
+
+  <app-modal titulo="Detalle de Insumo" [abierto]="modalVer()" (cerrar)="modalVer.set(false)">
+    <app-ver-insumos [insumo]="insumoSeleccionado()" />
+  </app-modal>
+</div>

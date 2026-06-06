@@ -19,6 +19,7 @@ export interface UsuarioAutenticado {
   nombre: string;
   correo: string;
   roles: string[];
+  personaId?: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -73,7 +74,7 @@ export class LoginService {
         sub: number;
         correo?: string;
         roles?: string[];
-        persona?: { nombre: string; apellido: string };
+        persona?: { id: number; nombre: string; apellido: string };
       };
       const nombre = payload.persona
         ? `${payload.persona.nombre} ${payload.persona.apellido}`.trim()
@@ -82,6 +83,7 @@ export class LoginService {
         nombre,
         correo: payload.correo ?? '',
         roles: payload.roles ?? [],
+        personaId: payload.persona?.id ?? undefined,
       };
     } catch {
       return null;

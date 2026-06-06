@@ -1,0 +1,63 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Nombre del insumo <span class="text-red-500">*</span></label>
+    <input formControlName="nombre" type="text" placeholder="Ej: Vendas elásticas, Electrodos TENS" class="input-base"
+      [class.input-error]="form.get('nombre')?.invalid && form.get('nombre')?.touched" />
+    @if (form.get('nombre')?.invalid && form.get('nombre')?.touched) {
+      <span class="text-xs text-red-500">Nombre requerido</span>
+    }
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Categoría <span class="text-red-500">*</span></label>
+      <select formControlName="categoria" class="input-base"
+        [class.input-error]="form.get('categoria')?.invalid && form.get('categoria')?.touched">
+        <option value="">Seleccione...</option>
+        <option value="material_terapeutico">Material terapéutico</option>
+        <option value="medicamento">Medicamento</option>
+        <option value="equipo">Equipo</option>
+        <option value="consumible">Consumible</option>
+      </select>
+      @if (form.get('categoria')?.invalid && form.get('categoria')?.touched) {
+        <span class="text-xs text-red-500">Categoría requerida</span>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Unidad de medida <span class="text-red-500">*</span></label>
+      <input formControlName="unidadMedida" type="text" placeholder="Ej: unidad, caja, rollo" class="input-base"
+        [class.input-error]="form.get('unidadMedida')?.invalid && form.get('unidadMedida')?.touched" />
+      @if (form.get('unidadMedida')?.invalid && form.get('unidadMedida')?.touched) {
+        <span class="text-xs text-red-500">Unidad de medida requerida</span>
+      }
+    </div>
+  </div>
+
+  <div class="grid grid-cols-3 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Stock actual <span class="text-red-500">*</span></label>
+      <input formControlName="stockActual" type="number" min="0" class="input-base"
+        [class.input-error]="form.get('stockActual')?.invalid && form.get('stockActual')?.touched" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Stock mínimo <span class="text-red-500">*</span></label>
+      <input formControlName="stockMinimo" type="number" min="0" class="input-base" />
+      <p class="text-xs text-gray-400">Umbral de alerta automática</p>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Precio unitario (Bs) <span class="text-red-500">*</span></label>
+      <input formControlName="precioUnitario" type="number" min="0" step="0.01" class="input-base"
+        [class.input-error]="form.get('precioUnitario')?.invalid && form.get('precioUnitario')?.touched" />
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-2">
+    <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+    <button type="submit" class="btn-primary">Guardar</button>
+  </div>
+
+</form>

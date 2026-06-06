@@ -1,23 +1,83 @@
 <form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
 
-  <div class="grid grid-cols-2 gap-4">
-    <div class="flex flex-col gap-1">
-      <label class="text-sm font-medium text-gray-700">ID Plan de Tratamiento</label>
-      <input formControlName="planTratamientoId" type="number" placeholder="Ingrese ID del plan" class="input-base"
-        [class.input-error]="form.get('planTratamientoId')?.invalid && form.get('planTratamientoId')?.touched" />
-      @if (form.get('planTratamientoId')?.invalid && form.get('planTratamientoId')?.touched) {
-        <span class="text-xs text-red-500">Campo requerido</span>
-      }
-    </div>
+  <!-- Plan de Tratamiento -->
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Plan de Tratamiento</label>
+    @if (!planTratamientoSeleccionado()) {
+      <div class="relative">
+        <input type="text" [value]="terminoPlanTratamiento" (input)="onBuscarPlanTratamiento($any($event.target).value)"
+          placeholder="Buscar por nombre de paciente u objetivo..." autocomplete="off" class="input-base"
+          [class.input-error]="form.get('planTratamientoId')?.invalid && form.get('planTratamientoId')?.touched" />
+        @if (planesTratamiento.length > 0) {
+          <ul class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-panel max-h-48 overflow-y-auto">
+            @for (p of planesTratamiento; track p.id) {
+              <li>
+                <button type="button" (click)="seleccionarPlanTratamiento(p)"
+                  class="w-full text-left px-3 py-2.5 hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-0">
+                  <span class="text-sm font-medium text-gray-800">{{ p.paciente?.persona?.nombre }} {{ p.paciente?.persona?.apellido }}</span>
+                  <span class="ml-2 text-xs text-gray-400">{{ p.estado }} · {{ p.fecha_inicio }}</span>
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    }
+    @if (planTratamientoSeleccionado()) {
+      <div class="flex items-center gap-2 px-3 py-2.5 bg-green-50 border border-green-200 rounded-lg">
+        <svg class="w-4 h-4 text-green-600 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        <span class="text-sm text-gray-800 flex-1">
+          <span class="font-medium">{{ planTratamientoSeleccionado()?.paciente?.persona?.nombre }} {{ planTratamientoSeleccionado()?.paciente?.persona?.apellido }}</span>
+          <span class="text-gray-500 ml-1.5">{{ planTratamientoSeleccionado()?.estado }}</span>
+        </span>
+        <button type="button" (click)="limpiarPlanTratamiento()" class="text-xs text-primary-600 hover:underline shrink-0">Cambiar</button>
+      </div>
+    }
+    @if (form.get('planTratamientoId')?.invalid && form.get('planTratamientoId')?.touched) {
+      <span class="text-xs text-red-500">Debe seleccionar un plan de tratamiento</span>
+    }
+  </div>
 
-    <div class="flex flex-col gap-1">
-      <label class="text-sm font-medium text-gray-700">ID Ejercicio</label>
-      <input formControlName="ejercicioId" type="number" placeholder="Ingrese ID del ejercicio" class="input-base"
-        [class.input-error]="form.get('ejercicioId')?.invalid && form.get('ejercicioId')?.touched" />
-      @if (form.get('ejercicioId')?.invalid && form.get('ejercicioId')?.touched) {
-        <span class="text-xs text-red-500">Campo requerido</span>
-      }
-    </div>
+  <!-- Ejercicio -->
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Ejercicio</label>
+    @if (!ejercicioSeleccionado()) {
+      <div class="relative">
+        <input type="text" [value]="terminoEjercicio" (input)="onBuscarEjercicio($any($event.target).value)"
+          placeholder="Buscar por nombre de ejercicio..." autocomplete="off" class="input-base"
+          [class.input-error]="form.get('ejercicioId')?.invalid && form.get('ejercicioId')?.touched" />
+        @if (ejercicios.length > 0) {
+          <ul class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-panel max-h-48 overflow-y-auto">
+            @for (e of ejercicios; track e.id) {
+              <li>
+                <button type="button" (click)="seleccionarEjercicio(e)"
+                  class="w-full text-left px-3 py-2.5 hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-0">
+                  <span class="text-sm font-medium text-gray-800">{{ e.nombre }}</span>
+                  <span class="ml-2 text-xs text-gray-400">{{ e.categoria_trabajo }} · Nivel {{ e.nivel_dificultad }}</span>
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    }
+    @if (ejercicioSeleccionado()) {
+      <div class="flex items-center gap-2 px-3 py-2.5 bg-green-50 border border-green-200 rounded-lg">
+        <svg class="w-4 h-4 text-green-600 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        <span class="text-sm text-gray-800 flex-1">
+          <span class="font-medium">{{ ejercicioSeleccionado()?.nombre }}</span>
+          <span class="text-gray-500 ml-1.5">{{ ejercicioSeleccionado()?.categoria_trabajo }}</span>
+        </span>
+        <button type="button" (click)="limpiarEjercicio()" class="text-xs text-primary-600 hover:underline shrink-0">Cambiar</button>
+      </div>
+    }
+    @if (form.get('ejercicioId')?.invalid && form.get('ejercicioId')?.touched) {
+      <span class="text-xs text-red-500">Debe seleccionar un ejercicio</span>
+    }
   </div>
 
   <div class="flex flex-col gap-1">
@@ -39,12 +99,10 @@
       <label class="text-sm font-medium text-gray-700">Orden</label>
       <input formControlName="orden" type="number" placeholder="0" class="input-base" />
     </div>
-
     <div class="flex flex-col gap-1">
       <label class="text-sm font-medium text-gray-700">Repeticiones</label>
       <input formControlName="repeticiones" type="number" placeholder="0" class="input-base" />
     </div>
-
     <div class="flex flex-col gap-1">
       <label class="text-sm font-medium text-gray-700">Series</label>
       <input formControlName="series" type="number" placeholder="0" class="input-base" />

@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { SesionesDomiciliariasService } from '../../../nucleo/graphql/gestion-clinica/sesiones-domiciliarias';
+import { PacientesService } from '../../../nucleo/graphql/gestion-clinica/pacientes';
 import { Tabla, ColumnaTabla } from '../../../compartido/tabla/tabla';
 import { Modal } from '../../../compartido/modal/modal';
 import { CrearSesionesDomiciliarias } from './crear-sesiones-domiciliarias/crear-sesiones-domiciliarias';
@@ -14,6 +15,7 @@ import { VerSesionesDomiciliarias } from './ver-sesiones-domiciliarias/ver-sesio
 })
 export class SesionesDomiciliarias implements OnInit {
   private sesionesDomiciliariasService = inject(SesionesDomiciliariasService);
+  private pacientesService = inject(PacientesService);
 
   sesiones = signal<any[]>([]);
   cargando = signal(false);
@@ -21,6 +23,8 @@ export class SesionesDomiciliarias implements OnInit {
   modalEditar = signal(false);
   modalVer = signal(false);
   sesionSeleccionada = signal<any | null>(null);
+  pacientesBuscados = signal<any[]>([]);
+  buscandoPaciente = signal(false);
 
   columnas: ColumnaTabla[] = [
     { key: 'paciente.persona.nombre', titulo: 'Paciente' },
@@ -45,10 +49,24 @@ export class SesionesDomiciliarias implements OnInit {
   abrirEditar(item: any): void { this.sesionSeleccionada.set(item); this.modalEditar.set(true); }
   abrirVer(item: any): void { this.sesionSeleccionada.set(item); this.modalVer.set(true); }
 
+  cerrarModalCrear(): void {
+    this.modalCrear.set(false);
+    this.pacientesBuscados.set([]);
+  }
+
+  buscarPaciente(termino: string): void {
+    if (!termino || termino.length < 2) { this.pacientesBuscados.set([]); return; }
+    this.buscandoPaciente.set(true);
+    this.pacientesService.buscarPacientes(termino).subscribe({
+      next: d => { this.pacientesBuscados.set(d); this.buscandoPaciente.set(false); },
+      error: () => this.buscandoPaciente.set(false),
+    });
+  }
+
   /** Crea una nueva sesión domiciliaria */
   crearSesion(datos: any): void {
     this.sesionesDomiciliariasService.crearSesionDomiciliaria(datos).subscribe({
-      next: () => { this.modalCrear.set(false); this.cargarSesiones(); },
+      next: () => { this.cerrarModalCrear(); this.cargarSesiones(); },
     });
   }
 

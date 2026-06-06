@@ -1,0 +1,103 @@
+<div class="max-w-3xl mx-auto space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-bold text-gray-800">Completar / Editar Evaluación Inicial</h1>
+      <p class="text-sm text-gray-500 mt-0.5">Llene los datos clínicos de la evaluación</p>
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <div class="bg-white rounded-xl p-6 shadow-[var(--shadow-card)] animate-pulse space-y-4">
+      <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+      <div class="h-10 bg-gray-200 rounded w-full"></div>
+      <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+      <div class="h-10 bg-gray-200 rounded w-full"></div>
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="bg-white rounded-xl p-6 shadow-[var(--shadow-card)] border border-gray-50 space-y-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-700">Categoría Enfermedad</label>
+          <select formControlName="categoria_enfermedad" class="input-base" [class.input-error]="form.get('categoria_enfermedad')?.invalid && form.get('categoria_enfermedad')?.touched">
+            <option value="">Seleccione...</option>
+            <option value="CADERA_DESALINEADA">Cadera Desalineada</option>
+            <option value="DISCAPACIDAD_MOTORA">Discapacidad Motora</option>
+            <option value="ESPALDA_DESVIADA">Espalda Desviada</option>
+            <option value="LESION_BRAZO">Lesión de Brazo</option>
+            <option value="LESION_PIE">Lesión de Pie</option>
+            <option value="LESION_PIERNA">Lesión de Pierna</option>
+            <option value="OBESIDAD">Obesidad</option>
+            <option value="PARALISIS_FACIAL">Parálisis Facial</option>
+            <option value="POST_ACV">Post ACV</option>
+            <option value="OTRO">Otro</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-700">Categoría Trabajo</label>
+          <select formControlName="categoria_trabajo" class="input-base" [class.input-error]="form.get('categoria_trabajo')?.invalid && form.get('categoria_trabajo')?.touched">
+            <option value="">Seleccione...</option>
+            <option value="EXTREMIDAD_SUPERIOR">Extremidad Superior</option>
+            <option value="EXTREMIDAD_INFERIOR">Extremidad Inferior</option>
+            <option value="TORAX_CINTURA">Tórax y Cintura</option>
+            <option value="SUPERIOR">Superior (Cabeza/Cuello)</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-700">Semáforo</label>
+          <select formControlName="categoria_semaforo" class="input-base" [class.input-error]="form.get('categoria_semaforo')?.invalid && form.get('categoria_semaforo')?.touched">
+            <option value="">Seleccione...</option>
+            <option value="VERDE">Verde</option>
+            <option value="AMARILLO">Amarillo</option>
+            <option value="ROJO">Rojo</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium text-gray-700">Nivel Intensidad</label>
+          <select formControlName="nivel" class="input-base" [class.input-error]="form.get('nivel')?.invalid && form.get('nivel')?.touched">
+            <option value="">Seleccione...</option>
+            <option value="BAJO">Bajo</option>
+            <option value="MEDIO">Medio</option>
+            <option value="ALTO">Alto</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Descripción Enfermedad</label>
+        <textarea formControlName="descripcion_enfermedad" rows="2" placeholder="Describa la afección..." class="input-base resize-none"></textarea>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Justificación Semáforo</label>
+        <textarea formControlName="justificacion_semaforo" rows="2" placeholder="Justifique la categoría semáforo asignada..." class="input-base resize-none"></textarea>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Observaciones (Opcional)</label>
+        <textarea formControlName="observaciones" rows="2" placeholder="Otras observaciones clínicas..." class="input-base resize-none"></textarea>
+      </div>
+
+      <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+        <div>
+          @if (form.get('id')?.value) {
+            <a [routerLink]="['/app/planes-tratamiento/crear', form.get('id')?.value]" class="btn-primary bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500 border-transparent text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+              </svg>
+              Generar Plan de Tratamiento
+            </a>
+          }
+        </div>
+        <div class="flex gap-3">
+          <button type="button" (click)="cancelar()" class="btn-secondary" [disabled]="guardando()">Cancelar</button>
+          <button type="submit" class="btn-primary" [disabled]="guardando()">
+            {{ guardando() ? 'Guardando...' : 'Guardar Evaluación' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  }
+</div>

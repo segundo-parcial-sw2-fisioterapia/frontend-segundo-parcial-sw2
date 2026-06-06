@@ -1,0 +1,9 @@
+<div class="bg-white rounded-xl p-5 shadow-[var(--shadow-card)] border border-gray-50 flex items-center gap-4">
+  <div class="w-12 h-12 rounded-lg flex items-center justify-center shrink-0" [class]="iconColorClass">
+    <ng-content select="[icon]"></ng-content>
+  </div>
+  <div>
+    <p class="text-sm font-medium text-gray-500">{{ titulo }}</p>
+    <p class="text-2xl font-bold text-gray-900">{{ valor }}</p>
+  </div>
+</div>

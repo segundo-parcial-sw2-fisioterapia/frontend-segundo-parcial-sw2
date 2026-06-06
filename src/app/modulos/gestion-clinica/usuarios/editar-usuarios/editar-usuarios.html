@@ -1,4 +1,28 @@
 <form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+
+  <!-- Tipo de Usuario -->
+  <div class="flex flex-col gap-1.5">
+    <label class="text-sm font-medium text-gray-700">Tipo de Usuario</label>
+    <div class="grid grid-cols-2 p-1 bg-gray-100 rounded-lg">
+      <button type="button" (click)="cambiarTipoUsuario('PERSONAL')"
+        class="py-1.5 text-xs font-semibold rounded-md transition-all"
+        [class.bg-white]="tipoUsuario() === 'PERSONAL'"
+        [class.shadow-sm]="tipoUsuario() === 'PERSONAL'"
+        [class.text-gray-800]="tipoUsuario() === 'PERSONAL'"
+        [class.text-gray-500]="tipoUsuario() !== 'PERSONAL'">
+        Personal (Staff)
+      </button>
+      <button type="button" (click)="cambiarTipoUsuario('PACIENTE')"
+        class="py-1.5 text-xs font-semibold rounded-md transition-all"
+        [class.bg-white]="tipoUsuario() === 'PACIENTE'"
+        [class.shadow-sm]="tipoUsuario() === 'PACIENTE'"
+        [class.text-gray-800]="tipoUsuario() === 'PACIENTE'"
+        [class.text-gray-500]="tipoUsuario() !== 'PACIENTE'">
+        Paciente
+      </button>
+    </div>
+  </div>
+
   <div class="flex flex-col gap-1">
     <label class="text-sm font-medium text-gray-700">Correo electrónico</label>
     <input formControlName="correo" type="email" placeholder="correo@ejemplo.com" class="input-base" [class.input-error]="form.get('correo')?.invalid && form.get('correo')?.touched" />
@@ -8,16 +32,22 @@
   </div>
 
   <div class="flex flex-col gap-1">
-    <label class="text-sm font-medium text-gray-700">Rol</label>
-    <select formControlName="roles" class="input-base">
-      <option value="">Seleccione...</option>
-      <option value="ADMINISTRADOR">Administrador</option>
-      <option value="CONTADOR">Contador</option>
-      <option value="DIRECTOR">Director</option>
-      <option value="FISIOTERAPEUTA">Fisioterapeuta</option>
-      <option value="PACIENTE">Paciente</option>
-      <option value="RECEPCIONISTA">Recepcionista</option>
-    </select>
+    @if (tipoUsuario() === 'PERSONAL') {
+      <label class="text-sm font-medium text-gray-700">Rol</label>
+      <select formControlName="roles" class="input-base">
+        <option value="">Seleccione...</option>
+        <option value="ADMINISTRADOR">Administrador</option>
+        <option value="CONTADOR">Contador</option>
+        <option value="DIRECTOR">Director</option>
+        <option value="FISIOTERAPEUTA">Fisioterapeuta</option>
+        <option value="RECEPCIONISTA">Recepcionista</option>
+      </select>
+    } @else {
+      <label class="text-sm font-medium text-gray-700">Rol asignado</label>
+      <div class="px-3 py-2 bg-gray-50 border border-gray-200 text-gray-500 rounded-lg text-sm font-medium">
+        Paciente (Asignado automáticamente)
+      </div>
+    }
   </div>
 
   <div class="flex flex-col gap-1">

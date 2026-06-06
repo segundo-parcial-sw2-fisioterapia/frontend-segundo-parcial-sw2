@@ -1,0 +1,53 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Nombre del insumo <span class="text-red-500">*</span></label>
+    <input formControlName="nombre" type="text" class="input-base"
+      [class.input-error]="form.get('nombre')?.invalid && form.get('nombre')?.touched" />
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Categoría</label>
+      <select formControlName="categoria" class="input-base">
+        <option value="material_terapeutico">Material terapéutico</option>
+        <option value="medicamento">Medicamento</option>
+        <option value="equipo">Equipo</option>
+        <option value="consumible">Consumible</option>
+      </select>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Unidad de medida</label>
+      <input formControlName="unidadMedida" type="text" class="input-base" />
+    </div>
+  </div>
+
+  <div class="grid grid-cols-3 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Stock actual</label>
+      <input formControlName="stockActual" type="number" min="0" class="input-base" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Stock mínimo</label>
+      <input formControlName="stockMinimo" type="number" min="0" class="input-base" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Precio unitario (Bs)</label>
+      <input formControlName="precioUnitario" type="number" min="0" step="0.01" class="input-base" />
+    </div>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <input formControlName="activo" type="checkbox" id="activo" class="w-4 h-4 text-primary-600 rounded" />
+    <label for="activo" class="text-sm text-gray-700">Insumo activo en el catálogo</label>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-2">
+    <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+    <button type="submit" class="btn-primary">Guardar cambios</button>
+  </div>
+
+</form>

@@ -1,0 +1,51 @@
+@if (empleado) {
+  <dl class="space-y-3">
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Cargo</dt>
+        <dd class="mt-1 text-sm text-gray-800 font-medium">{{ empleado.cargo }}</dd>
+      </div>
+      <div>
+        <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Especialidad</dt>
+        <dd class="mt-1 text-sm text-gray-800">{{ empleado.especialidad || '—' }}</dd>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Salario base</dt>
+        <dd class="mt-1 text-sm text-gray-800">Bs {{ empleado.salarioBase }}</dd>
+      </div>
+      <div>
+        <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Tipo de contrato</dt>
+        <dd class="mt-1 text-sm text-gray-800">{{ empleado.tipoContrato }}</dd>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Fecha de ingreso</dt>
+        <dd class="mt-1 text-sm text-gray-800">{{ empleado.fechaIngreso }}</dd>
+      </div>
+      <div>
+        <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Fecha de baja</dt>
+        <dd class="mt-1 text-sm text-gray-800">{{ empleado.fechaBaja || '—' }}</dd>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Estado laboral</dt>
+        <dd class="mt-1">
+          <span class="badge-base"
+            [class.badge-verde]="empleado.estadoLaboral === 'activo'"
+            [class.badge-amarillo]="empleado.estadoLaboral === 'suspendido'"
+            [class.badge-rojo]="empleado.estadoLaboral === 'retirado'">
+            {{ empleado.estadoLaboral }}
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">ID Persona (clínica)</dt>
+        <dd class="mt-1 text-sm text-gray-500 font-mono">{{ empleado.personaId }}</dd>
+      </div>
+    </div>
+  </dl>
+}

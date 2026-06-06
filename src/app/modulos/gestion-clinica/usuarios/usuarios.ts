@@ -1,15 +1,16 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { UsuariosService } from '../../../nucleo/graphql/gestion-clinica/usuarios';
 import { PersonasService } from '../../../nucleo/graphql/gestion-clinica/persona';
 import { Tabla, ColumnaTabla } from '../../../compartido/tabla/tabla';
 import { Modal } from '../../../compartido/modal/modal';
+import { KpiCard } from '../../../compartido/kpi-card/kpi-card';
 import { CrearUsuarios } from './crear-usuarios/crear-usuarios';
 import { EditarUsuarios } from './editar-usuarios/editar-usuarios';
 import { VerUsuarios } from './ver-usuarios/ver-usuarios';
 
 @Component({
   selector: 'app-usuarios',
-  imports: [Tabla, Modal, CrearUsuarios, EditarUsuarios, VerUsuarios],
+  imports: [Tabla, Modal, KpiCard, CrearUsuarios, EditarUsuarios, VerUsuarios],
   templateUrl: './usuarios.html',
   styleUrl: './usuarios.css',
 })
@@ -26,10 +27,42 @@ export class Usuarios implements OnInit {
   personasBuscadas = signal<any[]>([]);
   buscandoPersonas = signal(false);
 
+  // KPIs
+  usuariosEmpleados = computed(() => {
+    const list = this.usuarios();
+    const staffRoles = ['administrador', 'contador', 'director', 'fisioterapeuta', 'recepcionista'];
+    return list.filter(u => 
+      u.roles?.some((r: string) => staffRoles.includes(r.toLowerCase()))
+    ).length;
+  });
+
+  usuariosPacientes = computed(() => {
+    const list = this.usuarios();
+    return list.filter(u => 
+      u.roles?.some((r: string) => r.toLowerCase() === 'paciente')
+    ).length;
+  });
+
+  usuariosActivos = computed(() => {
+    const list = this.usuarios();
+    return list.filter(u => u.estado?.toUpperCase() === 'ACTIVO').length;
+  });
+
+  usuariosInactivos = computed(() => {
+    const list = this.usuarios();
+    return list.filter(u => u.estado?.toUpperCase() === 'INACTIVO').length;
+  });
+
+  usuariosSuspendidos = computed(() => {
+    const list = this.usuarios();
+    return list.filter(u => u.estado?.toUpperCase() === 'SUSPENDIDO').length;
+  });
+
   columnas: ColumnaTabla[] = [
     { key: 'correo', titulo: 'Correo' },
+    { key: 'roles', titulo: 'Roles' },
     { key: 'estado', titulo: 'Estado' },
-    { key: 'ultimo_acceso', titulo: 'Último Acceso' },
+    { key: 'ultimo_acceso', titulo: 'Último Acceso', tipo: 'fecha-hora' },
   ];
 
   ngOnInit(): void {

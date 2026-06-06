@@ -39,32 +39,50 @@
           <tr class="hover:bg-primary-50/40 transition-colors duration-100">
             @for (col of columnas; track col.key) {
               <td class="px-4 py-3 text-gray-700">
-                {{ obtenerValor(fila, col.key) ?? '—' }}
+                @if (col.tipo === 'enum') {
+                  {{ obtenerValor(fila, col.key) | etiquetaEnum }}
+                } @else if (col.tipo === 'badge') {
+                  @if (col.badgeMap && col.badgeMap[obtenerValor(fila, col.key)]; as info) {
+                    <span [class]="'badge-base ' + info.clases">{{ info.texto }}</span>
+                  } @else {
+                    <span class="text-gray-400 text-xs">{{ obtenerValor(fila, col.key) ?? '—' }}</span>
+                  }
+                } @else {
+                  {{ formatearValor(fila, col) }}
+                }
               </td>
             }
             @if (conAcciones) {
               <td class="px-4 py-3 text-right">
                 <div class="flex items-center justify-end gap-1.5">
-                  @if (conVer) {
-                    <button
-                      (click)="ver.emit(fila)"
-                      class="px-2.5 py-1 text-xs rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 font-medium transition"
-                    >
-                      Ver
-                    </button>
+                  @if (accionesTemplate) {
+                    <ng-container [ngTemplateOutlet]="accionesTemplate" [ngTemplateOutletContext]="{ $implicit: fila }"></ng-container>
+                  } @else {
+                    @if (conVer) {
+                      <button
+                        (click)="ver.emit(fila)"
+                        class="px-2.5 py-1 text-xs rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 font-medium transition"
+                      >
+                        Ver
+                      </button>
+                    }
+                    @if (conEditar) {
+                      <button
+                        (click)="editar.emit(fila)"
+                        class="px-2.5 py-1 text-xs rounded-lg bg-primary-100 text-primary-700 hover:bg-primary-200 font-medium transition"
+                      >
+                        Editar
+                      </button>
+                    }
+                    @if (conEliminar) {
+                      <button
+                        (click)="eliminar.emit(fila.id)"
+                        class="px-2.5 py-1 text-xs rounded-lg bg-red-100 text-red-700 hover:bg-red-200 font-medium transition"
+                      >
+                        Eliminar
+                      </button>
+                    }
                   }
-                  <button
-                    (click)="editar.emit(fila)"
-                    class="px-2.5 py-1 text-xs rounded-lg bg-primary-100 text-primary-700 hover:bg-primary-200 font-medium transition"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    (click)="eliminar.emit(fila.id)"
-                    class="px-2.5 py-1 text-xs rounded-lg bg-red-100 text-red-700 hover:bg-red-200 font-medium transition"
-                  >
-                    Eliminar
-                  </button>
                 </div>
               </td>
             }

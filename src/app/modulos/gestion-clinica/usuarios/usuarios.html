@@ -10,6 +10,39 @@
     </button>
   </div>
 
+  <!-- KPIs Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+    <app-kpi-card titulo="Personal / Staff" [valor]="usuariosEmpleados()" iconColorClass="bg-indigo-50 text-indigo-600">
+      <svg icon class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      </svg>
+    </app-kpi-card>
+
+    <app-kpi-card titulo="Pacientes" [valor]="usuariosPacientes()" iconColorClass="bg-teal-50 text-teal-600">
+      <svg icon class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      </svg>
+    </app-kpi-card>
+
+    <app-kpi-card titulo="Activos" [valor]="usuariosActivos()" iconColorClass="bg-emerald-50 text-emerald-600">
+      <svg icon class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </app-kpi-card>
+
+    <app-kpi-card titulo="Inactivos" [valor]="usuariosInactivos()" iconColorClass="bg-gray-50 text-gray-600">
+      <svg icon class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+      </svg>
+    </app-kpi-card>
+
+    <app-kpi-card titulo="Suspendidos" [valor]="usuariosSuspendidos()" iconColorClass="bg-rose-50 text-rose-600">
+      <svg icon class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+    </app-kpi-card>
+  </div>
+
   <app-tabla
     [columnas]="columnas"
     [filas]="usuarios()"

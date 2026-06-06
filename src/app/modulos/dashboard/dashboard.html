@@ -56,23 +56,23 @@
         </div>
       </div>
 
-      <!-- Citas del Día -->
+      <!-- Sesiones del Día -->
       <div class="bg-white rounded-xl p-5 shadow-[var(--shadow-card)] border border-gray-50">
         <div class="flex items-center justify-between mb-4">
-          <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Citas del Día</span>
+          <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Sesiones del Día</span>
           <div class="w-9 h-9 bg-teal-50 rounded-lg flex items-center justify-center shrink-0">
             <svg class="w-5 h-5 text-teal-600" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
             </svg>
           </div>
         </div>
-        <p class="text-3xl font-bold text-gray-900 tracking-tight">{{ datos().kpis.citasHoy }}</p>
+        <p class="text-3xl font-bold text-gray-900 tracking-tight">{{ datos().kpis.sesionesHoy }}</p>
         <div class="flex items-center gap-1.5 mt-2">
-          <span class="text-xs text-gray-400">Semana: <strong class="text-gray-700">{{ datos().kpis.citasSemana }}</strong></span>
-          @if (datos().kpis.citasSemana_variacion < 0) {
-            <span class="text-xs font-semibold text-red-500 ml-1">{{ datos().kpis.citasSemana_variacion }}%</span>
+          <span class="text-xs text-gray-400">Semana: <strong class="text-gray-700">{{ datos().kpis.sesionesSemana }}</strong></span>
+          @if (datos().kpis.sesionesSemana_variacion < 0) {
+            <span class="text-xs font-semibold text-red-500 ml-1">{{ datos().kpis.sesionesSemana_variacion }}%</span>
           } @else {
-            <span class="text-xs font-semibold text-emerald-600 ml-1">+{{ datos().kpis.citasSemana_variacion }}%</span>
+            <span class="text-xs font-semibold text-emerald-600 ml-1">+{{ datos().kpis.sesionesSemana_variacion }}%</span>
           }
         </div>
       </div>
@@ -124,15 +124,15 @@
     <!-- Charts Row -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
-      <!-- Bar Chart: Citas por Mes -->
+      <!-- Bar Chart: Sesiones por Mes -->
       <div class="lg:col-span-2 bg-white rounded-xl p-5 shadow-[var(--shadow-card)] border border-gray-50">
         <div class="flex items-center justify-between mb-5">
           <div>
-            <h3 class="text-sm font-semibold text-gray-700">Citas por Mes</h3>
+            <h3 class="text-sm font-semibold text-gray-700">Sesiones por Mes</h3>
             <p class="text-xs text-gray-400 mt-0.5">Últimos 6 meses</p>
           </div>
           <span class="text-[0.7rem] bg-primary-50 text-primary-600 font-semibold px-2.5 py-1 rounded-full">
-            Total: {{ datos().kpis.citasSemana * 4 }}
+            Total: {{ datos().kpis.sesionesSemana * 4 }}
           </span>
         </div>
         <div class="h-44">
@@ -233,28 +233,28 @@
     <!-- Bottom Row -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-      <!-- Agenda del Día -->
+      <!-- Agenda del Día (Sesiones) -->
       <div class="bg-white rounded-xl shadow-[var(--shadow-card)] border border-gray-50 overflow-hidden">
         <div class="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
           <h3 class="text-sm font-semibold text-gray-700">Agenda del Día</h3>
           <span class="text-xs text-primary-600 font-semibold bg-primary-50 px-2.5 py-1 rounded-full">
-            {{ datos().proximasCitas.length }} citas
+            {{ datos().proximasSesiones.length }} sesiones
           </span>
         </div>
         <div class="divide-y divide-gray-50">
-          @for (cita of datos().proximasCitas; track cita.hora) {
+          @for (sesion of datos().proximasSesiones; track sesion.hora) {
             <div class="px-5 py-3.5 flex items-center gap-3 hover:bg-gray-50/50 transition-colors">
-              <span class="text-xs font-mono font-bold text-primary-600 w-10 shrink-0">{{ cita.hora }}</span>
+              <span class="text-xs font-mono font-bold text-primary-600 w-10 shrink-0">{{ sesion.hora }}</span>
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-800 truncate">{{ cita.paciente }}</p>
-                <p class="text-xs text-gray-400 truncate mt-0.5">{{ cita.tipo }} · {{ cita.fisio }}</p>
+                <p class="text-sm font-medium text-gray-800 truncate">{{ sesion.paciente }}</p>
+                <p class="text-xs text-gray-400 truncate mt-0.5">{{ sesion.tipo }} · {{ sesion.fisio }}</p>
               </div>
               <span
                 class="badge-base shrink-0"
-                [class.badge-verde]="cita.estado === 'CONFIRMADA'"
-                [class.badge-amarillo]="cita.estado !== 'CONFIRMADA'"
+                [class.badge-verde]="sesion.estado === 'CONFIRMADA'"
+                [class.badge-amarillo]="sesion.estado !== 'CONFIRMADA'"
               >
-                {{ cita.estado === 'CONFIRMADA' ? 'Confirmada' : 'Pendiente' }}
+                {{ sesion.estado === 'CONFIRMADA' ? 'Confirmada' : 'Pendiente' }}
               </span>
             </div>
           }

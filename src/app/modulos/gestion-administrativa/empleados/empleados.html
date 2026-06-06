@@ -1,0 +1,51 @@
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-bold text-gray-800">Empleados</h1>
+      <p class="text-sm text-gray-500 mt-0.5">Gestión del personal del centro de rehabilitación</p>
+    </div>
+    <button (click)="abrirCrear()" class="btn-primary">
+      <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/>
+      </svg>
+      Nuevo Empleado
+    </button>
+  </div>
+
+  <app-tabla
+    [columnas]="columnas"
+    [filas]="empleados()"
+    [cargando]="cargando()"
+    mensajeVacio="No hay empleados registrados."
+    (ver)="abrirVer($event)"
+    (editar)="abrirEditar($event)"
+    (eliminar)="eliminarEmpleado($event)"
+  />
+
+  <app-paginacion
+    [paginaInfo]="paginaInfo()"
+    (cambiarPagina)="cambiarPagina($event)"
+  />
+
+  <app-modal titulo="Nuevo Empleado" [abierto]="modalCrear()" (cerrar)="cerrarModalCrear()">
+    <app-crear-empleados
+      [personas]="personasBuscadas()"
+      [buscandoPersonas]="buscandoPersonas()"
+      (buscarPersonas)="buscarPersonas($event)"
+      (guardar)="crearEmpleado($event)"
+      (cancelar)="cerrarModalCrear()"
+    />
+  </app-modal>
+
+  <app-modal titulo="Editar Empleado" [abierto]="modalEditar()" (cerrar)="modalEditar.set(false)">
+    <app-editar-empleados
+      [empleado]="empleadoSeleccionado()"
+      (guardar)="editarEmpleado($event)"
+      (cancelar)="modalEditar.set(false)"
+    />
+  </app-modal>
+
+  <app-modal titulo="Detalle de Empleado" [abierto]="modalVer()" (cerrar)="modalVer.set(false)">
+    <app-ver-empleados [empleado]="empleadoSeleccionado()" />
+  </app-modal>
+</div>

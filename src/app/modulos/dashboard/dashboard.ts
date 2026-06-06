@@ -74,16 +74,16 @@ export class Dashboard implements OnInit {
     return verde + amarillo + rojo;
   });
 
-  /** Barras para el gráfico de citas por mes */
+  /** Barras para el gráfico de sesiones por mes */
   barras = computed(() => {
     const d = this.datos();
-    if (!d?.citasPorMes) return [];
-    const max = Math.max(...d.citasPorMes.map((c: any) => c.valor));
-    return d.citasPorMes.map((c: any, i: number) => ({
+    if (!d?.sesionesPorMes) return [];
+    const max = Math.max(...d.sesionesPorMes.map((c: any) => c.valor));
+    return d.sesionesPorMes.map((c: any, i: number) => ({
       mes: c.mes,
       valor: c.valor,
       altura: Math.round((c.valor / max) * 78),
-      esUltimo: i === d.citasPorMes.length - 1,
+      esUltimo: i === d.sesionesPorMes.length - 1,
     }));
   });
 

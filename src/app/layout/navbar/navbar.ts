@@ -19,7 +19,6 @@ export class Navbar {
   private readonly mapaRutas: Record<string, Breadcrumb> = {
     '/app/dashboard':              { subsistema: 'Inicio', modulo: 'Dashboard' },
     '/app/pacientes':              { subsistema: 'Gestión Clínica', modulo: 'Pacientes' },
-    '/app/citas':                  { subsistema: 'Gestión Clínica', modulo: 'Citas' },
     '/app/evaluaciones-iniciales': { subsistema: 'Gestión Clínica', modulo: 'Evaluaciones Iniciales' },
     '/app/planes-tratamiento':     { subsistema: 'Gestión Clínica', modulo: 'Planes de Tratamiento' },
     '/app/planes-ejercicios':      { subsistema: 'Gestión Clínica', modulo: 'Planes de Ejercicios' },
@@ -31,6 +30,8 @@ export class Navbar {
     '/app/admin/empleados':        { subsistema: 'Gestión Administrativa', modulo: 'Empleados' },
     '/app/admin/inventario':       { subsistema: 'Gestión Administrativa', modulo: 'Inventario' },
     '/app/admin/facturacion':      { subsistema: 'Gestión Administrativa', modulo: 'Facturación' },
+    '/app/admin/tarifas':          { subsistema: 'Gestión Administrativa', modulo: 'Tarifas' },
+    '/app/admin/mensualidades':    { subsistema: 'Gestión Administrativa', modulo: 'Mensualidades' },
     '/app/bi/reportes':            { subsistema: 'Inteligencia de Negocio', modulo: 'Reportes' },
     '/app/bi/predictivo':          { subsistema: 'Inteligencia de Negocio', modulo: 'Análisis Predictivo' },
   };

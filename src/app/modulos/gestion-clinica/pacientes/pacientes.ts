@@ -110,7 +110,17 @@ export class Pacientes implements OnInit {
 
   /** Actualiza un paciente existente */
   editarPaciente(datos: any): void {
-    this.pacientesService.editarPaciente(datos).subscribe({
+    this.personasService.editarPersona(datos.persona).pipe(
+      switchMap(() =>
+        this.pacientesService.editarPaciente({
+          id: datos.id,
+          estado: datos.estado,
+          direccion: datos.direccion,
+          sexo: datos.sexo,
+          fecha_nacimiento: this.pacienteSeleccionado()?.fecha_nacimiento,
+        })
+      )
+    ).subscribe({
       next: () => { this.modalEditar.set(false); this.cargarPacientes(); },
     });
   }

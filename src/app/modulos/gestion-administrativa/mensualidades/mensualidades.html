@@ -1,0 +1,295 @@
+<div class="space-y-5">
+  <!-- Encabezado -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-bold text-gray-800">Mensualidades</h1>
+      <p class="text-sm text-gray-500 mt-0.5">Control de pagos mensuales de planes de tratamiento</p>
+    </div>
+  </div>
+
+  <!-- Error -->
+  @if (mensajeError()) {
+    <div class="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+      {{ mensajeError() }}
+    </div>
+  }
+
+  <!-- Barra de búsqueda de paciente + filtros de estado -->
+  <div class="flex flex-col sm:flex-row gap-3 items-start">
+
+    <!-- Búsqueda por CI / nombre -->
+    <div class="relative flex-1 min-w-0">
+      @if (pacienteSeleccionado()) {
+        <!-- Chip del paciente seleccionado -->
+        <div class="flex items-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm">
+          <span class="font-medium text-blue-800">
+            {{ pacienteSeleccionado()!.persona.nombre }} {{ pacienteSeleccionado()!.persona.apellido }}
+          </span>
+          <span class="text-blue-500 text-xs">CI: {{ pacienteSeleccionado()!.persona.ci }}</span>
+          <button
+            (click)="limpiarPaciente()"
+            class="ml-auto text-blue-400 hover:text-blue-700 text-xs font-medium"
+            title="Quitar filtro de paciente"
+          >✕ Cambiar</button>
+        </div>
+      } @else {
+        <div class="relative">
+          <input
+            type="text"
+            [value]="terminoBusqueda()"
+            (input)="onBuscarPaciente($event)"
+            placeholder="Buscar paciente por CI o nombre…"
+            class="input-base w-full pl-9"
+          />
+          <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+          </svg>
+          @if (buscandoPaciente()) {
+            <svg class="absolute right-3 top-2.5 w-4 h-4 text-gray-400 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+            </svg>
+          }
+        </div>
+
+        <!-- Dropdown de resultados -->
+        @if (pacientesBuscados().length > 0) {
+          <div class="absolute z-30 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
+            @for (pac of pacientesBuscados(); track pac.id) {
+              <button
+                type="button"
+                (click)="seleccionarPaciente(pac)"
+                class="w-full text-left px-4 py-2.5 hover:bg-blue-50 text-sm border-b border-gray-50 last:border-0"
+              >
+                <span class="font-medium text-gray-800">{{ pac.persona?.nombre }} {{ pac.persona?.apellido }}</span>
+                <span class="ml-2 text-gray-400 text-xs">CI: {{ pac.persona?.ci }}</span>
+              </button>
+            }
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Filtros de estado -->
+    <div class="flex gap-2 flex-wrap shrink-0">
+      @for (f of FILTROS; track f.valor) {
+        <button
+          (click)="cambiarFiltroEstado(f.valor)"
+          [class]="filtroEstado() === f.valor ? 'btn-primary' : 'btn-secondary'"
+          class="text-sm"
+        >{{ f.etiqueta }}</button>
+      }
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  @if (cargando()) {
+    <div class="shadow-card rounded-xl overflow-hidden animate-pulse">
+      <div class="h-10 bg-gray-100"></div>
+      @for (row of [1,2,3,4,5]; track row) {
+        <div class="h-14 bg-white border-t border-gray-100"></div>
+      }
+    </div>
+  }
+
+  @if (!cargando()) {
+    <div class="shadow-card rounded-xl overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-[--color-primary-600] text-white">
+          <tr>
+            <th class="px-5 py-3 text-left font-semibold">Paciente</th>
+            <th class="px-5 py-3 text-left font-semibold">Período</th>
+            <th class="px-5 py-3 text-right font-semibold">Monto (Bs)</th>
+            <th class="px-5 py-3 text-center font-semibold">Estado</th>
+            <th class="px-5 py-3 text-left font-semibold hidden md:table-cell">Registrada</th>
+            @if (auth.tieneRoles('administrador', 'contador', 'recepcionista')) {
+              <th class="px-5 py-3 text-center font-semibold">Acción</th>
+            }
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          @for (m of mensualidades(); track m.id) {
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-5 py-3 text-gray-800">
+                <div class="font-medium">{{ m.paciente ? (m.paciente.nombre + ' ' + m.paciente.apellido) : ('Paciente #' + m.pacienteId) }}</div>
+                @if (m.paciente?.ci) {
+                  <div class="text-xs text-gray-400">CI: {{ m.paciente!.ci }}</div>
+                }
+              </td>
+              <td class="px-5 py-3 text-gray-800 font-medium">{{ m.periodo }}</td>
+              <td class="px-5 py-3 text-right font-bold text-gray-800">
+                Bs {{ m.monto.toFixed(2) }}
+              </td>
+              <td class="px-5 py-3 text-center">
+                <span [class]="clasesBadgeEstado(m.estado)" class="capitalize">{{ m.estado }}</span>
+              </td>
+              <td class="px-5 py-3 text-gray-400 text-xs hidden md:table-cell">
+                {{ m.fechaCreacion ? m.fechaCreacion.slice(0, 10) : '—' }}
+              </td>
+              @if (auth.tieneRoles('administrador', 'contador', 'recepcionista')) {
+                <td class="px-5 py-3 text-center">
+                  @if (puedeRegistrarPago(m)) {
+                    <button (click)="abrirRegistrarPago(m)" class="btn-primary text-xs px-3 py-1">
+                      Registrar Pago
+                    </button>
+                  } @else {
+                    <span class="text-gray-300 text-xs">—</span>
+                  }
+                </td>
+              }
+            </tr>
+          }
+
+          @if (mensualidades().length === 0) {
+            <tr>
+              <td [attr.colspan]="auth.tieneRoles('administrador', 'contador', 'recepcionista') ? 6 : 5"
+                  class="px-5 py-12 text-center text-gray-400 text-sm">
+                @if (pacienteSeleccionado()) {
+                  No hay mensualidades para este paciente con el filtro seleccionado.
+                } @else {
+                  No hay mensualidades registradas.
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <app-paginacion [paginaInfo]="paginaInfo()" (cambiarPagina)="cambiarPagina($event)" />
+  }
+</div>
+
+<!-- ══ Modal: Registrar Pago ══════════════════════════════════════════════════ -->
+<app-modal titulo="Registrar Pago" [abierto]="modalPago()" (cerrar)="cerrarModalPago()" ancho="sm">
+  @if (mensualidadSeleccionada()) {
+    <div class="space-y-4">
+      <!-- Resumen de la mensualidad -->
+      <div class="rounded-lg bg-gray-50 border border-gray-200 px-4 py-3 space-y-2 text-sm">
+        @if (mensualidadSeleccionada()!.paciente) {
+          <div class="flex justify-between">
+            <span class="text-gray-500">Paciente:</span>
+            <span class="font-semibold text-gray-800">
+              {{ mensualidadSeleccionada()!.paciente!.nombre }} {{ mensualidadSeleccionada()!.paciente!.apellido }}
+              @if (mensualidadSeleccionada()!.paciente!.ci) {
+                <span class="text-gray-400 font-normal"> · CI {{ mensualidadSeleccionada()!.paciente!.ci }}</span>
+              }
+            </span>
+          </div>
+        }
+        <div class="flex justify-between">
+          <span class="text-gray-500">Período:</span>
+          <span class="font-semibold text-gray-800">{{ mensualidadSeleccionada()!.periodo }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-500">Monto a cobrar:</span>
+          <span class="font-bold text-lg text-[--color-primary-600]">Bs {{ mensualidadSeleccionada()!.monto.toFixed(2) }}</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-gray-500">Estado:</span>
+          <span [class]="clasesBadgeEstado(mensualidadSeleccionada()!.estado)" class="capitalize">
+            {{ mensualidadSeleccionada()!.estado }}
+          </span>
+        </div>
+        @if (empleadoActual()) {
+          <div class="flex justify-between pt-1 border-t border-gray-200">
+            <span class="text-gray-500">Atendido por:</span>
+            <span class="text-gray-700">
+              {{ empleadoActual()!.persona?.nombre }} {{ empleadoActual()!.persona?.apellido }}
+              <span class="text-gray-400 text-xs">({{ empleadoActual()!.cargo }})</span>
+            </span>
+          </div>
+        }
+      </div>
+
+      <!-- Formulario método de pago -->
+      <form [formGroup]="form" (ngSubmit)="confirmarPago()" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Método de Pago</label>
+          <select formControlName="metodoPago" class="input-base w-full capitalize">
+            @for (metodo of METODOS_PAGO; track metodo) {
+              <option [value]="metodo" class="capitalize">{{ metodo }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" (click)="cerrarModalPago()" class="btn-secondary">Cancelar</button>
+          <button type="submit" class="btn-primary" [disabled]="form.invalid || guardando()">
+            @if (guardando()) {
+              <svg class="w-4 h-4 animate-spin inline mr-1" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+              </svg>
+            }
+            Confirmar Pago
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+</app-modal>
+
+<!-- ══ Modal: Factura Emitida ═════════════════════════════════════════════════ -->
+<app-modal titulo="Pago Registrado" [abierto]="modalFactura()" (cerrar)="cerrarModalFactura()" ancho="sm">
+  @if (pagoRegistrado()?.factura) {
+    <div class="space-y-4">
+      <!-- Ícono de éxito -->
+      <div class="flex flex-col items-center gap-2 pb-2">
+        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <p class="text-sm text-gray-500">La mensualidad fue marcada como pagada y se generó la siguiente factura.</p>
+      </div>
+
+      <!-- Detalle de la factura -->
+      <div class="rounded-lg border border-gray-200 divide-y divide-gray-100 text-sm">
+        <div class="flex justify-between px-4 py-2.5">
+          <span class="text-gray-500">Nº Factura:</span>
+          <span class="font-mono font-semibold text-gray-800">{{ pagoRegistrado()!.factura.numeroFactura }}</span>
+        </div>
+        @if (pagoRegistrado()!.factura.paciente) {
+          <div class="flex justify-between px-4 py-2.5">
+            <span class="text-gray-500">Paciente:</span>
+            <span class="text-gray-800">
+              {{ pagoRegistrado()!.factura.paciente!.nombre }} {{ pagoRegistrado()!.factura.paciente!.apellido }}
+              @if (pagoRegistrado()!.factura.paciente!.ci) {
+                <span class="text-gray-400"> · CI {{ pagoRegistrado()!.factura.paciente!.ci }}</span>
+              }
+            </span>
+          </div>
+        }
+        @if (pagoRegistrado()!.factura.concepto) {
+          <div class="flex justify-between px-4 py-2.5">
+            <span class="text-gray-500">Concepto:</span>
+            <span class="text-gray-700 text-right max-w-[60%]">{{ pagoRegistrado()!.factura.concepto }}</span>
+          </div>
+        }
+        <div class="flex justify-between px-4 py-2.5">
+          <span class="text-gray-500">Monto:</span>
+          <span class="font-bold text-[--color-primary-600]">Bs {{ pagoRegistrado()!.factura.montoTotal.toFixed(2) }}</span>
+        </div>
+        @if (pagoRegistrado()!.factura.metodoPago) {
+          <div class="flex justify-between px-4 py-2.5">
+            <span class="text-gray-500">Método de pago:</span>
+            <span class="text-gray-700 capitalize">{{ pagoRegistrado()!.factura.metodoPago }}</span>
+          </div>
+        }
+        <div class="flex justify-between px-4 py-2.5">
+          <span class="text-gray-500">Registrado por:</span>
+          <span class="text-gray-700">{{ nombreEmpleadoFactura(pagoRegistrado()!.factura) }}</span>
+        </div>
+        <div class="flex justify-between px-4 py-2.5">
+          <span class="text-gray-500">Estado:</span>
+          <span class="badge-base badge-verde capitalize">{{ pagoRegistrado()!.factura.estado }}</span>
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-1">
+        <button (click)="cerrarModalFactura()" class="btn-primary">Cerrar</button>
+      </div>
+    </div>
+  }
+</app-modal>

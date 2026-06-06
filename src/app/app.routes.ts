@@ -2,6 +2,29 @@ import { Routes } from '@angular/router';
 import { authGuard } from './nucleo/guards/auth.guard';
 import { permisoGuard } from './nucleo/guards/permiso.guard';
 
+// Importación estática de componentes
+import { Login } from './auth/login/login';
+import { Layout } from './layout/layout';
+import { Dashboard } from './modulos/dashboard/dashboard';
+import { Personas } from './modulos/gestion-clinica/personas/personas';
+import { Pacientes } from './modulos/gestion-clinica/pacientes/pacientes';
+import { Usuarios } from './modulos/gestion-clinica/usuarios/usuarios';
+import { Ejercicios } from './modulos/gestion-clinica/ejercicios/ejercicios';
+import { EvaluacionesIniciales } from './modulos/gestion-clinica/evaluaciones-iniciales/evaluaciones-iniciales';
+import { EditarEvaluacion } from './modulos/gestion-clinica/evaluaciones-iniciales/editar-evaluacion/editar-evaluacion';
+import { PlanesTratamiento } from './modulos/gestion-clinica/planes-tratamiento/planes-tratamiento';
+import { PlanesEjercicios } from './modulos/gestion-clinica/planes-ejercicios/planes-ejercicios';
+import { Sesiones } from './modulos/gestion-clinica/sesiones/sesiones';
+import { VerSesiones } from './modulos/gestion-clinica/sesiones/ver-sesiones/ver-sesiones';
+import { EditarSesiones } from './modulos/gestion-clinica/sesiones/editar-sesiones/editar-sesiones';
+import { SesionesDomiciliarias } from './modulos/gestion-clinica/sesiones-domiciliarias/sesiones-domiciliarias';
+import { Empleados } from './modulos/gestion-administrativa/empleados/empleados';
+import { Insumos } from './modulos/gestion-administrativa/insumos/insumos';
+import { Facturas } from './modulos/gestion-administrativa/facturas/facturas';
+import { Tarifas } from './modulos/gestion-administrativa/tarifas/tarifas';
+import { Mensualidades } from './modulos/gestion-administrativa/mensualidades/mensualidades';
+import { Proximamente } from './modulos/placeholders/proximamente';
+
 export const routes: Routes = [
   {
     path: '',
@@ -10,140 +33,166 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    loadComponent: () => import('./auth/login/login').then((m) => m.Login),
+    component: Login,
   },
   {
     path: 'app',
-    loadComponent: () => import('./layout/layout').then((m) => m.Layout),
+    component: Layout,
     canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {
         path: 'dashboard',
-        loadComponent: () => import('./modulos/dashboard/dashboard').then((m) => m.Dashboard),
+        component: Dashboard,
       },
       {
         path: 'personas',
-        loadComponent: () =>
-          import('./modulos/gestion-clinica/personas/personas').then((m) => m.Personas),
+        component: Personas,
         canActivate: [permisoGuard],
         data: { roles: ['administrador', 'recepcionista', 'fisioterapeuta'] },
       },
       {
         path: 'pacientes',
-        loadComponent: () =>
-          import('./modulos/gestion-clinica/pacientes/pacientes').then((m) => m.Pacientes),
+        component: Pacientes,
         canActivate: [permisoGuard],
         data: { roles: ['administrador', 'recepcionista', 'fisioterapeuta'] },
       },
       {
         path: 'usuarios',
-        loadComponent: () =>
-          import('./modulos/gestion-clinica/usuarios/usuarios').then((m) => m.Usuarios),
+        component: Usuarios,
         canActivate: [permisoGuard],
         data: { roles: ['administrador'] },
       },
       {
-        path: 'citas',
-        loadComponent: () => import('./modulos/gestion-clinica/citas/citas').then((m) => m.Citas),
-        canActivate: [permisoGuard],
-        data: { roles: ['administrador', 'recepcionista', 'fisioterapeuta', 'director'] },
-      },
-      {
         path: 'ejercicios',
-        loadComponent: () =>
-          import('./modulos/gestion-clinica/ejercicios/ejercicios').then((m) => m.Ejercicios),
+        component: Ejercicios,
         canActivate: [permisoGuard],
         data: { roles: ['administrador', 'fisioterapeuta', 'paciente'] },
       },
       {
         path: 'evaluaciones-iniciales',
-        loadComponent: () =>
-          import('./modulos/gestion-clinica/evaluaciones-iniciales/evaluaciones-iniciales').then(
-            (m) => m.EvaluacionesIniciales,
-          ),
-        canActivate: [permisoGuard],
-        data: { roles: ['administrador', 'fisioterapeuta', 'director'] },
+        children: [
+          {
+            path: '',
+            component: EvaluacionesIniciales,
+            canActivate: [permisoGuard],
+            data: { roles: ['administrador', 'fisioterapeuta', 'director'] },
+          },
+          {
+            path: 'editar/:id',
+            component: EditarEvaluacion,
+            canActivate: [permisoGuard],
+            data: { roles: ['administrador', 'fisioterapeuta', 'director'] },
+          },
+        ],
       },
       {
         path: 'planes-tratamiento',
-        loadComponent: () =>
-          import('./modulos/gestion-clinica/planes-tratamiento/planes-tratamiento').then(
-            (m) => m.PlanesTratamiento,
-          ),
-        canActivate: [permisoGuard],
-        data: { roles: ['administrador', 'fisioterapeuta', 'director'] },
+        children: [
+          {
+            path: '',
+            component: PlanesTratamiento,
+            canActivate: [permisoGuard],
+            data: { roles: ['administrador', 'fisioterapeuta', 'director'] },
+          },
+          {
+            path: 'crear/:evaluacionId',
+            loadComponent: () => import('./modulos/gestion-clinica/planes-tratamiento/crear-planes-tratamiento/crear-planes-tratamiento').then(m => m.CrearPlanesTratamiento),
+            canActivate: [permisoGuard],
+            data: { roles: ['administrador', 'fisioterapeuta', 'director'] },
+          }
+        ]
       },
       {
         path: 'planes-ejercicios',
-        loadComponent: () =>
-          import('./modulos/gestion-clinica/planes-ejercicios/planes-ejercicios').then(
-            (m) => m.PlanesEjercicios,
-          ),
+        component: PlanesEjercicios,
         canActivate: [permisoGuard],
         data: { roles: ['administrador', 'fisioterapeuta'] },
       },
       {
         path: 'sesiones',
-        loadComponent: () =>
-          import('./modulos/gestion-clinica/sesiones/sesiones').then((m) => m.Sesiones),
-        canActivate: [permisoGuard],
-        data: { roles: ['administrador', 'fisioterapeuta', 'director'] },
+        children: [
+          {
+            path: '',
+            component: Sesiones,
+            canActivate: [permisoGuard],
+            data: { roles: ['administrador', 'fisioterapeuta', 'director', 'recepcionista'] },
+          },
+          {
+            path: 'ver/:id',
+            component: VerSesiones,
+            canActivate: [permisoGuard],
+            data: { roles: ['administrador', 'fisioterapeuta', 'director', 'recepcionista'] },
+          },
+          {
+            path: 'editar/:id',
+            component: EditarSesiones,
+            canActivate: [permisoGuard],
+            data: { roles: ['administrador', 'fisioterapeuta'] },
+          },
+        ],
       },
       {
         path: 'sesiones-domiciliarias',
-        loadComponent: () =>
-          import('./modulos/gestion-clinica/sesiones-domiciliarias/sesiones-domiciliarias').then(
-            (m) => m.SesionesDomiciliarias,
-          ),
+        component: SesionesDomiciliarias,
         canActivate: [permisoGuard],
         data: { roles: ['administrador', 'fisioterapeuta', 'director', 'paciente'] },
       },
       {
-        path: 'admin/empleados',
-        loadComponent: () =>
-          import('./modulos/placeholders/proximamente').then((m) => m.Proximamente),
-        data: {
-          titulo: 'Gestión de Empleados',
-          descripcion:
-            'Administración del personal del centro: fisioterapeutas, administrativos y médicos.',
-        },
+        path: 'admin',
+        children: [
+          {
+            path: 'empleados',
+            component: Empleados,
+            canActivate: [permisoGuard],
+            data: { roles: ['administrador', 'director', 'contador'] },
+          },
+          {
+            path: 'inventario',
+            component: Insumos,
+            canActivate: [permisoGuard],
+            data: { roles: ['administrador', 'director', 'recepcionista', 'fisioterapeuta'] },
+          },
+          {
+            path: 'facturacion',
+            component: Facturas,
+            canActivate: [permisoGuard],
+            data: { roles: ['administrador', 'director', 'contador', 'recepcionista'] },
+          },
+          {
+            path: 'tarifas',
+            component: Tarifas,
+            canActivate: [permisoGuard],
+            data: { roles: ['administrador', 'fisioterapeuta'] },
+          },
+          {
+            path: 'mensualidades',
+            component: Mensualidades,
+            canActivate: [permisoGuard],
+            data: { roles: ['administrador', 'contador', 'recepcionista'] },
+          },
+        ],
       },
       {
-        path: 'admin/inventario',
-        loadComponent: () =>
-          import('./modulos/placeholders/proximamente').then((m) => m.Proximamente),
-        data: {
-          titulo: 'Control de Inventario',
-          descripcion: 'Gestión de insumos, equipos terapéuticos y materiales del centro.',
-        },
-      },
-      {
-        path: 'admin/facturacion',
-        loadComponent: () =>
-          import('./modulos/placeholders/proximamente').then((m) => m.Proximamente),
-        data: {
-          titulo: 'Facturación y Cobros',
-          descripcion: 'Emisión de facturas, registro de pagos y gestión financiera del centro.',
-        },
-      },
-      {
-        path: 'bi/reportes',
-        loadComponent: () =>
-          import('./modulos/placeholders/proximamente').then((m) => m.Proximamente),
-        data: {
-          titulo: 'Reportes y Estadísticas',
-          descripcion: 'Informes de rendimiento clínico, ocupación y resultados por período.',
-        },
-      },
-      {
-        path: 'bi/predictivo',
-        loadComponent: () =>
-          import('./modulos/placeholders/proximamente').then((m) => m.Proximamente),
-        data: {
-          titulo: 'Análisis Predictivo',
-          descripcion: 'Modelos de IA para predicción de alta médica y riesgo de recaída.',
-        },
+        path: 'bi',
+        children: [
+          {
+            path: 'reportes',
+            component: Proximamente,
+            data: {
+              titulo: 'Reportes y Estadísticas',
+              descripcion: 'Informes de rendimiento clínico, ocupación y resultados por período.',
+            },
+          },
+          {
+            path: 'predictivo',
+            component: Proximamente,
+            data: {
+              titulo: 'Análisis Predictivo',
+              description: 'Modelos de IA para predicción de alta médica y riesgo de recaída.',
+            },
+          },
+        ],
       },
     ],
   },

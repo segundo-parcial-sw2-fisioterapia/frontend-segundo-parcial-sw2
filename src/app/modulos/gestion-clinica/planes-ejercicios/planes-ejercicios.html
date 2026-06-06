@@ -20,10 +20,14 @@
     (eliminar)="eliminarPlan($event)"
   />
 
-  <app-modal titulo="Nuevo Plan de Ejercicio" [abierto]="modalCrear()" (cerrar)="modalCrear.set(false)">
+  <app-modal titulo="Nuevo Plan de Ejercicio" [abierto]="modalCrear()" (cerrar)="cerrarModalCrear()">
     <app-crear-planes-ejercicios
+      [ejercicios]="ejerciciosFiltrados()"
+      (buscarEjercicio)="buscarEjercicio($event)"
+      [planesTratamiento]="planesTratamientoFiltrados()"
+      (buscarPlanTratamiento)="buscarPlanTratamiento($event)"
       (guardar)="crearPlan($event)"
-      (cancelar)="modalCrear.set(false)"
+      (cancelar)="cerrarModalCrear()"
     />
   </app-modal>
 

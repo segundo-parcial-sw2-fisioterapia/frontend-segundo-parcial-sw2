@@ -1,77 +1,405 @@
-<form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+<div class="max-w-5xl mx-auto space-y-6 pb-10">
 
-  <div class="grid grid-cols-2 gap-4">
-    <div class="flex flex-col gap-1">
-      <label class="text-sm font-medium text-gray-700">ID Paciente</label>
-      <input formControlName="pacienteId" type="number" placeholder="Ingrese ID del paciente" class="input-base"
-        [class.input-error]="form.get('pacienteId')?.invalid && form.get('pacienteId')?.touched" />
-      @if (form.get('pacienteId')?.invalid && form.get('pacienteId')?.touched) {
-        <span class="text-xs text-red-500">Campo requerido</span>
-      }
+  <!-- ── Cabecera ── -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-bold text-[#1c3766]">Generar Plan de Tratamiento</h1>
+      <p class="text-sm text-gray-400 mt-0.5">Complete las secciones para crear el plan y programar las sesiones exactas</p>
     </div>
-
-    <div class="flex flex-col gap-1">
-      <label class="text-sm font-medium text-gray-700">ID Empleado</label>
-      <input formControlName="empleadoId" type="number" placeholder="Ingrese ID del empleado" class="input-base"
-        [class.input-error]="form.get('empleadoId')?.invalid && form.get('empleadoId')?.touched" />
-      @if (form.get('empleadoId')?.invalid && form.get('empleadoId')?.touched) {
-        <span class="text-xs text-red-500">Campo requerido</span>
-      }
-    </div>
+    <a routerLink="/app/evaluaciones-iniciales" class="btn-secondary text-sm">← Volver</a>
   </div>
 
-  <div class="grid grid-cols-2 gap-4">
-    <div class="flex flex-col gap-1">
-      <label class="text-sm font-medium text-gray-700">Fecha Inicio</label>
-      <input formControlName="fecha_inicio" type="date" class="input-base"
-        [class.input-error]="form.get('fecha_inicio')?.invalid && form.get('fecha_inicio')?.touched" />
-      @if (form.get('fecha_inicio')?.invalid && form.get('fecha_inicio')?.touched) {
-        <span class="text-xs text-red-500">Campo requerido</span>
-      }
+  <!-- ── Skeleton ── -->
+  @if (cargando()) {
+    <div class="bg-white rounded-xl p-6 shadow-[var(--shadow-card)] animate-pulse space-y-4">
+      <div class="h-16 bg-gray-100 rounded-xl"></div>
+      <div class="grid grid-cols-3 gap-3">
+        <div class="h-10 bg-gray-100 rounded"></div>
+        <div class="h-10 bg-gray-100 rounded"></div>
+        <div class="h-10 bg-gray-100 rounded"></div>
+      </div>
+      <div class="h-24 bg-gray-100 rounded"></div>
+    </div>
+  } @else {
+
+    <!-- ── Banner paciente ── -->
+    <div class="rounded-xl overflow-hidden" style="background: linear-gradient(135deg,#0f1f3c 0%,#1c3766 100%)">
+      <div class="px-6 py-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <p class="text-xs text-blue-300 font-semibold uppercase tracking-widest mb-1">Paciente</p>
+          <h2 class="text-xl font-bold text-white">
+            {{ evaluacion()?.paciente?.persona?.nombre }} {{ evaluacion()?.paciente?.persona?.apellido }}
+          </h2>
+          <div class="flex flex-wrap items-center gap-2 mt-2">
+            <span class="text-xs bg-white/15 text-blue-100 px-2.5 py-0.5 rounded-full">
+              Evaluación #{{ evaluacion()?.id }}
+            </span>
+            <span class="text-xs bg-white/15 text-blue-100 px-2.5 py-0.5 rounded-full">
+              {{ evaluacion()?.categoria_trabajo }}
+            </span>
+            <span class="text-xs bg-white/15 text-blue-100 px-2.5 py-0.5 rounded-full">
+              {{ evaluacion()?.tiempo_sesion_minutos ?? 60 }} min/sesión
+            </span>
+          </div>
+        </div>
+        <div class="text-left md:text-right space-y-2">
+          <div class="flex items-center gap-2 justify-start md:justify-end flex-wrap">
+            @if (evaluacion()?.categoria_semaforo === 'rojo') {
+              <span class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">● Rojo</span>
+            } @else if (evaluacion()?.categoria_semaforo === 'amarillo') {
+              <span class="bg-yellow-400 text-gray-900 text-xs font-bold px-3 py-1 rounded-full">● Amarillo</span>
+            } @else {
+              <span class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">● Verde</span>
+            }
+            <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">
+              Nivel {{ labelNivel(evaluacion()?.nivel) }}
+            </span>
+          </div>
+          @if (tarifaSeleccionada()) {
+            <div>
+              <span class="text-blue-300 text-xs">Tarifa acordada</span>
+              <p class="text-2xl font-bold text-white leading-none">
+                Bs. {{ tarifaSeleccionada()!.precioMensual.toFixed(2) }}
+                <span class="text-sm font-normal text-blue-300">/mes</span>
+              </p>
+            </div>
+          }
+        </div>
+      </div>
     </div>
 
-    <div class="flex flex-col gap-1">
-      <label class="text-sm font-medium text-gray-700">Fecha Fin Estimada</label>
-      <input formControlName="fecha_fin_estimada" type="date" class="input-base" />
-    </div>
-  </div>
+    <!-- ═══════════════════════════════════════════════════
+         SECCIÓN 1 — DETALLES DEL PLAN
+    ════════════════════════════════════════════════════ -->
+    <div class="bg-white rounded-xl shadow-[var(--shadow-card)] border border-gray-100 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+        <span class="w-7 h-7 rounded-full bg-[#1c3766] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">1</span>
+        <h2 class="text-base font-semibold text-gray-800">Detalles del Plan</h2>
+      </div>
+      <div class="p-6 space-y-6">
+        <form [formGroup]="form" class="space-y-6">
 
-  <div class="flex flex-col gap-1">
-    <label class="text-sm font-medium text-gray-700">Objetivo Terapéutico</label>
-    <textarea formControlName="objetivo_terapeutico" rows="3" placeholder="Describa el objetivo terapéutico..." class="input-base resize-none"
-      [class.input-error]="form.get('objetivo_terapeutico')?.invalid && form.get('objetivo_terapeutico')?.touched"></textarea>
-    @if (form.get('objetivo_terapeutico')?.invalid && form.get('objetivo_terapeutico')?.touched) {
-      <span class="text-xs text-red-500">Campo requerido</span>
+          <!-- Tarifa -->
+          <div class="space-y-2">
+            <label class="text-sm font-medium text-gray-700">Tarifa Aplicable *</label>
+            <p class="text-xs text-gray-400">Auto-seleccionada según semáforo + nivel. Puede ajustarse si el especialista lo indica.</p>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1">
+              @for (t of tarifas(); track t.id) {
+                <button type="button" (click)="seleccionarTarifa(t.id)"
+                  [class]="'border-2 rounded-xl p-3 text-left transition-all ' +
+                    (form.value.tarifaId?.toString() === t.id
+                      ? 'border-[#1c3766] bg-blue-50 shadow-sm'
+                      : 'border-gray-200 hover:border-gray-300 bg-white')">
+                  <div class="text-xs text-gray-500 mb-1">{{ labelSemaforo(t.categoriaSemaforo) }} · Nivel {{ labelNivel(t.nivel) }}</div>
+                  <div class="text-base font-bold text-gray-800">
+                    Bs. {{ t.precioMensual.toFixed(2) }}
+                    <span class="text-xs font-normal text-gray-400">/mes</span>
+                  </div>
+                  @if (form.value.tarifaId?.toString() === t.id) {
+                    <span class="text-[10px] font-semibold text-[#1c3766] mt-1 block">✓ Seleccionada</span>
+                  }
+                </button>
+              }
+            </div>
+            @if (form.get('tarifaId')?.invalid && form.get('tarifaId')?.touched) {
+              <span class="text-xs text-red-500">Debe seleccionar una tarifa</span>
+            }
+          </div>
+
+          <!-- Duración + Observaciones -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label class="text-sm font-medium text-gray-700">Duración del Plan</label>
+              <div class="flex items-center gap-4 mt-1">
+                <button type="button" (click)="restarMes()"
+                  class="w-10 h-10 rounded-xl border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-gray-300 hover:bg-gray-50 font-bold text-xl transition-colors flex-shrink-0">
+                  −
+                </button>
+                <div class="flex-1 text-center py-2 bg-gray-50 rounded-xl">
+                  <span class="text-3xl font-bold text-[#1c3766]">{{ duracionMeses() }}</span>
+                  <span class="text-sm text-gray-500 ml-1.5">{{ duracionMeses() === 1 ? 'mes' : 'meses' }}</span>
+                  @if (sesionesXMes() > 0) {
+                    <p class="text-xs text-gray-400 mt-0.5">~{{ sesionesXMes() }} sesiones/mes</p>
+                  }
+                </div>
+                <button type="button" (click)="sumarMes()"
+                  class="w-10 h-10 rounded-xl border-2 border-[#1c3766] bg-[#1c3766] text-white flex items-center justify-center font-bold text-xl hover:bg-[#0f1f3c] transition-colors flex-shrink-0">
+                  +
+                </button>
+              </div>
+              <p class="text-xs text-gray-400">
+                Fecha inicio: hoy ({{ formatFecha(fechaHoy) }})
+              </p>
+            </div>
+            <div class="space-y-1">
+              <label class="text-sm font-medium text-gray-700">Observaciones</label>
+              <textarea formControlName="observaciones" rows="3"
+                placeholder="Restricciones, indicaciones especiales del especialista..."
+                class="input-base resize-none w-full text-sm"></textarea>
+            </div>
+          </div>
+
+          <!-- Objetivo terapéutico -->
+          <div class="space-y-1">
+            <label class="text-sm font-medium text-gray-700">Objetivo Terapéutico *</label>
+            <textarea formControlName="objetivo_terapeutico" rows="3"
+              placeholder="Ej. Recuperar movilidad articular al 90% en la extremidad inferior izquierda..."
+              class="input-base resize-none w-full"
+              [class.input-error]="form.get('objetivo_terapeutico')?.invalid && form.get('objetivo_terapeutico')?.touched">
+            </textarea>
+            @if (form.get('objetivo_terapeutico')?.invalid && form.get('objetivo_terapeutico')?.touched) {
+              <span class="text-xs text-red-500">El objetivo terapéutico es requerido</span>
+            }
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECCIÓN 2 — CALENDARIO DE SESIONES
+    ════════════════════════════════════════════════════ -->
+    <div class="bg-white rounded-xl shadow-[var(--shadow-card)] border border-gray-100 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="w-7 h-7 rounded-full bg-[#1c3766] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">2</span>
+          <div>
+            <h2 class="text-base font-semibold text-gray-800">Programación de Sesiones</h2>
+            <p class="text-xs text-gray-400 mt-0.5">Selecciona días y hora — el patrón se repite por todos los meses del plan</p>
+          </div>
+        </div>
+        @if (sesionesPreview().length > 0) {
+          <div class="text-right flex-shrink-0">
+            <p class="text-2xl font-bold text-[#1c3766] leading-none">{{ sesionesPreview().length }}</p>
+            <p class="text-xs text-gray-400">sesiones totales</p>
+          </div>
+        }
+      </div>
+
+      <div class="p-6 space-y-6">
+
+        <!-- Selector de días -->
+        <div>
+          <p class="text-sm font-medium text-gray-700 mb-3">Días de la semana</p>
+          <div class="grid grid-cols-7 gap-2">
+            @for (dia of DIAS_SEMANA; track dia.value) {
+              <button type="button" (click)="toggleDia(dia.value)"
+                [class]="'flex flex-col items-center justify-center py-3 rounded-xl border-2 transition-all select-none ' +
+                  (diaActivo(dia.value)
+                    ? 'border-[#1c3766] bg-[#1c3766] text-white font-bold shadow-md'
+                    : 'border-gray-200 text-gray-500 hover:border-gray-300 bg-white')">
+                <span class="text-sm font-bold">{{ dia.corto }}</span>
+                <span class="text-[10px] mt-0.5 hidden sm:block opacity-75">{{ dia.label.slice(0, 3) }}</span>
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Horas por día seleccionado -->
+        @if (slotsOrdenados().length > 0) {
+          <div class="bg-gray-50 rounded-xl p-4 space-y-3">
+            <p class="text-sm font-medium text-gray-600">Hora de atención por día</p>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              @for (slot of slotsOrdenados(); track slot.dia) {
+                <div class="bg-white rounded-xl p-3 border border-gray-200 shadow-sm">
+                  <p class="text-xs font-semibold text-gray-500 mb-2">
+                    {{ getDiaLabel(slot.dia) }}
+                  </p>
+                  <input type="time"
+                    [value]="getHora(slot.dia)"
+                    (change)="setHora(slot.dia, $any($event.target).value)"
+                    class="w-full text-base font-bold text-[#1c3766] font-mono bg-transparent border-none outline-none p-0 cursor-pointer" />
+                </div>
+              }
+            </div>
+            <p class="text-xs text-gray-400">
+              Duración por sesión:
+              <strong class="text-gray-600">{{ evaluacion()?.tiempo_sesion_minutos ?? 60 }} minutos</strong>
+            </p>
+          </div>
+        } @else {
+          <div class="rounded-xl border-2 border-dashed border-gray-200 p-8 text-center">
+            <p class="text-sm text-gray-400">Selecciona uno o más días para generar el calendario de sesiones</p>
+          </div>
+        }
+
+        <!-- Preview de sesiones -->
+        @if (sesionesPreview().length > 0) {
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-sm font-medium text-gray-700">
+                Vista previa — {{ sesionesPreview().length }} sesiones en {{ duracionMeses() }} {{ duracionMeses() === 1 ? 'mes' : 'meses' }}
+              </p>
+              <span class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
+                ~{{ sesionesXMes() }} por mes
+              </span>
+            </div>
+            <div class="rounded-xl border border-gray-200 overflow-hidden">
+              <div class="overflow-y-auto" style="max-height: 288px">
+                <table class="w-full text-sm">
+                  <thead class="bg-gray-50 sticky top-0 z-10">
+                    <tr>
+                      <th class="text-left px-4 py-2.5 text-xs font-semibold text-gray-400 uppercase tracking-wide w-12">#</th>
+                      <th class="text-left px-4 py-2.5 text-xs font-semibold text-gray-400 uppercase tracking-wide">Día</th>
+                      <th class="text-left px-4 py-2.5 text-xs font-semibold text-gray-400 uppercase tracking-wide">Fecha</th>
+                      <th class="text-left px-4 py-2.5 text-xs font-semibold text-gray-400 uppercase tracking-wide">Horario</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-100">
+                    @for (s of sesionesPreview(); track s.numero) {
+                      <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-4 py-2.5">
+                          <span class="text-xs font-bold text-gray-300">{{ s.numero }}</span>
+                        </td>
+                        <td class="px-4 py-2.5 font-medium text-gray-700">{{ s.diaLabel }}</td>
+                        <td class="px-4 py-2.5 text-gray-500 text-xs font-mono">{{ formatFecha(s.fecha) }}</td>
+                        <td class="px-4 py-2.5">
+                          <span class="font-mono text-xs font-semibold text-[#1c3766]">{{ s.hora }}</span>
+                          <span class="text-gray-400 text-xs"> → {{ s.horaFin }}</span>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        }
+
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SECCIÓN 3 — PRESCRIPCIÓN DE EJERCICIOS
+    ════════════════════════════════════════════════════ -->
+    <div class="bg-white rounded-xl shadow-[var(--shadow-card)] border border-gray-100 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="w-7 h-7 rounded-full bg-[#1c3766] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">3</span>
+          <div>
+            <h2 class="text-base font-semibold text-gray-800">Prescripción de Ejercicios</h2>
+            <p class="text-xs text-gray-400 mt-0.5">
+              Ejercicios domiciliarios recomendados (visibles para el paciente en la app)
+              @if (evaluacion()?.categoria_trabajo) {
+                · Filtrado por zona: <strong>{{ evaluacion()?.categoria_trabajo }}</strong>
+              }
+            </p>
+          </div>
+        </div>
+        <button type="button" (click)="agregarEjercicio()"
+          class="flex items-center gap-1.5 text-sm font-semibold text-[#1c3766] border-2 border-[#1c3766] hover:bg-blue-50 px-3 py-1.5 rounded-xl transition-colors">
+          + Agregar
+        </button>
+      </div>
+
+      <div class="p-6">
+        @if (filaEjercicios().length === 0) {
+          <div class="rounded-xl border-2 border-dashed border-gray-200 p-10 text-center">
+            <p class="text-sm text-gray-400">Sin prescripciones aún</p>
+            <p class="text-xs text-gray-300 mt-1">Haz clic en "+ Agregar" para asignar ejercicios domiciliarios al paciente</p>
+          </div>
+        } @else {
+          <div class="space-y-3">
+            @for (fila of filaEjercicios(); track fila.uid) {
+              <div class="bg-gray-50 rounded-xl p-4 grid grid-cols-12 gap-3 items-end">
+                <!-- Orden -->
+                <div class="col-span-1 flex items-center justify-center">
+                  <span class="w-7 h-7 rounded-full bg-[#1c3766] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+                    {{ fila.orden }}
+                  </span>
+                </div>
+                <!-- Ejercicio -->
+                <div class="col-span-12 sm:col-span-5">
+                  <label class="text-xs font-medium text-gray-500 mb-1 block">Ejercicio *</label>
+                  <select class="input-base text-sm w-full"
+                    [value]="fila.ejercicioId ?? ''"
+                    (change)="setEjercicioId(fila.uid, $any($event.target).value)">
+                    <option value="">— Seleccionar ejercicio —</option>
+                    @for (ej of ejerciciosCatalogo(); track ej.id) {
+                      <option [value]="ej.id">{{ ej.nombre }}
+                        @if (ej.nivel_dificultad) { ({{ ej.nivel_dificultad }}) }
+                      </option>
+                    }
+                  </select>
+                </div>
+                <!-- Repeticiones -->
+                <div class="col-span-4 sm:col-span-2">
+                  <label class="text-xs font-medium text-gray-500 mb-1 block">Reps.</label>
+                  <input type="number" min="1"
+                    [value]="fila.repeticiones"
+                    (change)="setNumCampo(fila.uid, 'repeticiones', $any($event.target).value)"
+                    class="input-base text-sm w-full" />
+                </div>
+                <!-- Series -->
+                <div class="col-span-4 sm:col-span-2">
+                  <label class="text-xs font-medium text-gray-500 mb-1 block">Series</label>
+                  <input type="number" min="1"
+                    [value]="fila.series"
+                    (change)="setNumCampo(fila.uid, 'series', $any($event.target).value)"
+                    class="input-base text-sm w-full" />
+                </div>
+                <!-- Frecuencia -->
+                <div class="col-span-3 sm:col-span-1">
+                  <label class="text-xs font-medium text-gray-500 mb-1 block">Frec.</label>
+                  <select class="input-base text-sm w-full"
+                    [value]="fila.frecuencia"
+                    (change)="setFrecuencia(fila.uid, $any($event.target).value)">
+                    @for (f of FRECUENCIAS; track f.value) {
+                      <option [value]="f.value">{{ f.label }}</option>
+                    }
+                  </select>
+                </div>
+                <!-- Eliminar -->
+                <div class="col-span-1 flex justify-end">
+                  <button type="button" (click)="quitarEjercicio(fila.uid)"
+                    class="w-8 h-8 rounded-lg text-red-400 hover:bg-red-50 flex items-center justify-center transition-colors text-lg font-bold"
+                    title="Eliminar ejercicio">
+                    ×
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- ── Error ── -->
+    @if (errorGuardado()) {
+      <div class="bg-red-50 border border-red-200 rounded-xl px-5 py-3 text-sm text-red-700 flex items-center gap-2">
+        <span class="font-bold text-red-500">!</span>
+        {{ errorGuardado() }}
+      </div>
     }
-  </div>
 
-  <div class="flex flex-col gap-1">
-    <label class="text-sm font-medium text-gray-700">Observaciones</label>
-    <textarea formControlName="observaciones" rows="2" placeholder="Observaciones adicionales..." class="input-base resize-none"></textarea>
-  </div>
+    <!-- ── Barra de acción ── -->
+    <div class="bg-white rounded-xl shadow-[var(--shadow-card)] border border-gray-100 px-6 py-4 flex items-center justify-between gap-4">
+      <button type="button" (click)="cancelar()" class="btn-secondary" [disabled]="guardando()">
+        Cancelar
+      </button>
 
-  <div class="flex flex-col gap-1">
-    <label class="text-sm font-medium text-gray-700">Estado</label>
-    <select formControlName="estado" class="input-base"
-      [class.input-error]="form.get('estado')?.invalid && form.get('estado')?.touched">
-      <option value="">Seleccione...</option>
-      <option value="ACTIVO">Activo</option>
-      <option value="COMPLETADO">Completado</option>
-      <option value="SUSPENDIDO">Suspendido</option>
-    </select>
-    @if (form.get('estado')?.invalid && form.get('estado')?.touched) {
-      <span class="text-xs text-red-500">Campo requerido</span>
-    }
-  </div>
+      <div class="flex items-center gap-4">
+        @if (guardando()) {
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 rounded-full border-2 border-[#1c3766] border-t-transparent animate-spin"></div>
+            <span class="text-sm text-gray-500 animate-pulse">{{ pasoGuardado() }}</span>
+          </div>
+        } @else if (sesionesPreview().length > 0) {
+          <div class="text-right hidden sm:block">
+            <p class="text-xs text-gray-400">Resumen</p>
+            <p class="text-sm font-semibold text-gray-700">
+              {{ sesionesPreview().length }} sesiones · {{ filaEjercicios().length }} ejercicios
+            </p>
+          </div>
+        }
+        <button type="button" (click)="guardar()" class="btn-primary"
+          [disabled]="guardando()">
+          @if (guardando()) { Generando... }
+          @else if (planCreadoId() !== null) { Ir al listado → }
+          @else { Confirmar Plan de Tratamiento }
+        </button>
+      </div>
+    </div>
 
-  <div class="flex flex-col gap-1">
-    <label class="text-sm font-medium text-gray-700">ID Evaluación Inicial (opcional)</label>
-    <input formControlName="evaluacionInicialId" type="number" placeholder="Ingrese ID de la evaluación inicial" class="input-base" />
-  </div>
-
-  <div class="flex justify-end gap-3 pt-2">
-    <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
-    <button type="submit" class="btn-primary">Guardar</button>
-  </div>
-
-</form>
+  }
+</div>
