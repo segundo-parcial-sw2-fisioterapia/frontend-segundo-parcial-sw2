@@ -15,7 +15,7 @@ export class EvaluacionesInicialesService {
             id categoria_enfermedad categoria_semaforo categoria_trabajo
             descripcion_enfermedad fecha_evaluacion nivel
             observaciones justificacion_semaforo empleado_id
-            tiempo_sesion_minutos
+            tiempo_sesion_minutos estado
             paciente { id persona { nombre apellido } }
           }
         }
@@ -31,8 +31,8 @@ export class EvaluacionesInicialesService {
           verEvaluacionInicial(id: $id) {
             id categoria_enfermedad categoria_semaforo nivel
             fecha_evaluacion descripcion_enfermedad
-            justificacion_semaforo observaciones empleado_id
-            tiempo_sesion_minutos
+            justificacion_semaforo observaciones empleado_id categoria_trabajo
+            tiempo_sesion_minutos estado
             paciente { id persona { nombre apellido } }
           }
         }`,
@@ -48,7 +48,7 @@ export class EvaluacionesInicialesService {
         `query($pacienteId: Int!) {
           listarEvaluacionesPorPaciente(pacienteId: $pacienteId) {
             id categoria_enfermedad categoria_semaforo
-            nivel fecha_evaluacion
+            nivel fecha_evaluacion estado
           }
         }`,
         { pacienteId }
@@ -62,7 +62,7 @@ export class EvaluacionesInicialesService {
       .mutate<{ crearEvaluacionesIniciales: any }>(
         `mutation($datos: CreateEvaluacionesInnicialeInput!) {
           crearEvaluacionesIniciales(datos: $datos) {
-            id categoria_enfermedad categoria_semaforo nivel
+            id categoria_enfermedad categoria_semaforo nivel estado
           }
         }`,
         { datos }
@@ -76,7 +76,7 @@ export class EvaluacionesInicialesService {
       .mutate<{ editarEvaluacionInicial: any }>(
         `mutation($datos: UpdateEvaluacionesInnicialeInput!) {
           editarEvaluacionInicial(datos: $datos) {
-            id categoria_semaforo nivel
+            id categoria_semaforo nivel categoria_trabajo estado
           }
         }`,
         { datos }

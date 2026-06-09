@@ -10,6 +10,7 @@ import {
 } from '../../../nucleo/graphql/gestion-administrativa/mensualidades';
 import { EmpleadosService } from '../../../nucleo/graphql/gestion-administrativa/empleados';
 import { PacientesService } from '../../../nucleo/graphql/gestion-clinica/pacientes';
+import { BiGraphQLService } from '../../../nucleo/graphql/bi-automatizacion/bi-graphql.service';
 import { LoginService } from '../../../nucleo/rest/login.service';
 import { Modal } from '../../../compartido/modal/modal';
 import { Paginacion, PaginaInfo } from '../../../compartido/paginacion/paginacion';
@@ -25,6 +26,7 @@ export class Mensualidades implements OnInit {
   private mensualidadesService = inject(MensualidadesService);
   private empleadosService = inject(EmpleadosService);
   private pacientesService = inject(PacientesService);
+  private biGql = inject(BiGraphQLService);
   protected auth = inject(LoginService);
   private fb = inject(FormBuilder);
 

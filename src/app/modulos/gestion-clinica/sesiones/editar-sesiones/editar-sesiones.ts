@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { SesionesService } from '../../../../nucleo/graphql/gestion-clinica/sesiones';
+import { BiGraphQLService } from '../../../../nucleo/graphql/bi-automatizacion/bi-graphql.service';
 import { LoginService } from '../../../../nucleo/rest/login.service';
 
 @Component({
@@ -14,6 +15,7 @@ export class EditarSesiones implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private sesionesService = inject(SesionesService);
+  private biGql = inject(BiGraphQLService);
   private auth = inject(LoginService);
   private fb = inject(FormBuilder);
 

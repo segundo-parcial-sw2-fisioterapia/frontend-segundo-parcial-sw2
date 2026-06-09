@@ -106,6 +106,16 @@
   >
     <ng-template #accionesTemplate let-fila>
 
+      <!-- Badge blockchain (sesión con hash registrado) -->
+      @if (fila.hash_blockchain) {
+        <span
+          class="px-2 py-0.5 text-xs rounded-full bg-purple-100 text-purple-700 font-medium"
+          [title]="'Hash: ' + fila.hash_blockchain"
+        >
+          Blockchain
+        </span>
+      }
+
       <!-- Ver Detalle (siempre disponible) -->
       <button
         (click)="verDetalle(fila.id)"

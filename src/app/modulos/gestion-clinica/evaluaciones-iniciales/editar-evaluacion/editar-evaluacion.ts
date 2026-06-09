@@ -57,7 +57,8 @@ export class EditarEvaluacion implements OnInit {
       return;
     }
     this.guardando.set(true);
-    this.service.editarEvaluacionInicial(this.form.value).subscribe({
+    const datosGuardar = { ...this.form.value, estado: 'TERMINADA' };
+    this.service.editarEvaluacionInicial(datosGuardar).subscribe({
       next: () => {
         this.guardando.set(false);
         this.router.navigate(['/app/evaluaciones-iniciales']);

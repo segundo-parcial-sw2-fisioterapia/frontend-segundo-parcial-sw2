@@ -10,30 +10,123 @@
     </button>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-    <div class="bg-white rounded-xl p-5 shadow-[var(--shadow-card)] border border-gray-50 flex items-center gap-4">
-      <div class="w-12 h-12 bg-primary-50 rounded-lg flex items-center justify-center shrink-0">
-        <svg class="w-6 h-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  @if (esRecepcionista() || esAdmin()) {
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <app-kpi-card titulo="Programadas para Hoy" [valor]="evaluacionesHoy()">
+        <svg icon class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
-      </div>
-      <div>
-        <p class="text-sm font-medium text-gray-500">Programadas para Hoy</p>
-        <p class="text-2xl font-bold text-gray-900">{{ evaluacionesHoy() }}</p>
-      </div>
+      </app-kpi-card>
+      <app-kpi-card titulo="En espera (sin fisio)" [valor]="kpiEnEspera()" iconColorClass="bg-amber-50 text-amber-600">
+        <svg icon class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </app-kpi-card>
     </div>
-  </div>
+
+    @if (fisioterapeutas().length > 0) {
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 mb-6">
+        <h2 class="text-sm font-semibold text-gray-700 mb-3">
+          Carga de trabajo — Fisioterapeutas
+        </h2>
+        @if (cargandoFisios()) {
+          <div class="flex gap-3">
+            @for (i of [1,2,3]; track i) {
+              <div class="h-16 flex-1 bg-gray-100 rounded-lg animate-pulse"></div>
+            }
+          </div>
+        } @else {
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            @for (fisio of cargaFisioterapeutas(); track fisio.id) {
+              <div
+                class="flex items-center justify-between rounded-lg border px-4 py-3 cursor-pointer transition"
+                [class]="fisio.libre
+                  ? 'border-green-200 bg-green-50 hover:bg-green-100'
+                  : 'border-blue-200 bg-blue-50 hover:bg-blue-100'"
+              >
+                <div>
+                  <p class="text-sm font-medium text-gray-800">
+                    {{ fisio.persona?.nombre }} {{ fisio.persona?.apellido }}
+                  </p>
+                  <p class="text-xs text-gray-500 mt-0.5">
+                    Carga actual: {{ fisio.pendientes }} evaluación(es)
+                  </p>
+                </div>
+                <span
+                  class="text-xs font-semibold px-2 py-1 rounded-full"
+                  [class]="fisio.libre
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-blue-100 text-blue-700'"
+                >
+                  {{ fisio.estadoTexto }}
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
 
   <app-tabla
     [columnas]="columnas"
     [filas]="evaluaciones()"
     [cargando]="cargando()"
     mensajeVacio="No hay evaluaciones iniciales registradas"
-    (ver)="abrirVer($event)"
-    (editar)="abrirEditar($event)"
-    (eliminar)="eliminarEvaluacion($event)"
-  />
+  >
+    <ng-template #accionesTemplate let-fila>
+      <!-- Ver Detalle -->
+      <button
+        (click)="abrirVer(fila)"
+        class="px-2.5 py-1 text-xs rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 font-medium transition"
+      >
+        Ver
+      </button>
 
+      <!-- Recepcionista / Admin: Asignar o Reasignar -->
+      @if (esRecepcionista() || esAdmin()) {
+        @if (fila.estado === 'PROGRAMADA' || fila.estado === 'INICIADA') {
+          <button
+            (click)="abrirReasignar(fila)"
+            class="px-2.5 py-1 text-xs rounded-lg bg-amber-100 text-amber-700 hover:bg-amber-200 font-medium transition"
+          >
+            {{ fila.empleado_id ? 'Reasignar' : 'Asignar Fisio' }}
+          </button>
+        }
+      }
+
+      <!-- Fisioterapeuta: Iniciar / Continuar -->
+      @if (esFisioterapeuta()) {
+        @if (fila.estado === 'PROGRAMADA') {
+          <button
+            (click)="iniciarEvaluacion(fila)"
+            class="px-2.5 py-1 text-xs rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 font-medium transition"
+          >
+            Iniciar
+          </button>
+        } @else if (fila.estado === 'INICIADA') {
+          <button
+            (click)="iniciarEvaluacion(fila)"
+            class="px-2.5 py-1 text-xs rounded-lg bg-indigo-100 text-indigo-700 hover:bg-indigo-200 font-medium transition"
+          >
+            Continuar
+          </button>
+        }
+      }
+
+      <!-- Admin: Eliminar -->
+      @if (esAdmin()) {
+        <button
+          (click)="eliminarEvaluacion(fila.id)"
+          class="px-2.5 py-1 text-xs rounded-lg bg-red-100 text-red-700 hover:bg-red-200 font-medium transition"
+        >
+          Eliminar
+        </button>
+      }
+    </ng-template>
+  </app-tabla>
+
+  <!-- Modal Crear -->
   <app-modal titulo="Nueva Evaluación Inicial" [abierto]="modalCrear()" (cerrar)="cerrarModalCrear()">
     <app-crear-evaluaciones-iniciales
       [pacientes]="pacientesBuscados()"
@@ -44,7 +137,61 @@
     />
   </app-modal>
 
+  <!-- Modal Ver -->
   <app-modal titulo="Detalle Evaluación Inicial" [abierto]="modalVer()" (cerrar)="modalVer.set(false)">
     <app-ver-evaluaciones-iniciales [evaluacion]="evaluacionSeleccionada()" />
+  </app-modal>
+
+  <!-- Modal Reasignar -->
+  <app-modal
+    titulo="Asignar / Reasignar Fisioterapeuta"
+    [abierto]="modalReasignar()"
+    (cerrar)="modalReasignar.set(false)"
+  >
+    @if (evaluacionReasignar()) {
+      <div class="space-y-4">
+        <p class="text-sm text-gray-600">
+          Evaluación de {{ evaluacionReasignar().paciente?.persona?.nombre }}
+          {{ evaluacionReasignar().paciente?.persona?.apellido }}
+        </p>
+
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-gray-700">Seleccionar fisioterapeuta</label>
+          @for (fisio of cargaFisioterapeutas(); track fisio.id) {
+            <div
+              (click)="fisioSeleccionadoId.set(fisio.id)"
+              class="flex items-center justify-between rounded-lg border px-4 py-3 cursor-pointer transition"
+              [class]="fisioSeleccionadoId() === fisio.id
+                ? 'border-primary-500 bg-primary-50'
+                : 'border-gray-200 hover:bg-gray-50'"
+            >
+              <div>
+                <p class="text-sm font-medium text-gray-800">
+                  {{ fisio.persona?.nombre }} {{ fisio.persona?.apellido }}
+                </p>
+                <p class="text-xs text-gray-500">Carga actual: {{ fisio.pendientes }} evaluación(es)</p>
+              </div>
+              <span
+                class="text-xs font-semibold px-2 py-1 rounded-full"
+                [class]="fisio.libre ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'"
+              >
+                {{ fisio.estadoTexto }}
+              </span>
+            </div>
+          }
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <button class="btn-secondary" (click)="modalReasignar.set(false)">Cancelar</button>
+          <button
+            class="btn-primary"
+            [disabled]="!fisioSeleccionadoId()"
+            (click)="confirmarReasignar()"
+          >
+            Confirmar Asignación
+          </button>
+        </div>
+      </div>
+    }
   </app-modal>
 </div>

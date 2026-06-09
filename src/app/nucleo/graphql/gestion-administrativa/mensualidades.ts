@@ -27,6 +27,10 @@ export interface FacturaEnriquecida {
   concepto?: string;
   empleadoId?: string;
   metodoPago?: string;
+  urlDocumento?: string;
+  hashBlockchain?: string;
+  txBlockchain?: string;
+  fechaRegistroBlockchain?: string;
   fechaCreacion?: string;
   paciente?: { nombre?: string; apellido?: string; ci?: string };
   empleado?: { id: string; cargo: string; especialidad?: string; persona?: { nombre?: string; apellido?: string } };
@@ -50,7 +54,8 @@ const FRAGMENT_MENSUALIDAD_ENRIQUECIDA = `
 `;
 const FRAGMENT_FACTURA_ENRIQUECIDA = `
   id pacienteId numeroFactura fechaEmision montoTotal estado mensualidadId
-  concepto empleadoId metodoPago fechaCreacion
+  concepto empleadoId metodoPago urlDocumento hashBlockchain txBlockchain
+  fechaRegistroBlockchain fechaCreacion
   paciente { nombre apellido ci }
   empleado { id cargo especialidad persona { nombre apellido } }
 `;

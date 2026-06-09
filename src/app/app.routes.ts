@@ -24,6 +24,8 @@ import { Facturas } from './modulos/gestion-administrativa/facturas/facturas';
 import { Tarifas } from './modulos/gestion-administrativa/tarifas/tarifas';
 import { Mensualidades } from './modulos/gestion-administrativa/mensualidades/mensualidades';
 import { Proximamente } from './modulos/placeholders/proximamente';
+import { Predictivo } from './modulos/bi-automatizacion/predictivo';
+import { Reportes } from './modulos/bi-automatizacion/reportes/reportes';
 
 export const routes: Routes = [
   {
@@ -178,19 +180,15 @@ export const routes: Routes = [
         children: [
           {
             path: 'reportes',
-            component: Proximamente,
-            data: {
-              titulo: 'Reportes y Estadísticas',
-              descripcion: 'Informes de rendimiento clínico, ocupación y resultados por período.',
-            },
+            component: Reportes,
+            canActivate: [permisoGuard],
+            data: { roles: ['administrador', 'director', 'contador'] },
           },
           {
             path: 'predictivo',
-            component: Proximamente,
-            data: {
-              titulo: 'Análisis Predictivo',
-              description: 'Modelos de IA para predicción de alta médica y riesgo de recaída.',
-            },
+            component: Predictivo,
+            canActivate: [permisoGuard],
+            data: { roles: ['director', 'fisioterapeuta'] },
           },
         ],
       },

@@ -23,7 +23,7 @@ export class CrearEvaluacionesIniciales {
 
   form = this.fb.group({
     pacienteId: [null as number | null, Validators.required],
-    empleadoId: [null as number | null, Validators.required],
+    empleadoId: [null as number | null],
     fecha_evaluacion: ['', Validators.required],
     categoria_enfermedad: [null],
     categoria_semaforo: [null],

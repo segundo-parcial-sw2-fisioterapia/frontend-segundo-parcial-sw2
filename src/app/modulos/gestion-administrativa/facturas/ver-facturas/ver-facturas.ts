@@ -9,8 +9,7 @@ export class VerFacturas {
   @Input() factura: any | null = null;
   @Input() generandoPdf = false;
 
-  /** Emite el ID de la factura para registrar en blockchain */
-  @Output() registrarBlockchain = new EventEmitter<number>();
+
 
   /** Emite el ID de la factura para generar e imprimir el PDF */
   @Output() imprimirFactura = new EventEmitter<number>();

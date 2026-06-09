@@ -111,12 +111,7 @@ export class Facturas implements OnInit {
     });
   }
 
-  /** Registra la factura en blockchain y recarga. */
-  registrarEnBlockchain(id: number): void {
-    this.facturasService.registrarEnBlockchain(id).subscribe({
-      next: () => { this.modalVer.set(false); this.cargarFacturas(); },
-    });
-  }
+
 
   /** Genera e imprime la factura como PDF/HTML. */
   imprimirFactura(id: number): void {
