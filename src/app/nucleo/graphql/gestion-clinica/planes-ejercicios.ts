@@ -56,7 +56,7 @@ export class PlanesEjerciciosService {
   crearPlanEjercicio(datos: any): Observable<any> {
     return this.gql
       .mutate<{ crearPlanesEjercicios: any }>(
-        `mutation($datos: CreatePlanEjercicioInput!) {
+        `mutation($datos: CreatePlanesEjercicioInput!) {
           crearPlanesEjercicios(datos: $datos) {
             id frecuencia repeticiones series ejercicio { nombre }
           }
@@ -70,7 +70,7 @@ export class PlanesEjerciciosService {
   editarPlanEjercicio(datos: any): Observable<any> {
     return this.gql
       .mutate<{ editarPlanEjercicio: any }>(
-        `mutation($datos: UpdatePlanEjercicioInput!) {
+        `mutation($datos: UpdatePlanesEjercicioInput!) {
           editarPlanEjercicio(datos: $datos) {
             id frecuencia repeticiones series activo
           }

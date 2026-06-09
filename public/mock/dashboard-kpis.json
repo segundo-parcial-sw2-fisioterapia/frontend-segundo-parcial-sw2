@@ -2,9 +2,9 @@
   "kpis": {
     "pacientesActivos": 284,
     "pacientesActivos_variacion": 12,
-    "citasHoy": 18,
-    "citasSemana": 94,
-    "citasSemana_variacion": -3,
+    "sesionesHoy": 18,
+    "sesionesSemana": 94,
+    "sesionesSemana_variacion": -3,
     "sesionesEsteMes": 312,
     "sesionesEsteMes_variacion": 8,
     "ingresosMes": 48750,
@@ -21,7 +21,7 @@
     { "nombre": "Dra. María Soto", "iniciales": "MS", "ocupacion": 85 },
     { "nombre": "Lic. Juan Pérez", "iniciales": "JP", "ocupacion": 65 }
   ],
-  "citasPorMes": [
+  "sesionesPorMes": [
     { "mes": "Dic", "valor": 267 },
     { "mes": "Ene", "valor": 312 },
     { "mes": "Feb", "valor": 289 },
@@ -29,7 +29,7 @@
     { "mes": "Abr", "valor": 318 },
     { "mes": "May", "valor": 356 }
   ],
-  "proximasCitas": [
+  "proximasSesiones": [
     { "hora": "08:30", "paciente": "Juan Vásquez Torres", "tipo": "Fisioterapia Neurológica", "fisio": "A. Vásquez", "estado": "CONFIRMADA" },
     { "hora": "09:00", "paciente": "María López Gutiérrez", "tipo": "Rehabilitación Deportiva", "fisio": "C. Mendoza", "estado": "CONFIRMADA" },
     { "hora": "09:30", "paciente": "Carlos Ríos Paz", "tipo": "Terapia Manual", "fisio": "M. Soto", "estado": "PENDIENTE" },

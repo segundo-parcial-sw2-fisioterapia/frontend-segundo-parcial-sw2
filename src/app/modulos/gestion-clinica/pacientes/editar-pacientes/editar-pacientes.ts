@@ -1,9 +1,10 @@
 import { Component, Input, Output, EventEmitter, OnChanges, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { FormularioPersona } from '../../personas/formulario-persona/formulario-persona';
 
 @Component({
   selector: 'app-editar-pacientes',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, FormularioPersona],
   templateUrl: './editar-pacientes.html',
   styleUrl: './editar-pacientes.css',
 })
@@ -19,11 +20,35 @@ export class EditarPacientes implements OnChanges {
     estado: [''],
     direccion: [''],
     sexo: [''],
+    persona: this.fb.group({
+      id: [null as number | null],
+      nombre: ['', Validators.required],
+      apellido: ['', Validators.required],
+      ci: ['', Validators.required],
+      telefono: [''],
+      email: ['', [Validators.required, Validators.email]],
+    })
   });
 
   ngOnChanges(): void {
-    if (this.paciente) this.form.patchValue(this.paciente);
-    else this.form.reset();
+    if (this.paciente) {
+      this.form.patchValue({
+        id: this.paciente.id,
+        estado: this.paciente.estado,
+        direccion: this.paciente.direccion,
+        sexo: this.paciente.sexo,
+        persona: {
+          id: this.paciente.persona?.id ?? null,
+          nombre: this.paciente.persona?.nombre ?? '',
+          apellido: this.paciente.persona?.apellido ?? '',
+          ci: this.paciente.persona?.ci ?? '',
+          telefono: this.paciente.persona?.telefono ?? '',
+          email: this.paciente.persona?.email ?? '',
+        }
+      });
+    } else {
+      this.form.reset();
+    }
   }
 
   /** Valida y emite los datos actualizados al componente padre */

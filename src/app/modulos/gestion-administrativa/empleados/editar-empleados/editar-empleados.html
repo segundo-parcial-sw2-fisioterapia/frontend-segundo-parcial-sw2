@@ -1,0 +1,68 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+
+  <!-- Datos Personales -->
+  <div class="border-b border-gray-150 pb-3 mb-4">
+    <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider">Datos Personales</h3>
+  </div>
+
+  <app-formulario-persona [formGroup]="$any(form.controls.persona)"></app-formulario-persona>
+
+  <!-- Datos Laborales -->
+  <div class="border-b border-gray-150 pb-3 pt-2 mb-4">
+    <h3 class="text-sm font-semibold text-gray-800 uppercase tracking-wider">Datos Laborales</h3>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Cargo <span class="text-red-500">*</span></label>
+    <input formControlName="cargo" type="text" class="input-base"
+      [class.input-error]="form.get('cargo')?.invalid && form.get('cargo')?.touched" />
+    @if (form.get('cargo')?.invalid && form.get('cargo')?.touched) {
+      <span class="text-xs text-red-500">Cargo requerido</span>
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Especialidad</label>
+    <input formControlName="especialidad" type="text" class="input-base" />
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Salario base (Bs) <span class="text-red-500">*</span></label>
+      <input formControlName="salarioBase" type="number" min="0" step="0.01" class="input-base"
+        [class.input-error]="form.get('salarioBase')?.invalid && form.get('salarioBase')?.touched" />
+      @if (form.get('salarioBase')?.invalid && form.get('salarioBase')?.touched) {
+        <span class="text-xs text-red-500">Salario válido requerido</span>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Tipo de contrato <span class="text-red-500">*</span></label>
+      <select formControlName="tipoContrato" class="input-base">
+        <option value="tiempo_completo">Tiempo completo</option>
+        <option value="medio_tiempo">Medio tiempo</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Estado laboral <span class="text-red-500">*</span></label>
+    <select formControlName="estadoLaboral" class="input-base">
+      <option value="activo">Activo</option>
+      <option value="suspendido">Suspendido</option>
+      <option value="retirado">Retirado</option>
+    </select>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Fecha de baja</label>
+    <input formControlName="fechaBaja" type="date" class="input-base" />
+    <p class="text-xs text-gray-400">Solo completar al finalizar el contrato</p>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-2">
+    <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+    <button type="submit" class="btn-primary">Guardar cambios</button>
+  </div>
+
+</form>

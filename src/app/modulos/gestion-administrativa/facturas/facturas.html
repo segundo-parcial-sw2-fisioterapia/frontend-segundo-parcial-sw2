@@ -1,0 +1,86 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div>
+    <h1 class="text-xl font-bold text-gray-800">Facturación (Auditoría)</h1>
+    <p class="text-sm text-gray-500 mt-0.5">Consulta y auditoría de facturas emitidas — solo lectura</p>
+  </div>
+
+  <!-- KPIs -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <app-kpi-card
+      titulo="Total Facturado"
+      [valor]="'Bs ' + totalFacturado().toFixed(2)"
+      iconColorClass="bg-green-50 text-green-600"
+    />
+    <app-kpi-card
+      titulo="Facturas Emitidas"
+      [valor]="cantidadFacturas()"
+      iconColorClass="bg-blue-50 text-blue-600"
+    />
+    <app-kpi-card
+      titulo="Facturas Anuladas"
+      [valor]="cantidadAnuladas()"
+      iconColorClass="bg-red-50 text-red-600"
+    />
+  </div>
+
+  <!-- Filtros -->
+  <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-wrap items-end gap-4">
+    <div>
+      <label class="block text-xs font-medium text-gray-600 mb-1 uppercase tracking-wide">Mes</label>
+      <select [(ngModel)]="mesSeleccionado" class="input-field" style="min-width: 140px;">
+        @for (mes of meses; track mes.valor) {
+          <option [value]="mes.valor">{{ mes.nombre }}</option>
+        }
+      </select>
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-gray-600 mb-1 uppercase tracking-wide">Año</label>
+      <select [(ngModel)]="anioSeleccionado" class="input-field" style="min-width: 110px;">
+        @for (anio of anios; track anio) {
+          <option [value]="anio">{{ anio }}</option>
+        }
+      </select>
+    </div>
+    <button (click)="aplicarFiltros()" class="btn-primary flex items-center gap-2">
+      <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.553.894l-4 2A1 1 0 016 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"/>
+      </svg>
+      Filtrar
+    </button>
+    @if (cargando()) {
+      <span class="text-sm text-gray-400 animate-pulse">Cargando...</span>
+    }
+  </div>
+
+  <!-- Tabla -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <app-tabla
+      [columnas]="columnas"
+      [filas]="facturas()"
+      [cargando]="cargando()"
+      [conEditar]="false"
+      [conEliminar]="false"
+      mensajeVacio="No hay facturas registradas en este período."
+      (ver)="abrirVer($event)"
+    />
+  </div>
+
+  <app-paginacion [paginaInfo]="paginaInfo()" (cambiarPagina)="cambiarPagina($event)" />
+
+  <!-- Modal Ver Factura -->
+  <app-modal titulo="Detalle de Factura" [abierto]="modalVer()" (cerrar)="modalVer.set(false)">
+    @if (cargandoDetalle()) {
+      <div class="flex items-center justify-center py-12">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+      </div>
+    } @else {
+      <app-ver-facturas
+        [factura]="facturaSeleccionada()"
+        [generandoPdf]="generandoPdf()"
+
+        (imprimirFactura)="imprimirFactura($event)"
+      />
+    }
+  </app-modal>
+</div>

@@ -1,9 +1,10 @@
 import { Component, Output, EventEmitter, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { FormularioPersona } from '../formulario-persona/formulario-persona';
 
 @Component({
   selector: 'app-crear-personas',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, FormularioPersona],
   templateUrl: './crear-personas.html',
   styleUrl: './crear-personas.css',
 })
@@ -18,6 +19,7 @@ export class CrearPersonas {
     apellido: ['', Validators.required],
     ci: ['', Validators.required],
     telefono: [''],
+    email: ['', [Validators.required, Validators.email]],
   });
 
   /** Valida y emite los datos del formulario al componente padre */

@@ -13,9 +13,9 @@ export class EvaluacionesInicialesService {
         query {
           listarEvaluacionesIniciales {
             id categoria_enfermedad categoria_semaforo categoria_trabajo
-            descripcion_enfermedad fecha_evaluacion frecuencia_sesion
-            es_vigente observaciones justificacion_semaforo empleado_id
-            tiempo_sesion_minutos
+            descripcion_enfermedad fecha_evaluacion nivel
+            observaciones justificacion_semaforo empleado_id
+            tiempo_sesion_minutos estado
             paciente { id persona { nombre apellido } }
           }
         }
@@ -29,11 +29,11 @@ export class EvaluacionesInicialesService {
       .query<{ verEvaluacionInicial: any }>(
         `query($id: Int!) {
           verEvaluacionInicial(id: $id) {
-            id categoria_enfermedad categoria_semaforo es_vigente
-            fecha_evaluacion frecuencia_sesion descripcion_enfermedad
-            justificacion_semaforo observaciones empleado_id
-            tiempo_sesion_minutos
-            paciente { persona { nombre apellido } }
+            id categoria_enfermedad categoria_semaforo nivel
+            fecha_evaluacion descripcion_enfermedad
+            justificacion_semaforo observaciones empleado_id categoria_trabajo
+            tiempo_sesion_minutos estado
+            paciente { id persona { nombre apellido } }
           }
         }`,
         { id }
@@ -48,7 +48,7 @@ export class EvaluacionesInicialesService {
         `query($pacienteId: Int!) {
           listarEvaluacionesPorPaciente(pacienteId: $pacienteId) {
             id categoria_enfermedad categoria_semaforo
-            es_vigente fecha_evaluacion frecuencia_sesion
+            nivel fecha_evaluacion estado
           }
         }`,
         { pacienteId }
@@ -60,9 +60,9 @@ export class EvaluacionesInicialesService {
   crearEvaluacionInicial(datos: any): Observable<any> {
     return this.gql
       .mutate<{ crearEvaluacionesIniciales: any }>(
-        `mutation($datos: CreateEvaluacionInicialInput!) {
+        `mutation($datos: CreateEvaluacionesInnicialeInput!) {
           crearEvaluacionesIniciales(datos: $datos) {
-            id categoria_enfermedad categoria_semaforo es_vigente
+            id categoria_enfermedad categoria_semaforo nivel estado
           }
         }`,
         { datos }
@@ -74,9 +74,9 @@ export class EvaluacionesInicialesService {
   editarEvaluacionInicial(datos: any): Observable<any> {
     return this.gql
       .mutate<{ editarEvaluacionInicial: any }>(
-        `mutation($datos: UpdateEvaluacionInicialInput!) {
+        `mutation($datos: UpdateEvaluacionesInnicialeInput!) {
           editarEvaluacionInicial(datos: $datos) {
-            id categoria_semaforo es_vigente
+            id categoria_semaforo nivel categoria_trabajo estado
           }
         }`,
         { datos }

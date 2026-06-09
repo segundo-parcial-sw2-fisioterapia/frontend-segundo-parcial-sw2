@@ -8,6 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { FormularioPersona } from '../../personas/formulario-persona/formulario-persona';
 
 export type DatosCrearPaciente =
   | {
@@ -20,7 +21,7 @@ export type DatosCrearPaciente =
     }
   | {
       tipo: 'nueva';
-      persona: { nombre: string; apellido: string; ci: string; telefono: string };
+      persona: { nombre: string; apellido: string; ci: string; telefono: string; email: string };
       fecha_nacimiento: string;
       sexo: string;
       estado: string;
@@ -29,7 +30,7 @@ export type DatosCrearPaciente =
 
 @Component({
   selector: 'app-crear-pacientes',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, FormularioPersona],
   templateUrl: './crear-pacientes.html',
   styleUrl: './crear-pacientes.css',
 })
@@ -52,6 +53,7 @@ export class CrearPacientes implements OnDestroy {
     apellido: ['', Validators.required],
     ci:       ['', Validators.required],
     telefono: [''],
+    email:    ['', [Validators.required, Validators.email]],
   });
 
   formPaciente = this.fb.group({
@@ -144,7 +146,7 @@ export class CrearPacientes implements OnDestroy {
     } else {
       this.guardar.emit({
         tipo: 'nueva',
-        persona: this.formPersona.value as { nombre: string; apellido: string; ci: string; telefono: string },
+        persona: this.formPersona.value as { nombre: string; apellido: string; ci: string; telefono: string; email: string },
         ...datosPaciente,
       });
     }

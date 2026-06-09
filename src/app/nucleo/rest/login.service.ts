@@ -10,8 +10,16 @@ export interface LoginCredenciales {
 }
 
 export interface LoginRespuesta {
-  token: string;
+  tokenAcceso: string;
+  tokenRefresco: string;
   usuario?: any;
+}
+
+export interface UsuarioAutenticado {
+  nombre: string;
+  correo: string;
+  roles: string[];
+  personaId?: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -21,21 +29,18 @@ export class LoginService {
 
   private readonly TOKEN_KEY = 'token';
 
-  /** Estado reactivo de autenticación */
   autenticado = signal<boolean>(this.tieneToken());
 
   /**
-   * Envía las credenciales al endpoint REST y almacena el token recibido.
+   * Envía las credenciales al endpoint REST y almacena el tokenAcceso recibido.
    */
   login(credenciales: LoginCredenciales): Observable<LoginRespuesta> {
-    return this.http
-      .post<LoginRespuesta>(`${enviroment.apiUrl}/auth/login`, credenciales)
-      .pipe(
-        tap((respuesta) => {
-          localStorage.setItem(this.TOKEN_KEY, respuesta.token);
-          this.autenticado.set(true);
-        })
-      );
+    return this.http.post<LoginRespuesta>(`${enviroment.apiUrl}/auth/login`, credenciales).pipe(
+      tap((respuesta) => {
+        localStorage.setItem(this.TOKEN_KEY, respuesta.tokenAcceso);
+        this.autenticado.set(true);
+      }),
+    );
   }
 
   /**
@@ -54,22 +59,57 @@ export class LoginService {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  /** Decodifica el JWT y retorna los datos básicos del usuario autenticado */
-  obtenerUsuario(): { nombre: string; correo: string; rol?: string } | null {
+  /**
+   * Decodifica el JWT y retorna los datos del usuario autenticado.
+   * Extrae nombre completo, correo y array de roles del payload.
+   */
+  obtenerUsuario(): UsuarioAutenticado | null {
     const token = this.obtenerToken();
     if (!token) return null;
     try {
       const partes = token.split('.');
       if (partes.length !== 3) return null;
       const base64 = partes[1].replace(/-/g, '+').replace(/_/g, '/');
-      const payload = JSON.parse(atob(base64));
+      const payload = JSON.parse(atob(base64)) as {
+        sub: number;
+        correo?: string;
+        roles?: string[];
+        persona?: { id: number; nombre: string; apellido: string };
+      };
+      const nombre = payload.persona
+        ? `${payload.persona.nombre} ${payload.persona.apellido}`.trim()
+        : String(payload.sub);
       return {
-        nombre: payload.nombre ?? payload.name ?? payload.sub ?? 'Administrador',
-        correo: payload.correo ?? payload.email ?? '',
-        rol: payload.rol ?? payload.role,
+        nombre,
+        correo: payload.correo ?? '',
+        roles: payload.roles ?? [],
+        personaId: payload.persona?.id ?? undefined,
       };
     } catch {
       return null;
+    }
+  }
+
+  /**
+   * Comprueba de manera estricta y literal si el usuario posee al menos uno
+   * de los roles indicados. No aplica bypass de administrador.
+   *
+   * @example
+   * auth.tieneRoles('administrador')               // true solo si es administrador
+   * auth.tieneRoles('administrador', 'fisioterapeuta') // true si tiene cualquiera de los dos
+   */
+  tieneRoles(...rolesRequeridos: string[]): boolean {
+    const token = this.obtenerToken();
+    if (!token) return false;
+    try {
+      const partes = token.split('.');
+      if (partes.length !== 3) return false;
+      const base64 = partes[1].replace(/-/g, '+').replace(/_/g, '/');
+      const payload = JSON.parse(atob(base64)) as { roles?: string[] };
+      const rolesUsuario: string[] = payload.roles ?? [];
+      return rolesRequeridos.some((rol) => rolesUsuario.includes(rol));
+    } catch {
+      return false;
     }
   }
 

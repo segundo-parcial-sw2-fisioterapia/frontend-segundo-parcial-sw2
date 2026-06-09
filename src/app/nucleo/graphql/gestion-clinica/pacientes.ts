@@ -13,7 +13,7 @@ export class PacientesService {
         query {
           listarPacientes {
             id estado sexo fecha_nacimiento fecha_registro direccion
-            persona { id nombre apellido ci telefono }
+            persona { id nombre apellido ci telefono email }
           }
         }
       `)
@@ -27,7 +27,7 @@ export class PacientesService {
         `query($id: Int!) {
           verPaciente(id: $id) {
             id estado sexo fecha_nacimiento fecha_registro direccion
-            persona { id nombre apellido ci telefono }
+            persona { id nombre apellido ci telefono email }
           }
         }`,
         { id }
@@ -41,7 +41,7 @@ export class PacientesService {
       .query<{ buscarPacientes: any[] }>(
         `query($termino: String!) {
           buscarPacientes(termino: $termino) {
-            id estado persona { nombre apellido ci telefono }
+            id estado persona { nombre apellido ci telefono email }
           }
         }`,
         { termino }
@@ -55,7 +55,7 @@ export class PacientesService {
       .mutate<{ crearPacientes: any }>(
         `mutation($datos: CreatePacienteInput!) {
           crearPacientes(datos: $datos) {
-            id estado sexo persona { nombre apellido }
+            id estado sexo persona { nombre apellido email }
           }
         }`,
         { datos }

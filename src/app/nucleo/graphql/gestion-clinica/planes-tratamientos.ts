@@ -12,14 +12,17 @@ export class PlanesTratamientosService {
       .query<{ listarPlanesTratamientos: any[] }>(`
         query {
           listarPlanesTratamientos {
-            id fecha_inicio fecha_fin_estimada estado
-            objetivo_terapeutico observaciones empleado_id
-            paciente { id persona { nombre apellido } }
-            evaluacion_inicial { id categoria_enfermedad }
+            id fecha_inicio estado
+            duracion_meses_estimada numero_sesiones_mes
+            objetivo_terapeutico observaciones tarifa_id
+            evaluacion_inicial { id paciente { persona { nombre apellido } } }
           }
         }
       `)
-      .pipe(map((d) => d.listarPlanesTratamientos));
+      .pipe(map((d) => d.listarPlanesTratamientos.map((p: any) => ({
+        ...p,
+        paciente: p.evaluacion_inicial?.paciente
+      }))));
   }
 
   /** Obtiene el detalle de un plan de tratamiento por ID */
@@ -28,15 +31,22 @@ export class PlanesTratamientosService {
       .query<{ verPlanTratamiento: any }>(
         `query($id: Int!) {
           verPlanTratamiento(id: $id) {
-            id fecha_inicio fecha_fin_estimada estado
-            objetivo_terapeutico observaciones empleado_id
-            paciente { persona { nombre apellido } }
-            evaluacion_inicial { id categoria_enfermedad }
+            id fecha_inicio estado
+            duracion_meses_estimada numero_sesiones_mes
+            objetivo_terapeutico observaciones tarifa_id
+            evaluacion_inicial { id paciente { persona { nombre apellido } } categoria_enfermedad }
           }
         }`,
         { id }
       )
-      .pipe(map((d) => d.verPlanTratamiento));
+      .pipe(map((d) => {
+        const p = d.verPlanTratamiento;
+        if (!p) return null;
+        return {
+          ...p,
+          paciente: p.evaluacion_inicial?.paciente
+        };
+      }));
   }
 
   /** Lista los planes de tratamiento de un paciente específico */
@@ -45,7 +55,7 @@ export class PlanesTratamientosService {
       .query<{ listarPlanesPorPaciente: any[] }>(
         `query($pacienteId: Int!) {
           listarPlanesPorPaciente(pacienteId: $pacienteId) {
-            id estado fecha_inicio fecha_fin_estimada objetivo_terapeutico
+            id estado fecha_inicio duracion_meses_estimada objetivo_terapeutico
           }
         }`,
         { pacienteId }
@@ -57,7 +67,7 @@ export class PlanesTratamientosService {
   crearPlanTratamiento(datos: any): Observable<any> {
     return this.gql
       .mutate<{ crearPlanesTratamientos: any }>(
-        `mutation($datos: CreatePlanTratamientoInput!) {
+        `mutation($datos: CreatePlanesTratamientoInput!) {
           crearPlanesTratamientos(datos: $datos) {
             id estado fecha_inicio objetivo_terapeutico
           }
@@ -71,8 +81,8 @@ export class PlanesTratamientosService {
   editarPlanTratamiento(datos: any): Observable<any> {
     return this.gql
       .mutate<{ editarPlanTratamiento: any }>(
-        `mutation($datos: UpdatePlanTratamientoInput!) {
-          editarPlanTratamiento(datos: $datos) { id estado fecha_fin_estimada }
+        `mutation($datos: UpdatePlanesTratamientoInput!) {
+          editarPlanTratamiento(datos: $datos) { id estado }
         }`,
         { datos }
       )

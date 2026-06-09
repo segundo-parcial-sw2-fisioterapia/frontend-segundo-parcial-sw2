@@ -20,10 +20,13 @@
     (eliminar)="eliminarSesion($event)"
   />
 
-  <app-modal titulo="Nueva Sesión Domiciliaria" [abierto]="modalCrear()" (cerrar)="modalCrear.set(false)">
+  <app-modal titulo="Nueva Sesión Domiciliaria" [abierto]="modalCrear()" (cerrar)="cerrarModalCrear()">
     <app-crear-sesiones-domiciliarias
+      [pacientes]="pacientesBuscados()"
+      [buscandoPaciente]="buscandoPaciente()"
+      (buscarPaciente)="buscarPaciente($event)"
       (guardar)="crearSesion($event)"
-      (cancelar)="modalCrear.set(false)"
+      (cancelar)="cerrarModalCrear()"
     />
   </app-modal>
 

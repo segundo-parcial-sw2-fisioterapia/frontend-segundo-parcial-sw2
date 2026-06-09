@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
@@ -9,6 +9,18 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 })
 export class CrearPlanesEjercicios {
   private fb = inject(FormBuilder);
+
+  // ── FK: Plan de Tratamiento ───────────────────────────────
+  @Input() planesTratamiento: any[] = [];
+  @Output() buscarPlanTratamiento = new EventEmitter<string>();
+  planTratamientoSeleccionado = signal<any | null>(null);
+  terminoPlanTratamiento = '';
+
+  // ── FK: Ejercicio ─────────────────────────────────────────
+  @Input() ejercicios: any[] = [];
+  @Output() buscarEjercicio = new EventEmitter<string>();
+  ejercicioSeleccionado = signal<any | null>(null);
+  terminoEjercicio = '';
 
   @Output() guardar = new EventEmitter<any>();
   @Output() cancelar = new EventEmitter<void>();
@@ -23,7 +35,14 @@ export class CrearPlanesEjercicios {
     activo: [false],
   });
 
-  /** Valida y emite los datos del formulario al componente padre */
+  onBuscarPlanTratamiento(t: string): void { this.terminoPlanTratamiento = t; this.buscarPlanTratamiento.emit(t); }
+  seleccionarPlanTratamiento(p: any): void { this.planTratamientoSeleccionado.set(p); this.form.patchValue({ planTratamientoId: Number(p.id) }); }
+  limpiarPlanTratamiento(): void { this.planTratamientoSeleccionado.set(null); this.form.patchValue({ planTratamientoId: null }); this.terminoPlanTratamiento = ''; this.buscarPlanTratamiento.emit(''); }
+
+  onBuscarEjercicio(t: string): void { this.terminoEjercicio = t; this.buscarEjercicio.emit(t); }
+  seleccionarEjercicio(e: any): void { this.ejercicioSeleccionado.set(e); this.form.patchValue({ ejercicioId: Number(e.id) }); }
+  limpiarEjercicio(): void { this.ejercicioSeleccionado.set(null); this.form.patchValue({ ejercicioId: null }); this.terminoEjercicio = ''; this.buscarEjercicio.emit(''); }
+
   enviar(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.guardar.emit(this.form.value);

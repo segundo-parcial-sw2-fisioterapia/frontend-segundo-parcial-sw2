@@ -4,7 +4,11 @@
       <h1 class="text-xl font-bold text-gray-800">Pacientes</h1>
       <p class="text-sm text-gray-500 mt-0.5">Gestión de pacientes del centro</p>
     </div>
-    <button (click)="abrirCrear()" class="btn-primary">
+    <button
+      *ngIf="auth.tieneRoles('administrador', 'recepcionista')"
+      (click)="abrirCrear()"
+      class="btn-primary"
+    >
       <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/></svg>
       Nuevo Paciente
     </button>

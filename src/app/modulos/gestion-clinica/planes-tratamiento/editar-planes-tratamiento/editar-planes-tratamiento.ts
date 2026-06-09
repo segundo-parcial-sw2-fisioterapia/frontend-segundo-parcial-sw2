@@ -17,7 +17,7 @@ export class EditarPlanesTratamiento implements OnChanges {
   form = this.fb.group({
     id: [null as number | null],
     estado: ['', Validators.required],
-    fecha_fin_estimada: [''],
+
     objetivo_terapeutico: ['', Validators.required],
     observaciones: [''],
   });

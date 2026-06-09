@@ -9,11 +9,13 @@ export class PersonasService {
   /** Lista todas las personas registradas en el sistema */
   listarPersonas(): Observable<any[]> {
     return this.gql
-      .query<{ listarPersonas: any[] }>(`
+      .query<{ listarPersonas: any[] }>(
+        `
         query {
-          listarPersonas { id nombre apellido ci telefono }
+          listarPersonas { id nombre apellido ci telefono email }
         }
-      `)
+      `,
+      )
       .pipe(map((d) => d.listarPersonas));
   }
 
@@ -22,9 +24,9 @@ export class PersonasService {
     return this.gql
       .query<{ verPersona: any }>(
         `query($id: Int!) {
-          verPersona(id: $id) { id nombre apellido ci telefono }
+          verPersona(id: $id) { id nombre apellido ci telefono email }
         }`,
-        { id }
+        { id },
       )
       .pipe(map((d) => d.verPersona));
   }
@@ -34,9 +36,9 @@ export class PersonasService {
     return this.gql
       .query<{ buscarPersonas: any[] }>(
         `query($termino: String!) {
-          buscarPersonas(termino: $termino) { id nombre apellido ci telefono }
+          buscarPersonas(termino: $termino) { id nombre apellido ci telefono email }
         }`,
-        { termino }
+        { termino },
       )
       .pipe(map((d) => d.buscarPersonas));
   }
@@ -46,9 +48,9 @@ export class PersonasService {
     return this.gql
       .mutate<{ crearPersonas: any }>(
         `mutation($datos: CreatePersonaInput!) {
-          crearPersonas(datos: $datos) { id nombre apellido ci }
+          crearPersonas(datos: $datos) { id nombre apellido ci email }
         }`,
-        { datos }
+        { datos },
       )
       .pipe(map((d) => d.crearPersonas));
   }
@@ -58,9 +60,9 @@ export class PersonasService {
     return this.gql
       .mutate<{ editarPersona: any }>(
         `mutation($datos: UpdatePersonaInput!) {
-          editarPersona(datos: $datos) { id nombre apellido telefono }
+          editarPersona(datos: $datos) { id nombre apellido telefono email }
         }`,
-        { datos }
+        { datos },
       )
       .pipe(map((d) => d.editarPersona));
   }
@@ -72,7 +74,7 @@ export class PersonasService {
         `mutation($id: Int!) {
           eliminarPersona(id: $id) { id nombre apellido }
         }`,
-        { id }
+        { id },
       )
       .pipe(map((d) => d.eliminarPersona));
   }

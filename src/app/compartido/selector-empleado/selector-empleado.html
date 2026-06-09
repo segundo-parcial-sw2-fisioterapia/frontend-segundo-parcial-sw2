@@ -1,0 +1,72 @@
+<div class="flex flex-col gap-1">
+  <label class="text-sm font-medium text-gray-700">{{ label }}</label>
+
+  @if (!empleadoSeleccionado()) {
+    <div class="relative">
+      <input
+        type="text"
+        [value]="termino()"
+        (input)="onBuscar($any($event.target).value)"
+        (focus)="abrirDropdown()"
+        (blur)="cerrarDropdown()"
+        [placeholder]="placeholder"
+        autocomplete="off"
+        class="input-base"
+        [class.input-error]="mostrarError"
+      />
+
+      @if (cargando()) {
+        <div class="absolute right-3 top-2.5 w-4 h-4 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+      }
+
+      @if (dropdownAbierto() && empleadosFiltrados().length > 0) {
+        <ul class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-panel max-h-48 overflow-y-auto">
+          @for (emp of empleadosFiltrados(); track emp.id) {
+            <li>
+              <button
+                type="button"
+                (mousedown)="seleccionar(emp)"
+                class="w-full text-left px-3 py-2.5 hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-0"
+              >
+                <span class="text-sm font-medium text-gray-800">
+                  {{ emp.persona?.nombre }} {{ emp.persona?.apellido }}
+                </span>
+                <span class="ml-2 text-xs text-gray-400">CI: {{ emp.persona?.ci }}</span>
+                <div class="text-xs text-gray-500 mt-0.5">
+                  Cargo: {{ emp.cargo }} @if (emp.especialidad) { · {{ emp.especialidad }} }
+                </div>
+              </button>
+            </li>
+          }
+        </ul>
+      } @else if (dropdownAbierto() && !cargando()) {
+        <ul class="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-panel p-3 text-center text-xs text-gray-400">
+          No se encontraron empleados activos.
+        </ul>
+      }
+    </div>
+  }
+
+  @if (empleadoSeleccionado()) {
+    <div class="flex items-center gap-2 px-3 py-2.5 bg-green-50 border border-green-200 rounded-lg">
+      <svg class="w-4 h-4 text-green-600 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+      </svg>
+      <span class="text-sm text-gray-800 flex-1">
+        <span class="font-medium">
+          {{ empleadoSeleccionado()?.persona?.nombre }} {{ empleadoSeleccionado()?.persona?.apellido }}
+        </span>
+        <span class="text-gray-500 ml-1.5">
+          {{ empleadoSeleccionado()?.cargo }} @if (empleadoSeleccionado()?.especialidad) { ({{ empleadoSeleccionado()?.especialidad }}) }
+        </span>
+      </span>
+      <button type="button" (click)="limpiar()" class="text-xs text-primary-600 hover:underline shrink-0">
+        Cambiar
+      </button>
+    </div>
+  }
+
+  @if (mostrarError) {
+    <span class="text-xs text-red-500">{{ errorMsg }}</span>
+  }
+</div>

@@ -1,7 +1,9 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { NgIf } from '@angular/common';
 import { switchMap } from 'rxjs';
 import { PacientesService } from '../../../nucleo/graphql/gestion-clinica/pacientes';
 import { PersonasService } from '../../../nucleo/graphql/gestion-clinica/persona';
+import { LoginService } from '../../../nucleo/rest/login.service';
 import { Tabla, ColumnaTabla } from '../../../compartido/tabla/tabla';
 import { Modal } from '../../../compartido/modal/modal';
 import { CrearPacientes } from './crear-pacientes/crear-pacientes';
@@ -10,11 +12,12 @@ import { VerPacientes } from './ver-pacientes/ver-pacientes';
 
 @Component({
   selector: 'app-pacientes',
-  imports: [Tabla, Modal, CrearPacientes, EditarPacientes, VerPacientes],
+  imports: [NgIf, Tabla, Modal, CrearPacientes, EditarPacientes, VerPacientes],
   templateUrl: './pacientes.html',
   styleUrl: './pacientes.css',
 })
 export class Pacientes implements OnInit {
+  auth = inject(LoginService);
   private pacientesService = inject(PacientesService);
   private personasService = inject(PersonasService);
 
@@ -32,6 +35,7 @@ export class Pacientes implements OnInit {
     { key: 'persona.nombre', titulo: 'Nombre' },
     { key: 'persona.apellido', titulo: 'Apellido' },
     { key: 'persona.ci', titulo: 'C.I.' },
+    { key: 'persona.email', titulo: 'Correo' },
     { key: 'estado', titulo: 'Estado' },
     { key: 'sexo', titulo: 'Sexo' },
   ];
@@ -106,7 +110,17 @@ export class Pacientes implements OnInit {
 
   /** Actualiza un paciente existente */
   editarPaciente(datos: any): void {
-    this.pacientesService.editarPaciente(datos).subscribe({
+    this.personasService.editarPersona(datos.persona).pipe(
+      switchMap(() =>
+        this.pacientesService.editarPaciente({
+          id: datos.id,
+          estado: datos.estado,
+          direccion: datos.direccion,
+          sexo: datos.sexo,
+          fecha_nacimiento: this.pacienteSeleccionado()?.fecha_nacimiento,
+        })
+      )
+    ).subscribe({
       next: () => { this.modalEditar.set(false); this.cargarPacientes(); },
     });
   }

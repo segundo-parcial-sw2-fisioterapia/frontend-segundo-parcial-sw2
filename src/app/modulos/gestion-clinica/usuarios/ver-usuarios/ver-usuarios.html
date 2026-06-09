@@ -14,11 +14,11 @@
     </div>
     <div class="flex flex-col gap-0.5">
       <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Fecha de Creación</span>
-      <span class="text-sm text-gray-800">{{ usuario.fecha_creacion ?? '—' }}</span>
+      <span class="text-sm text-gray-800">{{ usuario.fecha_creacion ? (usuario.fecha_creacion | date:'medium') : '—' }}</span>
     </div>
     <div class="flex flex-col gap-0.5">
       <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Último Acceso</span>
-      <span class="text-sm text-gray-800">{{ usuario.ultimo_acceso ?? '—' }}</span>
+      <span class="text-sm text-gray-800">{{ usuario.ultimo_acceso ? (usuario.ultimo_acceso | date:'medium') : '—' }}</span>
     </div>
     <div class="flex flex-col gap-0.5">
       <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Nombre</span>
@@ -33,4 +33,61 @@
       <span class="text-sm text-gray-800">{{ usuario?.persona?.ci ?? '—' }}</span>
     </div>
   </div>
+
+  @if (cargandoExtra()) {
+    <div class="mt-6 flex justify-center">
+      <div class="w-6 h-6 border-2 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  }
+
+  @if (datosExtra()) {
+    <div class="mt-6 pt-4 border-t border-gray-100">
+      <h4 class="text-sm font-semibold text-gray-700 mb-4">Información {{ datosExtra().tipo === 'PACIENTE' ? 'Clínica (Paciente)' : 'Laboral (Empleado)' }}</h4>
+      <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+        @if (datosExtra().tipo === 'PACIENTE') {
+          <div class="flex flex-col gap-0.5">
+            <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Sexo</span>
+            <span class="text-sm text-gray-800">{{ datosExtra().sexo ?? '—' }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Fecha de Nacimiento</span>
+            <span class="text-sm text-gray-800">{{ datosExtra().fecha_nacimiento ?? '—' }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Dirección</span>
+            <span class="text-sm text-gray-800">{{ datosExtra().direccion ?? '—' }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Estado Clínico</span>
+            <span class="text-sm text-gray-800">{{ datosExtra().estado ?? '—' }}</span>
+          </div>
+        } @else {
+          <div class="flex flex-col gap-0.5">
+            <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Cargo</span>
+            <span class="text-sm text-gray-800">{{ datosExtra().cargo ?? '—' }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Especialidad</span>
+            <span class="text-sm text-gray-800">{{ datosExtra().especialidad ?? '—' }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Tipo de Contrato</span>
+            <span class="text-sm text-gray-800">{{ datosExtra().tipoContrato ?? '—' }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Fecha de Ingreso</span>
+            <span class="text-sm text-gray-800">{{ datosExtra().fechaIngreso ?? '—' }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Salario Base</span>
+            <span class="text-sm text-gray-800">{{ datosExtra().salarioBase ? (datosExtra().salarioBase | currency) : '—' }}</span>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span class="text-[0.7rem] font-semibold text-gray-400 uppercase tracking-wide">Estado Laboral</span>
+            <span class="text-sm text-gray-800">{{ datosExtra().estadoLaboral ?? '—' }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
 }
