@@ -4,19 +4,19 @@
 
 [[redirects]]
   from = "/api/*"
-  to = "http://18.223.0.133:4000/api/:splat"
+  to = "http://3.132.29.25:4000/api/:splat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/graphql"
-  to = "http://18.223.0.133:4000/graphql"
+  to = "http://3.132.29.25:4000/graphql"
   status = 200
   force = true
 
 [[redirects]]
   from = "/bi/*"
-  to = "http://18.223.0.133:8000/:splat"
+  to = "http://3.132.29.25:8000/:splat"
   status = 200
   force = true
 
