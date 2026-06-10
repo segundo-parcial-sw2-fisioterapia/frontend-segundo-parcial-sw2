@@ -3,6 +3,25 @@
   publish = "dist/frontend-segundo-parcial-sw2/browser"
 
 [[redirects]]
+  from = "/api/*"
+  to = "http://18.223.0.133:4000/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/graphql"
+  to = "http://18.223.0.133:4000/graphql"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/bi/*"
+  to = "http://18.223.0.133:8000/:splat"
+  status = 200
+  force = true
+
+# Esta regla para Angular (SPA) SIEMPRE debe ir de última
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
