@@ -23,7 +23,6 @@ export class Facturas implements OnInit {
   modalVer = signal(false);
   facturaSeleccionada = signal<any | null>(null);
   cargandoDetalle = signal(false);
-  generandoPdf = signal(false);
 
   // Filtros — variables primitivas (no signal) para [(ngModel)]
   meses = [
@@ -113,24 +112,4 @@ export class Facturas implements OnInit {
 
 
 
-  /** Genera e imprime la factura como PDF/HTML. */
-  imprimirFactura(id: number): void {
-    this.generandoPdf.set(true);
-    this.facturasService.generarPdfFactura(id).subscribe({
-      next: (dataUri: string) => {
-        this.generandoPdf.set(false);
-        // El backend retorna HTML como base64; lo abrimos en nueva pestaña para imprimir
-        const base64 = dataUri.replace('data:application/pdf;base64,', '');
-        const html = atob(base64);
-        const win = window.open('', '_blank');
-        if (win) {
-          win.document.write(html);
-          win.document.close();
-          win.focus();
-          setTimeout(() => win.print(), 500);
-        }
-      },
-      error: () => this.generandoPdf.set(false),
-    });
-  }
 }
