@@ -7,12 +7,11 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 })
 export class VerFacturas {
   @Input() factura: any | null = null;
-  @Input() generandoPdf = false;
-
-
-
-  /** Emite el ID de la factura para generar e imprimir el PDF */
-  @Output() imprimirFactura = new EventEmitter<number>();
+  abrirDocumento() {
+    if (this.factura?.urlDocumento) {
+      window.open(this.factura.urlDocumento, '_blank');
+    }
+  }
 
   get pacienteNombre(): string {
     if (!this.factura?.paciente) return `ID: ${this.factura?.pacienteId ?? '—'}`;
