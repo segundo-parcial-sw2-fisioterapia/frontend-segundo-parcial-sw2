@@ -1,0 +1,60 @@
+<div class="space-y-5">
+
+  <!-- Selector FK: Empleado -->
+  @if (!empleadoIdFijo) {
+    <app-selector-empleado
+      label="Empleado"
+      placeholder="Buscar por nombre o cargo..."
+      [selectedId]="empleadoId()"
+      [mostrarError]="intentoEnvio() && !empleadoId()"
+      errorMsg="Debe seleccionar un empleado"
+      (seleccionado)="seleccionarEmpleado($event)"
+    />
+  }
+
+  <form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+
+    <!-- Fecha y estado -->
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Fecha <span class="text-red-500">*</span></label>
+        <input formControlName="fecha" type="date" class="input-base"
+          [class.input-error]="form.get('fecha')?.invalid && form.get('fecha')?.touched" />
+        @if (form.get('fecha')?.invalid && form.get('fecha')?.touched) {
+          <span class="text-xs text-red-500">Fecha requerida</span>
+        }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Estado <span class="text-red-500">*</span></label>
+        <select formControlName="estado" class="input-base">
+          @for (est of estadosAsistencia; track est.value) {
+            <option [value]="est.value">{{ est.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Hora entrada / salida -->
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Hora de entrada <span class="text-red-500">*</span></label>
+        <input formControlName="horaEntrada" type="time" class="input-base"
+          [class.input-error]="form.get('horaEntrada')?.invalid && form.get('horaEntrada')?.touched" />
+        @if (form.get('horaEntrada')?.invalid && form.get('horaEntrada')?.touched) {
+          <span class="text-xs text-red-500">Requerido</span>
+        }
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Hora de salida</label>
+        <input formControlName="horaSalida" type="time" class="input-base" />
+        <p class="text-xs text-gray-400">Opcional al registrar la entrada</p>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-3 pt-2">
+      <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+      <button type="submit" class="btn-primary">Registrar asistencia</button>
+    </div>
+
+  </form>
+</div>

@@ -1,0 +1,43 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+
+  <!-- Referencia (solo lectura) -->
+  @if (asistencia) {
+    <div class="px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 text-sm text-gray-600">
+      Empleado ID: <span class="font-mono font-medium text-gray-800">{{ asistencia.empleadoId }}</span>
+      &nbsp;&mdash;&nbsp;Fecha: <span class="font-medium text-gray-800">{{ asistencia.fecha }}</span>
+    </div>
+  }
+
+  <!-- Estado -->
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Estado <span class="text-red-500">*</span></label>
+    <select formControlName="estado" class="input-base"
+      [class.input-error]="form.get('estado')?.invalid && form.get('estado')?.touched">
+      @for (est of estadosAsistencia; track est.value) {
+        <option [value]="est.value">{{ est.label }}</option>
+      }
+    </select>
+  </div>
+
+  <!-- Hora entrada / salida -->
+  <div class="grid grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Hora de entrada <span class="text-red-500">*</span></label>
+      <input formControlName="horaEntrada" type="time" class="input-base"
+        [class.input-error]="form.get('horaEntrada')?.invalid && form.get('horaEntrada')?.touched" />
+      @if (form.get('horaEntrada')?.invalid && form.get('horaEntrada')?.touched) {
+        <span class="text-xs text-red-500">Requerido</span>
+      }
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Hora de salida</label>
+      <input formControlName="horaSalida" type="time" class="input-base" />
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-2">
+    <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+    <button type="submit" class="btn-primary">Guardar cambios</button>
+  </div>
+
+</form>

@@ -1,0 +1,171 @@
+<div class="space-y-6">
+
+  <!-- Encabezado -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-bold text-gray-800">Asistencias</h1>
+      <p class="text-sm text-gray-500 mt-0.5">
+        @if (esFisioterapeuta && !esAdministrador) {
+          Tu historial de asistencias vinculado a tus turnos asignados
+        } @else if (esRecepcionista && !esAdministrador) {
+          Registro de asistencias del personal
+        } @else {
+          Control de asistencias — selecciona un empleado para cruzar con sus turnos
+        }
+      </p>
+    </div>
+    @if (puedeCrear) {
+      <button (click)="abrirCrear()" class="btn-primary">
+        <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/>
+        </svg>
+        Registrar asistencia
+      </button>
+    }
+  </div>
+
+  @if (esRecepcionista && !esAdministrador) {
+    <div class="rounded-xl border border-blue-200 bg-blue-50 px-5 py-4 text-sm text-blue-700">
+      Puedes registrar la asistencia de los empleados usando el botón "Registrar asistencia".
+      El historial completo está disponible para administrador y director.
+    </div>
+  } @else {
+
+    <!-- Filtro por empleado (solo modo todos) -->
+    @if (modo === 'todos') {
+      <div class="bg-white p-4 rounded-xl shadow-card border border-gray-100 flex items-end gap-4">
+        <div class="flex-1 max-w-sm">
+          <app-selector-empleado
+            label="Filtrar por Empleado"
+            placeholder="Buscar por nombre, CI o cargo..."
+            [selectedId]="empleadoFiltro()"
+            (seleccionado)="filtrarPorEmpleado($event)"
+          />
+        </div>
+        @if (!empleadoFiltro()) {
+          <p class="text-xs text-gray-400 pb-1">Selecciona un empleado para ver su horario y asistencias cruzadas.</p>
+        }
+      </div>
+    }
+
+    <!-- Panel de horario semanal (visible cuando hay turnos del empleado) -->
+    @if (horarioSemanal().length > 0) {
+      <div class="bg-white rounded-xl border border-primary-100 shadow-card p-4">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-semibold text-gray-700 flex items-center gap-2">
+            <svg class="w-4 h-4 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            Horario semanal asignado
+          </h3>
+          <!-- Toggle filtro -->
+          @if (diasConTurno().size > 0) {
+            <button
+              type="button"
+              (click)="toggleFiltroTurno()"
+              class="flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-lg border transition"
+              [class.bg-primary-600]="filtroSoloDiasTurno()"
+              [class.text-white]="filtroSoloDiasTurno()"
+              [class.border-primary-600]="filtroSoloDiasTurno()"
+              [class.bg-white]="!filtroSoloDiasTurno()"
+              [class.text-gray-600]="!filtroSoloDiasTurno()"
+              [class.border-gray-200]="!filtroSoloDiasTurno()"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+              </svg>
+              {{ filtroSoloDiasTurno() ? 'Solo días de turno' : 'Filtrar por turno' }}
+            </button>
+          }
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          @for (turno of horarioSemanal(); track turno.id) {
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary-50 border border-primary-200 text-xs">
+              <span class="font-semibold text-primary-800 capitalize">{{ turno.diaSemana }}</span>
+              <span class="text-primary-600 font-mono">{{ turno.horaInicio }} – {{ turno.horaFin }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- KPIs (visibles cuando hay empleado seleccionado o modo propio) -->
+    @if (empleadoFiltro() || modo === 'propio') {
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <app-kpi-card titulo="Total" [valor]="kpiTotal()">
+          <svg icon class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+          </svg>
+        </app-kpi-card>
+        <app-kpi-card titulo="Presentes" [valor]="kpiPresentes()" iconColorClass="bg-green-50 text-green-600">
+          <svg icon class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+        </app-kpi-card>
+        <app-kpi-card titulo="Tardanzas" [valor]="kpiTardanzas()" iconColorClass="bg-amber-50 text-amber-600">
+          <svg icon class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </app-kpi-card>
+        <app-kpi-card titulo="Faltas" [valor]="kpiFaltas()" iconColorClass="bg-red-50 text-red-600">
+          <svg icon class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </app-kpi-card>
+        @if (diasConTurno().size > 0) {
+          <app-kpi-card titulo="En turno" [valor]="kpiCumplidos()" iconColorClass="bg-primary-50 text-primary-600">
+            <svg icon class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </app-kpi-card>
+        }
+      </div>
+    }
+
+    <!-- Tabla -->
+    <app-tabla
+      [columnas]="columnas"
+      [filas]="asistencias()"
+      [cargando]="cargando()"
+      mensajeVacio="No hay registros de asistencia."
+      (ver)="abrirVer($event)"
+      (editar)="puedeEditar ? abrirEditar($event) : null"
+      (eliminar)="puedeEditar ? eliminarAsistencia($event) : null"
+      [conAcciones]="true"
+    />
+
+    @if (paginaInfo()) {
+      <app-paginacion
+        [paginaInfo]="paginaInfo()"
+        (cambiarPagina)="cambiarPagina($event)"
+      />
+    }
+  }
+
+  <!-- Modales -->
+  <app-modal titulo="Registrar Asistencia" [abierto]="modalCrear()" (cerrar)="cerrarModalCrear()">
+    <app-crear-asistencias
+      [empleadoIdFijo]="empleadoIdPropio()"
+      (guardar)="crearAsistencia($event)"
+      (cancelar)="cerrarModalCrear()"
+    />
+  </app-modal>
+
+  <app-modal titulo="Editar Asistencia" [abierto]="modalEditar()" (cerrar)="modalEditar.set(false)">
+    <app-editar-asistencias
+      [asistencia]="asistenciaSeleccionada()"
+      (guardar)="editarAsistencia($event)"
+      (cancelar)="modalEditar.set(false)"
+    />
+  </app-modal>
+
+  <app-modal titulo="Detalle de Asistencia" [abierto]="modalVer()" (cerrar)="modalVer.set(false)">
+    <app-ver-asistencias [asistencia]="asistenciaSeleccionada()" />
+  </app-modal>
+</div>

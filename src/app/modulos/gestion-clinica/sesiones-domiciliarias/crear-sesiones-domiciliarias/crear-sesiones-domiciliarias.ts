@@ -27,8 +27,6 @@ export class CrearSesionesDomiciliarias {
     repeticiones_completadas: [null as number | null],
     puntuacion: [null as number | null],
     xp_ganado: [null as number | null],
-    url_video: [''],
-    analizado_por_ia: [false],
     correcciones_emitidas: [''],
   });
 

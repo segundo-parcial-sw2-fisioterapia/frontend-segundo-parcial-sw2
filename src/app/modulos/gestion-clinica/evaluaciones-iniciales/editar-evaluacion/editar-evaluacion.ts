@@ -1,11 +1,11 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EvaluacionesInicialesService } from '../../../../nucleo/graphql/gestion-clinica/evaluaciones-iniciales';
 
 @Component({
   selector: 'app-editar-evaluacion',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule],
   templateUrl: './editar-evaluacion.html',
   styleUrl: './editar-evaluacion.css',
 })
@@ -62,6 +62,24 @@ export class EditarEvaluacion implements OnInit {
       next: () => {
         this.guardando.set(false);
         this.router.navigate(['/app/evaluaciones-iniciales']);
+      },
+      error: () => this.guardando.set(false),
+    });
+  }
+
+  /** Valida, guarda y redirige a la generación del plan de tratamiento */
+  guardarYGenerarPlan(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    this.guardando.set(true);
+    const datosGuardar = { ...this.form.value, estado: 'TERMINADA' };
+    this.service.editarEvaluacionInicial(datosGuardar).subscribe({
+      next: () => {
+        this.guardando.set(false);
+        const evalId = this.form.get('id')?.value;
+        this.router.navigate(['/app/planes-tratamiento/crear', evalId]);
       },
       error: () => this.guardando.set(false),
     });

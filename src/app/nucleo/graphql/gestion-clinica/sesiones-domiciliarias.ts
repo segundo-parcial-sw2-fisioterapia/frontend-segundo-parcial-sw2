@@ -12,9 +12,9 @@ export class SesionesDomiciliariasService {
       .query<{ listarSesionesDomiciliarias: any[] }>(`
         query {
           listarSesionesDomiciliarias {
-            id fecha_hora fecha_creacion analizado_por_ia
+            id fecha_hora fecha_creacion
             correcciones_emitidas puntuacion
-            repeticiones_completadas xp_ganado url_video
+            repeticiones_completadas xp_ganado
             paciente { id persona { nombre apellido } }
             plan_ejercicio { id ejercicio { nombre nivel_dificultad } }
           }
@@ -29,8 +29,8 @@ export class SesionesDomiciliariasService {
       .query<{ verSesionDomiciliaria: any }>(
         `query($id: Int!) {
           verSesionDomiciliaria(id: $id) {
-            id fecha_hora analizado_por_ia correcciones_emitidas
-            puntuacion repeticiones_completadas xp_ganado url_video
+            id fecha_hora correcciones_emitidas
+            puntuacion repeticiones_completadas xp_ganado
             paciente { persona { nombre apellido } }
             plan_ejercicio { ejercicio { nombre nivel_dificultad } }
           }
@@ -47,7 +47,7 @@ export class SesionesDomiciliariasService {
         `query($pacienteId: Int!) {
           listarSesionesDomiciliariasPorPaciente(pacienteId: $pacienteId) {
             id fecha_hora puntuacion xp_ganado
-            repeticiones_completadas analizado_por_ia
+            repeticiones_completadas
             plan_ejercicio { ejercicio { nombre } }
           }
         }`,
@@ -60,7 +60,7 @@ export class SesionesDomiciliariasService {
   crearSesionDomiciliaria(datos: any): Observable<any> {
     return this.gql
       .mutate<{ crearSesionesDomiciliarias: any }>(
-        `mutation($datos: CreateSesionDomiciliariaInput!) {
+        `mutation($datos: CreateSesionesDocmiciliariaInput!) {
           crearSesionesDomiciliarias(datos: $datos) {
             id puntuacion xp_ganado repeticiones_completadas
           }
@@ -74,9 +74,9 @@ export class SesionesDomiciliariasService {
   editarSesionDomiciliaria(datos: any): Observable<any> {
     return this.gql
       .mutate<{ editarSesionDomiciliaria: any }>(
-        `mutation($datos: UpdateSesionDomiciliariaInput!) {
+        `mutation($datos: UpdateSesionesDocmiciliariaInput!) {
           editarSesionDomiciliaria(datos: $datos) {
-            id analizado_por_ia correcciones_emitidas puntuacion xp_ganado
+            id correcciones_emitidas puntuacion xp_ganado
           }
         }`,
         { datos }
