@@ -4,10 +4,11 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { SesionesService } from '../../../../nucleo/graphql/gestion-clinica/sesiones';
 import { BiGraphQLService } from '../../../../nucleo/graphql/bi-automatizacion/bi-graphql.service';
 import { LoginService } from '../../../../nucleo/rest/login.service';
+import { Predictivo } from '../../../bi-automatizacion/predictivo';
 
 @Component({
   selector: 'app-editar-sesiones',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, Predictivo],
   templateUrl: './editar-sesiones.html',
   styleUrl: './editar-sesiones.css',
 })

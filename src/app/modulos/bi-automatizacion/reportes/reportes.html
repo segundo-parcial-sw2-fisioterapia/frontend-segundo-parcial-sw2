@@ -9,6 +9,215 @@
     </div>
   </div>
 
+  <!-- ════════════════ GENERADOR DE REPORTES POR PROMPT (IA · OpenAI) ════════════════ -->
+  <section class="space-y-4">
+    <div class="flex items-center gap-2">
+      <h2 class="text-sm font-semibold text-gray-700">Generador de Reportes con IA</h2>
+      <span class="text-[0.65rem] bg-indigo-50 text-indigo-700 font-semibold px-2 py-0.5 rounded-full">
+        OpenAI · Spring Boot · GraphQL
+      </span>
+    </div>
+
+    <div class="bg-gradient-to-br from-primary-800 to-primary-600 rounded-xl p-5 shadow-[var(--shadow-panel)]">
+      <label class="block text-xs font-semibold text-primary-100 uppercase tracking-wider mb-2">
+        Describe el reporte que necesitas
+      </label>
+      <div class="flex flex-col sm:flex-row gap-2">
+        <input
+          [ngModel]="promptIA()"
+          (ngModelChange)="promptIA.set($event)"
+          (keyup.enter)="generarPorPrompt()"
+          type="text"
+          placeholder="Ej. Ingresos por método de pago en 2026"
+          class="flex-1 rounded-lg border-0 px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-primary-300 outline-none"
+        />
+        <button
+          (click)="generarPorPrompt()"
+          [disabled]="cargandoIA() || !promptIA().trim()"
+          class="bg-white text-primary-700 font-semibold text-sm px-5 py-2.5 rounded-lg hover:bg-primary-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+        >
+          {{ cargandoIA() ? 'Generando…' : 'Generar reporte' }}
+        </button>
+      </div>
+      <!-- Ejemplos -->
+      <div class="flex flex-wrap gap-1.5 mt-3">
+        @for (ej of ejemplosPrompt; track ej) {
+          <button
+            (click)="usarEjemplo(ej)"
+            [disabled]="cargandoIA()"
+            class="text-[0.7rem] bg-primary-700/40 text-primary-50 px-2.5 py-1 rounded-full hover:bg-primary-700/70 transition-colors disabled:opacity-50"
+          >{{ ej }}</button>
+        }
+      </div>
+    </div>
+
+    @if (errorIA()) {
+      <div class="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-5 py-4">
+        {{ errorIA() }}
+      </div>
+    }
+
+    @if (reporteIA(); as rep) {
+      <div class="bg-white rounded-xl p-5 shadow-[var(--shadow-card)] border border-gray-50 space-y-4">
+        <div class="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <h3 class="text-sm font-semibold text-gray-800">{{ rep.resultado.titulo }}</h3>
+            <p class="text-xs text-gray-500 mt-1 max-w-2xl">{{ rep.resumenNarrativo }}</p>
+          </div>
+          <!-- Interpretación de la IA (transparencia) -->
+          <div class="flex flex-wrap gap-1.5">
+            <span class="text-[0.65rem] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{{ rep.interpretacion.fuente }}</span>
+            <span class="text-[0.65rem] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{{ rep.interpretacion.metrica }}</span>
+            <span class="text-[0.65rem] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">por {{ rep.interpretacion.agruparPor }}</span>
+            @if (rep.interpretacion.anio) {
+              <span class="text-[0.65rem] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{{ rep.interpretacion.anio }}</span>
+            }
+          </div>
+        </div>
+
+        @if (barrasIA().length === 0) {
+          <p class="text-xs text-gray-400">El reporte no devolvió datos.</p>
+        } @else {
+          <div class="space-y-3">
+            @for (b of barrasIA(); track b.etiqueta) {
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-xs text-gray-600 font-medium">{{ b.etiqueta }}</span>
+                  <span class="text-xs font-bold text-gray-800">{{ formatearMoneda(b.valor) }}</span>
+                </div>
+                <div class="w-full bg-gray-100 rounded-full h-2">
+                  <div class="h-2 rounded-full bg-indigo-500 transition-all" [style.width.%]="b.altura"></div>
+                </div>
+              </div>
+            }
+          </div>
+          <div class="flex items-center justify-between border-t border-gray-100 pt-3">
+            <span class="text-xs text-gray-500">{{ rep.resultado.etiquetaMetrica }} — total</span>
+            <span class="text-sm font-bold text-gray-900">{{ formatearMoneda(rep.resultado.total) }}</span>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- ════════════════ CONSTRUCTOR DE REPORTES DINÁMICOS (GraphQL) ════════════════ -->
+  <section class="space-y-4">
+    <div class="flex items-center gap-2">
+      <h2 class="text-sm font-semibold text-gray-700">Constructor de Reportes</h2>
+      <span class="text-[0.65rem] bg-primary-50 text-primary-600 font-semibold px-2 py-0.5 rounded-full">
+        Spring Boot · GraphQL
+      </span>
+    </div>
+
+    @if (catalogo(); as cat) {
+      <div class="bg-white rounded-xl p-5 shadow-[var(--shadow-card)] border border-gray-50">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+          <!-- Fuente -->
+          <div>
+            <label class="block text-[0.7rem] font-semibold text-gray-500 uppercase tracking-wider mb-1">Fuente</label>
+            <select
+              [ngModel]="fuenteSel()"
+              (ngModelChange)="seleccionarFuente($event)"
+              class="input-base w-full text-sm"
+            >
+              @for (f of cat.fuentes; track f.fuente) {
+                <option [value]="f.fuente">{{ f.etiqueta }}</option>
+              }
+            </select>
+          </div>
+          <!-- Métrica -->
+          <div>
+            <label class="block text-[0.7rem] font-semibold text-gray-500 uppercase tracking-wider mb-1">Métrica</label>
+            <select
+              [ngModel]="metricaSel()"
+              (ngModelChange)="metricaSel.set($event)"
+              class="input-base w-full text-sm"
+            >
+              <option value="CONTEO">Conteo</option>
+              <option value="SUMA">Suma</option>
+              <option value="PROMEDIO">Promedio</option>
+            </select>
+          </div>
+          <!-- Campo métrica (solo SUMA/PROMEDIO) -->
+          <div>
+            <label class="block text-[0.7rem] font-semibold text-gray-500 uppercase tracking-wider mb-1">Campo</label>
+            <select
+              [ngModel]="campoMetricaSel()"
+              (ngModelChange)="campoMetricaSel.set($event)"
+              [disabled]="metricaSel() === 'CONTEO'"
+              class="input-base w-full text-sm disabled:opacity-50"
+            >
+              @for (n of fuenteActual()?.numericos ?? []; track n.campo) {
+                <option [value]="n.campo">{{ n.etiqueta }}</option>
+              }
+            </select>
+          </div>
+          <!-- Agrupar por -->
+          <div>
+            <label class="block text-[0.7rem] font-semibold text-gray-500 uppercase tracking-wider mb-1">Agrupar por</label>
+            <select
+              [ngModel]="agruparPorSel()"
+              (ngModelChange)="agruparPorSel.set($event)"
+              class="input-base w-full text-sm"
+            >
+              @for (d of fuenteActual()?.dimensiones ?? []; track d.campo) {
+                <option [value]="d.campo">{{ d.etiqueta }}</option>
+              }
+            </select>
+          </div>
+          <!-- Año + ejecutar -->
+          <div class="flex gap-2">
+            @if (fuenteActual()?.soportaAnio) {
+              <input
+                [ngModel]="anioDinamico()"
+                (ngModelChange)="anioDinamico.set($event ? +$event : null)"
+                type="number"
+                placeholder="Año"
+                class="input-base w-24 text-sm"
+              />
+            }
+            <button (click)="ejecutarDinamico()" [disabled]="cargandoDinamico()" class="btn-primary text-sm whitespace-nowrap flex-1">
+              {{ cargandoDinamico() ? '…' : 'Ejecutar' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (errorDinamico()) {
+      <div class="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-5 py-4">
+        {{ errorDinamico() }}
+      </div>
+    }
+
+    @if (reporteDinamico(); as rep) {
+      <div class="bg-white rounded-xl p-5 shadow-[var(--shadow-card)] border border-gray-50 space-y-4">
+        <h3 class="text-sm font-semibold text-gray-800">{{ rep.titulo }}</h3>
+        @if (barrasDinamico().length === 0) {
+          <p class="text-xs text-gray-400">El reporte no devolvió datos.</p>
+        } @else {
+          <div class="space-y-3">
+            @for (b of barrasDinamico(); track b.etiqueta) {
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-xs text-gray-600 font-medium">{{ b.etiqueta }}</span>
+                  <span class="text-xs font-bold text-gray-800">{{ formatearMoneda(b.valor) }}</span>
+                </div>
+                <div class="w-full bg-gray-100 rounded-full h-2">
+                  <div class="h-2 rounded-full bg-primary-500 transition-all" [style.width.%]="b.altura"></div>
+                </div>
+              </div>
+            }
+          </div>
+          <div class="flex items-center justify-between border-t border-gray-100 pt-3">
+            <span class="text-xs text-gray-500">{{ rep.etiquetaMetrica }} — total</span>
+            <span class="text-sm font-bold text-gray-900">{{ formatearMoneda(rep.total) }}</span>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
   <!-- ════════════════ REPORTE FINANCIERO (Spring Boot · GraphQL) ════════════════ -->
   <section class="space-y-4">
     <div class="flex items-center justify-between flex-wrap gap-3">
@@ -144,9 +353,9 @@
       <span class="text-[0.65rem] bg-teal-50 text-teal-700 font-semibold px-2 py-0.5 rounded-full">
         Django · Python BI
       </span>
-      @if (tendencias()?.total_registros) {
+      @if (kpis()?.totalRegistros) {
         <span class="text-[0.65rem] text-gray-400">
-          {{ tendencias().total_registros }} registros analizados
+          {{ kpis().totalRegistros }} registros analizados
         </span>
       }
     </div>
@@ -172,7 +381,7 @@
               <div>
                 <div class="flex items-center justify-between mb-1.5">
                   <span class="text-xs text-gray-600 font-medium">{{ e.etiqueta }}</span>
-                  <span class="text-xs font-bold text-gray-800">{{ e.valor }} <span class="text-gray-400 font-normal">({{ e.pct }}%)</span></span>
+                  <span class="text-xs font-bold text-gray-800">{{ e.valor }} <span class="text-gray-400 font-normal">sesiones prom.</span></span>
                 </div>
                 <div class="w-full bg-gray-100 rounded-full h-1.5">
                   <div class="h-1.5 rounded-full bg-teal-500 transition-all" [style.width.%]="e.pct"></div>
@@ -192,7 +401,7 @@
               <div>
                 <div class="flex items-center justify-between mb-1.5">
                   <span class="text-xs text-gray-600 font-medium">{{ z.etiqueta }}</span>
-                  <span class="text-xs font-bold text-gray-800">{{ z.valor }} <span class="text-gray-400 font-normal">({{ z.pct }}%)</span></span>
+                  <span class="text-xs font-bold text-gray-800">{{ z.valor }} sesiones prom. <span class="text-gray-400 font-normal">({{ z.pct }}% ocup.)</span></span>
                 </div>
                 <div class="w-full bg-gray-100 rounded-full h-1.5">
                   <div class="h-1.5 rounded-full bg-violet-500 transition-all" [style.width.%]="z.pct"></div>

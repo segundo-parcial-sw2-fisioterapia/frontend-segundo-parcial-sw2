@@ -16,7 +16,6 @@ export class EditarSesionesDomiciliarias implements OnChanges {
 
   form = this.fb.group({
     id: [null as number | null],
-    analizado_por_ia: [false],
     correcciones_emitidas: [''],
     puntuacion: [null as number | null],
     xp_ganado: [null as number | null],

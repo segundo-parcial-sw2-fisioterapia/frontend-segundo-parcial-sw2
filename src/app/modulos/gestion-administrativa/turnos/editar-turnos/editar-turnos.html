@@ -1,0 +1,49 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" class="space-y-5">
+
+  <!-- Día de la semana -->
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-medium text-gray-700">Día de la semana <span class="text-red-500">*</span></label>
+    <select formControlName="diaSemana" class="input-base"
+      [class.input-error]="form.get('diaSemana')?.invalid && form.get('diaSemana')?.touched">
+      @for (dia of diasSemana; track dia.value) {
+        <option [value]="dia.value">{{ dia.label }}</option>
+      }
+    </select>
+    @if (form.get('diaSemana')?.invalid && form.get('diaSemana')?.touched) {
+      <span class="text-xs text-red-500">Día requerido</span>
+    }
+  </div>
+
+  <!-- Hora inicio / fin -->
+  <div class="grid grid-cols-2 gap-4">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Hora inicio <span class="text-red-500">*</span></label>
+      <input formControlName="horaInicio" type="time" class="input-base"
+        [class.input-error]="form.get('horaInicio')?.invalid && form.get('horaInicio')?.touched" />
+      @if (form.get('horaInicio')?.invalid && form.get('horaInicio')?.touched) {
+        <span class="text-xs text-red-500">Requerido</span>
+      }
+    </div>
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">Hora fin <span class="text-red-500">*</span></label>
+      <input formControlName="horaFin" type="time" class="input-base"
+        [class.input-error]="form.get('horaFin')?.invalid && form.get('horaFin')?.touched" />
+      @if (form.get('horaFin')?.invalid && form.get('horaFin')?.touched) {
+        <span class="text-xs text-red-500">Requerido</span>
+      }
+    </div>
+  </div>
+
+  <!-- Activo -->
+  <div class="flex items-center gap-3">
+    <input formControlName="activo" type="checkbox" id="activoCheck"
+      class="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500" />
+    <label for="activoCheck" class="text-sm font-medium text-gray-700">Turno activo</label>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-2">
+    <button type="button" (click)="cancelar.emit()" class="btn-secondary">Cancelar</button>
+    <button type="submit" class="btn-primary">Guardar cambios</button>
+  </div>
+
+</form>

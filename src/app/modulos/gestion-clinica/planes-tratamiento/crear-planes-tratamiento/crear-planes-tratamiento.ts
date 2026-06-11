@@ -8,6 +8,8 @@ import { SesionesService } from '../../../../nucleo/graphql/gestion-clinica/sesi
 import { PlanesEjerciciosService } from '../../../../nucleo/graphql/gestion-clinica/planes-ejercicios';
 import { EjerciciosService } from '../../../../nucleo/graphql/gestion-clinica/ejercicios';
 import { MensualidadesService } from '../../../../nucleo/graphql/gestion-administrativa/mensualidades';
+import { LoginService } from '../../../../nucleo/rest/login.service';
+import { Predictivo } from '../../../bi-automatizacion/predictivo';
 
 interface SlotDia {
   dia: number; // 0=Dom 1=Lun … 6=Sáb (getDay())
@@ -33,7 +35,7 @@ interface FilaEjercicio {
 
 @Component({
   selector: 'app-crear-planes-tratamiento',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Predictivo],
   templateUrl: './crear-planes-tratamiento.html',
   styleUrl: './crear-planes-tratamiento.css',
 })
@@ -48,6 +50,9 @@ export class CrearPlanesTratamiento implements OnInit {
   private planesEjSvc = inject(PlanesEjerciciosService);
   private ejerciciosSvc = inject(EjerciciosService);
   private mensualidadesSvc = inject(MensualidadesService);
+  private loginService = inject(LoginService);
+
+  esFisioterapeuta = computed(() => this.loginService.tieneRoles('fisioterapeuta'));
 
   readonly DIAS_SEMANA = [
     { value: 1, corto: 'L', label: 'Lunes' },

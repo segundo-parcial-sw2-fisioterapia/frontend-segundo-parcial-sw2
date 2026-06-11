@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BiGraphQLService, TiempoRecuperacionResultado, RiesgoAbandonoResultado } from '../../nucleo/graphql/bi-automatizacion/bi-graphql.service';
@@ -9,9 +9,29 @@ import { BiGraphQLService, TiempoRecuperacionResultado, RiesgoAbandonoResultado 
   templateUrl: './predictivo.html',
   styleUrl: './predictivo.css',
 })
-export class Predictivo {
+export class Predictivo implements OnChanges {
   private fb = inject(FormBuilder);
   private biGql = inject(BiGraphQLService);
+
+  @Input() evaluacion: any = null;
+  @Input() sesion: any = null;
+  @Input() modo: 'ambos' | 'recuperacion' | 'abandono' = 'ambos';
+
+  readonly SEMAFOROS = [
+    { value: 'VERDE', label: 'Verde (Bajo Riesgo)' },
+    { value: 'AMARILLO', label: 'Amarillo (Riesgo Moderado)' },
+    { value: 'ROJO', label: 'Rojo (Alto Riesgo)' }
+  ];
+
+  readonly DIAGNOSTICOS = [
+    { value: 'GENERAL', label: 'General / No Específico' },
+    { value: 'DISCAPACIDAD_MOTORA', label: 'Discapacidad Motora' },
+    { value: 'LESION_DEPORTIVA', label: 'Lesión Deportiva' },
+    { value: 'POST_OPERATORIO', label: 'Post-Operatorio' },
+    { value: 'NEUROLOGICO', label: 'Rehabilitación Neurológica' },
+    { value: 'DOLOR_CRONICO', label: 'Dolor Crónico' },
+    { value: 'TRAUMATOLOGIA', label: 'Traumatología' }
+  ];
 
   /** Tab activa en la vista: 'recuperacion' o 'abandono' */
   tabActiva = signal<'recuperacion' | 'abandono'>('recuperacion');
@@ -30,6 +50,52 @@ export class Predictivo {
     puntuacionPromedioDolor: [null as number | null, [Validators.required, Validators.min(1), Validators.max(10)]],
     categoriaSemaforo: ['', Validators.required],
   });
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.modo === 'recuperacion' || this.modo === 'ambos') {
+      this.tabActiva.set('recuperacion');
+      if (this.evaluacion) {
+        this.autocompletarRecuperacion();
+      }
+    } else if (this.modo === 'abandono') {
+      this.tabActiva.set('abandono');
+      if (this.sesion) {
+        this.autocompletarAbandono();
+      }
+    }
+  }
+
+  private autocompletarRecuperacion(): void {
+    const semaforo = this.evaluacion.categoria_semaforo || '';
+    const diagnostico = this.evaluacion.categoria_enfermedad || '';
+    
+    // Asumimos edad promedio por defecto si no hay fecha_nacimiento
+    let edad = 30; 
+    
+    this.formRecuperacion.patchValue({
+      categoriaSemaforo: semaforo,
+      diagnostico: diagnostico,
+      edad: edad
+    });
+  }
+
+  private autocompletarAbandono(): void {
+    // Del payload de sesion, obtener los datos
+    const plan = this.sesion?.plan_tratamiento;
+    const evaluacion = plan?.evaluacion_inicial;
+    
+    const semaforo = evaluacion?.categoria_semaforo || '';
+    const totales = plan?.numero_sesiones_mes * plan?.duracion_meses_estimada || 10;
+    const asistidas = this.sesion?.numero_sesion || 1;
+    const dolor = this.sesion?.nivel_dolor_reportado || 5;
+
+    this.formAbandono.patchValue({
+      categoriaSemaforo: semaforo,
+      sesionesTotales: totales,
+      sesionesAsistidas: asistidas, 
+      puntuacionPromedioDolor: dolor
+    });
+  }
 
   /** Estado de carga y resultado para recuperación */
   cargandoRecuperacion = signal(false);

@@ -33,6 +33,58 @@ export interface ReporteFinanciero {
   mensualidades: ResumenMensualidades;
 }
 
+// ─── Reportes dinámicos ─────────────────────────────────────────────────────────
+export type MetricaReporte = 'CONTEO' | 'SUMA' | 'PROMEDIO';
+export type TipoGrafico = 'BARRA' | 'LINEA' | 'PIE' | 'TABLA' | 'KPI';
+
+export interface ReporteDinamicoInput {
+  fuente: string;
+  metrica: MetricaReporte;
+  campoMetrica?: string | null;
+  agruparPor: string;
+  anio?: number | null;
+  filtroCampo?: string | null;
+  filtroValor?: string | null;
+}
+
+export interface FilaReporte {
+  etiqueta: string;
+  valor: number;
+}
+
+export interface ReporteDinamico {
+  titulo: string;
+  etiquetaDimension: string;
+  etiquetaMetrica: string;
+  filas: FilaReporte[];
+  total: number;
+  visualizacionSugerida: TipoGrafico;
+}
+
+export interface CampoMeta {
+  campo: string;
+  etiqueta: string;
+}
+
+export interface FuenteMeta {
+  fuente: string;
+  etiqueta: string;
+  soportaAnio: boolean;
+  dimensiones: CampoMeta[];
+  numericos: CampoMeta[];
+}
+
+export interface CatalogoReportes {
+  fuentes: FuenteMeta[];
+}
+
+export interface ReporteIA {
+  prompt: string;
+  interpretacion: ReporteDinamicoInput;
+  resultado: ReporteDinamico;
+  resumenNarrativo: string;
+}
+
 /**
  * Servicio de reportes del subsistema de gestión empresarial (Spring Boot · GraphQL).
  * Consume las queries de reporte federadas a través del gateway.
@@ -61,5 +113,56 @@ export class ReportesAdminService {
         { anio: anio ?? null },
       )
       .pipe(map((d) => d.reporteFinanciero));
+  }
+
+  /** Catálogo de fuentes/dimensiones/métricas para el constructor manual y la IA. */
+  catalogoReportes(): Observable<CatalogoReportes> {
+    return this.gql
+      .query<{ catalogoReportes: CatalogoReportes }>(
+        `query {
+          catalogoReportes {
+            fuentes {
+              fuente etiqueta soportaAnio
+              dimensiones { campo etiqueta }
+              numericos { campo etiqueta }
+            }
+          }
+        }`,
+      )
+      .pipe(map((d) => d.catalogoReportes));
+  }
+
+  /** Ejecuta un reporte dinámico parametrizable sobre datos reales. */
+  reporteDinamico(input: ReporteDinamicoInput): Observable<ReporteDinamico> {
+    return this.gql
+      .query<{ reporteDinamico: ReporteDinamico }>(
+        `query($input: ReporteDinamicoInput!) {
+          reporteDinamico(input: $input) {
+            titulo etiquetaDimension etiquetaMetrica total visualizacionSugerida
+            filas { etiqueta valor }
+          }
+        }`,
+        { input },
+      )
+      .pipe(map((d) => d.reporteDinamico));
+  }
+
+  /** Genera un reporte a partir de un prompt en lenguaje natural (OpenAI). */
+  reportePorPrompt(prompt: string): Observable<ReporteIA> {
+    return this.gql
+      .query<{ reportePorPrompt: ReporteIA }>(
+        `query($prompt: String!) {
+          reportePorPrompt(prompt: $prompt) {
+            prompt resumenNarrativo
+            interpretacion { fuente metrica campoMetrica agruparPor anio filtroCampo filtroValor }
+            resultado {
+              titulo etiquetaDimension etiquetaMetrica total visualizacionSugerida
+              filas { etiqueta valor }
+            }
+          }
+        }`,
+        { prompt },
+      )
+      .pipe(map((d) => d.reportePorPrompt));
   }
 }

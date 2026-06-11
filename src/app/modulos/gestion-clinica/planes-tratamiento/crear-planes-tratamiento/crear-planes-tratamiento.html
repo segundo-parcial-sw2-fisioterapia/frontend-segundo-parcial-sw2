@@ -157,6 +157,15 @@
     </div>
 
     <!-- ═══════════════════════════════════════════════════
+         ASISTENTE PREDICTIVO ML (SOLO FISIOTERAPEUTAS)
+    ════════════════════════════════════════════════════ -->
+    @if (esFisioterapeuta()) {
+      <div class="mb-6">
+        <app-predictivo [evaluacion]="evaluacion()" modo="recuperacion"></app-predictivo>
+      </div>
+    }
+
+    <!-- ═══════════════════════════════════════════════════
          SECCIÓN 2 — CALENDARIO DE SESIONES
     ════════════════════════════════════════════════════ -->
     <div class="bg-white rounded-xl shadow-[var(--shadow-card)] border border-gray-100 overflow-hidden">

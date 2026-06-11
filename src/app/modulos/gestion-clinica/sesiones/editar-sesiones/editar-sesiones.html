@@ -5,7 +5,7 @@
 }
 
 @if (!cargando() && sesion()) {
-  <div class="space-y-6 max-w-2xl mx-auto">
+  <div class="space-y-6 mx-auto">
 
     <!-- ── Navegación ── -->
     <div class="flex items-center justify-between">
@@ -48,6 +48,11 @@
         </div>
       </div>
     </div>
+
+    <!-- ── Asistente Predictivo ML ── -->
+    @if (esFisioterapeuta) {
+      <app-predictivo [sesion]="sesion()" modo="abandono"></app-predictivo>
+    }
 
     <!-- ── Formulario clínico ── -->
     <form [formGroup]="form" class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 space-y-5">

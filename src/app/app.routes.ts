@@ -23,8 +23,11 @@ import { Insumos } from './modulos/gestion-administrativa/insumos/insumos';
 import { Facturas } from './modulos/gestion-administrativa/facturas/facturas';
 import { Tarifas } from './modulos/gestion-administrativa/tarifas/tarifas';
 import { Mensualidades } from './modulos/gestion-administrativa/mensualidades/mensualidades';
+import { Turnos } from './modulos/gestion-administrativa/turnos/turnos';
+import { CrearTurnos } from './modulos/gestion-administrativa/turnos/crear-turnos/crear-turnos';
+import { Asistencias } from './modulos/gestion-administrativa/asistencias/asistencias';
 import { Proximamente } from './modulos/placeholders/proximamente';
-import { Predictivo } from './modulos/bi-automatizacion/predictivo';
+
 import { Reportes } from './modulos/bi-automatizacion/reportes/reportes';
 
 export const routes: Routes = [
@@ -78,13 +81,13 @@ export const routes: Routes = [
             path: '',
             component: EvaluacionesIniciales,
             canActivate: [permisoGuard],
-            data: { roles: ['administrador', 'fisioterapeuta', 'director'] },
+            data: { roles: ['administrador', 'fisioterapeuta', 'director', 'recepcionista'] },
           },
           {
             path: 'editar/:id',
             component: EditarEvaluacion,
             canActivate: [permisoGuard],
-            data: { roles: ['administrador', 'fisioterapeuta', 'director'] },
+            data: { roles: ['administrador', 'fisioterapeuta', 'director', 'recepcionista'] },
           },
         ],
       },
@@ -95,13 +98,13 @@ export const routes: Routes = [
             path: '',
             component: PlanesTratamiento,
             canActivate: [permisoGuard],
-            data: { roles: ['administrador', 'fisioterapeuta', 'director'] },
+            data: { roles: ['administrador', 'fisioterapeuta', 'director', 'recepcionista'] },
           },
           {
             path: 'crear/:evaluacionId',
             loadComponent: () => import('./modulos/gestion-clinica/planes-tratamiento/crear-planes-tratamiento/crear-planes-tratamiento').then(m => m.CrearPlanesTratamiento),
             canActivate: [permisoGuard],
-            data: { roles: ['administrador', 'fisioterapeuta', 'director'] },
+            data: { roles: ['administrador', 'fisioterapeuta', 'director', 'recepcionista'] },
           }
         ]
       },
@@ -109,7 +112,7 @@ export const routes: Routes = [
         path: 'planes-ejercicios',
         component: PlanesEjercicios,
         canActivate: [permisoGuard],
-        data: { roles: ['administrador', 'fisioterapeuta'] },
+        data: { roles: ['administrador', 'fisioterapeuta', 'recepcionista'] },
       },
       {
         path: 'sesiones',
@@ -130,7 +133,7 @@ export const routes: Routes = [
             path: 'editar/:id',
             component: EditarSesiones,
             canActivate: [permisoGuard],
-            data: { roles: ['administrador', 'fisioterapeuta'] },
+            data: { roles: ['administrador', 'fisioterapeuta', 'recepcionista'] },
           },
         ],
       },
@@ -165,13 +168,36 @@ export const routes: Routes = [
             path: 'tarifas',
             component: Tarifas,
             canActivate: [permisoGuard],
-            data: { roles: ['administrador', 'fisioterapeuta'] },
+            data: { roles: ['administrador', 'fisioterapeuta', 'director'] },
           },
           {
             path: 'mensualidades',
             component: Mensualidades,
             canActivate: [permisoGuard],
             data: { roles: ['administrador', 'contador', 'recepcionista'] },
+          },
+          {
+            path: 'turnos',
+            children: [
+              {
+                path: '',
+                component: Turnos,
+                canActivate: [permisoGuard],
+                data: { roles: ['administrador', 'director', 'fisioterapeuta', 'recepcionista'] },
+              },
+              {
+                path: 'crear',
+                component: CrearTurnos,
+                canActivate: [permisoGuard],
+                data: { roles: ['administrador', 'director', 'fisioterapeuta', 'recepcionista'] },
+              },
+            ],
+          },
+          {
+            path: 'asistencias',
+            component: Asistencias,
+            canActivate: [permisoGuard],
+            data: { roles: ['administrador', 'director', 'fisioterapeuta', 'recepcionista'] },
           },
         ],
       },
@@ -183,12 +209,6 @@ export const routes: Routes = [
             component: Reportes,
             canActivate: [permisoGuard],
             data: { roles: ['administrador', 'director', 'contador'] },
-          },
-          {
-            path: 'predictivo',
-            component: Predictivo,
-            canActivate: [permisoGuard],
-            data: { roles: ['director', 'fisioterapeuta'] },
           },
         ],
       },

@@ -12,26 +12,28 @@
     </div>
     
     <!-- Tabs -->
-    <div class="flex bg-gray-100 p-1 rounded-xl">
-      <button 
-        (click)="cambiarTab('recuperacion')" 
-        [class.bg-white]="tabActiva() === 'recuperacion'"
-        [class.shadow-sm]="tabActiva() === 'recuperacion'"
-        [class.text-gray-900]="tabActiva() === 'recuperacion'"
-        [class.text-gray-500]="tabActiva() !== 'recuperacion'"
-        class="px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 hover:text-gray-900 focus:outline-none">
-        Tiempo de Recuperación
-      </button>
-      <button 
-        (click)="cambiarTab('abandono')" 
-        [class.bg-white]="tabActiva() === 'abandono'"
-        [class.shadow-sm]="tabActiva() === 'abandono'"
-        [class.text-gray-900]="tabActiva() === 'abandono'"
-        [class.text-gray-500]="tabActiva() !== 'abandono'"
-        class="px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 hover:text-gray-900 focus:outline-none">
-        Riesgo de Abandono
-      </button>
-    </div>
+    @if (modo === 'ambos') {
+      <div class="flex bg-gray-100 p-1 rounded-xl">
+        <button 
+          (click)="cambiarTab('recuperacion')" 
+          [class.bg-white]="tabActiva() === 'recuperacion'"
+          [class.shadow-sm]="tabActiva() === 'recuperacion'"
+          [class.text-gray-900]="tabActiva() === 'recuperacion'"
+          [class.text-gray-500]="tabActiva() !== 'recuperacion'"
+          class="px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 hover:text-gray-900 focus:outline-none">
+          Tiempo de Recuperación
+        </button>
+        <button 
+          (click)="cambiarTab('abandono')" 
+          [class.bg-white]="tabActiva() === 'abandono'"
+          [class.shadow-sm]="tabActiva() === 'abandono'"
+          [class.text-gray-900]="tabActiva() === 'abandono'"
+          [class.text-gray-500]="tabActiva() !== 'abandono'"
+          class="px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-200 hover:text-gray-900 focus:outline-none">
+          Riesgo de Abandono
+        </button>
+      </div>
+    }
   </div>
 
   <!-- Content Areas -->
@@ -52,12 +54,9 @@
             <label class="text-xs font-semibold text-gray-700">Diagnóstico Principal</label>
             <select formControlName="diagnostico" class="input-base" [class.input-error]="formRecuperacion.get('diagnostico')?.invalid && formRecuperacion.get('diagnostico')?.touched">
               <option value="">Seleccione un diagnóstico...</option>
-              <option value="Fractura">Fractura de Hueso</option>
-              <option value="Esguince">Esguince de Ligamento</option>
-              <option value="Tendinitis">Tendinitis / Tendinopatía</option>
-              <option value="Lumbalgia">Lumbalgia / Dolor de Espalda</option>
-              <option value="Artrosis">Artrosis / Desgaste Articular</option>
-              <option value="Desgarro">Desgarro Muscular</option>
+              @for (diag of DIAGNOSTICOS; track diag.value) {
+                <option [value]="diag.value">{{ diag.label }}</option>
+              }
             </select>
             @if (formRecuperacion.get('diagnostico')?.invalid && formRecuperacion.get('diagnostico')?.touched) {
               <span class="text-xxs text-red-500">Diagnóstico es requerido</span>
@@ -68,9 +67,9 @@
             <label class="text-xs font-semibold text-gray-700">Categoría Semáforo (Gravedad)</label>
             <select formControlName="categoriaSemaforo" class="input-base" [class.input-error]="formRecuperacion.get('categoriaSemaforo')?.invalid && formRecuperacion.get('categoriaSemaforo')?.touched">
               <option value="">Seleccione gravedad...</option>
-              <option value="verde">Verde (Leve - 45 min por sesión)</option>
-              <option value="amarillo">Amarillo (Moderado - 90 min por sesión)</option>
-              <option value="rojo">Rojo (Grave - 120 min por sesión)</option>
+              @for (sem of SEMAFOROS; track sem.value) {
+                <option [value]="sem.value">{{ sem.label }}</option>
+              }
             </select>
             @if (formRecuperacion.get('categoriaSemaforo')?.invalid && formRecuperacion.get('categoriaSemaforo')?.touched) {
               <span class="text-xxs text-red-500">Categoría semáforo es requerida</span>
@@ -164,9 +163,9 @@
             <label class="text-xs font-semibold text-gray-700">Categoría Semáforo</label>
             <select formControlName="categoriaSemaforo" class="input-base" [class.input-error]="formAbandono.get('categoriaSemaforo')?.invalid && formAbandono.get('categoriaSemaforo')?.touched">
               <option value="">Seleccione gravedad...</option>
-              <option value="verde">Verde (Leve)</option>
-              <option value="amarillo">Amarillo (Moderado)</option>
-              <option value="rojo">Rojo (Grave)</option>
+              @for (sem of SEMAFOROS; track sem.value) {
+                <option [value]="sem.value">{{ sem.label }}</option>
+              }
             </select>
             @if (formAbandono.get('categoriaSemaforo')?.invalid && formAbandono.get('categoriaSemaforo')?.touched) {
               <span class="text-xxs text-red-500">Categoría semáforo es requerida</span>
@@ -227,7 +226,7 @@
             <div class="w-3 h-3 bg-indigo-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
             <div class="w-3 h-3 bg-indigo-600 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
           </div>
-          <p class="text-xs text-gray-500 mt-4 font-medium">Consultando microservicio predictivo en la nube...</p>
+          <p class="text-xs text-gray-500 mt-4 font-medium">Ejecutando inferencia en el modelo local Scikit-Learn...</p>
         </div>
       }
 
@@ -245,7 +244,7 @@
                 <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> ML Online
               </span>
             } @else {
-              <span class="inline-flex items-center gap-1 text-xxs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full" title="No se pudo contactar con FastAPI. Mostrando estimación de respaldo en base al semáforo y la edad.">
+              <span class="inline-flex items-center gap-1 text-xxs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full" title="No se pudo cargar el modelo. Mostrando estimación de respaldo en base al semáforo y la edad.">
                 <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span> Modo Fallback (Estimado)
               </span>
             }
@@ -277,14 +276,14 @@
               <svg class="w-5 h-5 text-amber-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
-              <span>El microservicio predictivo central está actualmente desconectado. El sistema ha generado una aproximación estadística en base a datos agregados del diagnóstico y edad.</span>
+              <span>El modelo predictivo local no se encuentra entrenado (datasets_bi vacío). El sistema ha generado una aproximación estadística genérica en base al diagnóstico y edad.</span>
             </div>
           } @else {
             <div class="bg-blue-50 rounded-xl p-3 text-xxs text-blue-800 border border-blue-100 leading-relaxed flex gap-2">
               <svg class="w-5 h-5 text-blue-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>Predicción en tiempo real calculada exitosamente por el regresor lineal clínico en base a variables ponderadas.</span>
+              <span>Predicción generada exitosamente por el modelo RandomForestRegressor en base al perfil del paciente.</span>
             </div>
           }
         </div>
@@ -304,7 +303,7 @@
                 <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> ML Online
               </span>
             } @else {
-              <span class="inline-flex items-center gap-1 text-xxs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full" title="No se pudo contactar con FastAPI. Mostrando estimación de respaldo en base al dolor y asistencia.">
+              <span class="inline-flex items-center gap-1 text-xxs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full" title="No se pudo cargar el modelo. Mostrando estimación de respaldo en base al dolor y asistencia.">
                 <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span> Modo Fallback (Estimado)
               </span>
             }
@@ -356,14 +355,14 @@
               <svg class="w-5 h-5 text-amber-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
-              <span>El microservicio predictivo central está actualmente desconectado. El sistema ha clasificado la adherencia usando heurísticas clínicas locales.</span>
+              <span>El modelo predictivo local no se encuentra entrenado (datasets_bi vacío). El sistema ha clasificado la adherencia usando heurísticas clínicas locales.</span>
             </div>
           } @else {
             <div class="bg-blue-50 rounded-xl p-3 text-xxs text-blue-800 border border-blue-100 leading-relaxed flex gap-2">
               <svg class="w-5 h-5 text-blue-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>Clasificación de riesgo generada en tiempo real por el bosque aleatorio clínico del microservicio FastAPI.</span>
+              <span>Clasificación de riesgo generada en tiempo real por el RandomForestClassifier incorporado en el servicio.</span>
             </div>
           }
         </div>
